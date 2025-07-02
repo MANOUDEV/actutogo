@@ -7,7 +7,22 @@
     @include('includes.header')
 
     <main>
- 
+
+        <section class="position-relative" style="margin-top: -45px; margin-bottom: -25px">
+
+            @include('sectionHomePage.alaUne.alaUne')
+
+            @include('sectionHomePage.toutelActualite.toutelActualite')
+
+            @include('sectionHomePage.international.international')
+
+            @include('sectionHomePage.opinionFaitsDivers.opinionFaitsDivers')
+
+            @include('sectionHomePage.societe.societe')
+
+            @include('sectionHomePage.aNePasManquerTogo.aNePasManquerTogo')
+
+        </section>
 
         @include('includes.newletter')
     </main>
