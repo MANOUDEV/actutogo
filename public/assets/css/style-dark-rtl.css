@@ -17510,6 +17510,174 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
     width: calc(100% + 140px - 20px + 140px - 20px);
     margin-right: calc(-140px + 20px);
   }
+
+  
+.alaune_title{
+  font-size: 20px;
+}
+
+.alaune_logo{
+  height: 40px
+}
+
+.togoPolitique_title{
+  font-size: 20px;
+}
+
+.togoPolitique_logo{
+  height: 40px
+}
+
+.toutelactualite_logo{
+  height: 40px
+}
+
+.toute_lactualite_title{
+  font-size: 20px;
+}
+
+.toute_lactualite{
+  height: 280px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.alaune_first_section_img_responsive{
+  height: 520px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(50%);
+}
+
+.international_first_section_img_responsive{
+  height: 330px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(50%);
+}
+
+.important_first_section_img_responsive{
+    height: 650px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+  }
+
+.societe_first_section_img_responsive{
+    height: 385px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+}
+.societe_second_section_img_responsive{
+    height: 40px;
+    width: 100% ;
+    object-fit: cover;
+    object-position: center;
+  }
+.alaune_second_section_img_responsive{
+  height: 100px;
+  width: 100% ;
+  object-fit: cover;
+  object-position: center;
+}
+
+.one_slug_page_article_img_responsive{
+  height: auto;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.responsive_nav_link{
+  font-size: 5px;
+}
+
+@media only screen and (min-width: 991px) and (max-width: 1200px) {
+
+  .navbar-nav .nav-link {
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: capitalize;
+    line-height: 90px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+}
+
+@media only screen and (max-width: 575px) {
+  .one_slug_page_article_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .alaune_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+  }
+
+  .international_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+  }
+
+  .important_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+  }
+
+  .societe_first_section_img_responsive{
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+  }
+
+  .alaune_second_section_img_responsive{
+    height: 90px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    object-fit: cover;
+    display: block;
+  }
+
+  .toute_lactualite{
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+  }
 }
 /*User CSS*/
 /*# sourceMappingURL=style-dark-rtl.css.map */

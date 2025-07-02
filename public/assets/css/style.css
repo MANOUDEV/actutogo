@@ -5451,12 +5451,12 @@ textarea.form-control-lg {
 }
 
 .alert-success {
-  --bs-alert-color: #077151;
+  --bs-alert-color: ##0cbc87;
   --bs-alert-bg: #cef2e7;
   --bs-alert-border-color: #b6ebdb;
 }
 .alert-success .alert-link {
-  color: #065a41;
+  color: #0cbc87;
 }
 
 .alert-info {
@@ -5866,17 +5866,17 @@ textarea.form-control-lg {
 }
 
 .list-group-item-success {
-  color: #077151;
+  color: #0cbc87;
   background-color: #cef2e7;
 }
 .list-group-item-success.list-group-item-action:hover, .list-group-item-success.list-group-item-action:focus {
-  color: #077151;
+  color: #0cbc87;
   background-color: #b9dad0;
 }
 .list-group-item-success.list-group-item-action.active {
   color: #fff;
-  background-color: #077151;
-  border-color: #077151;
+  background-color: #0cbc87;
+  border-color: #0cbc87;
 }
 
 .list-group-item-info {
@@ -7707,7 +7707,7 @@ textarea.form-control-lg {
 
 .text-bg-success {
   color: #fff !important;
-  background-color: RGBA(12, 188, 135, var(--bs-bg-opacity, 1)) !important;
+  background-color: #0cbc87 !important;
 }
 
 .text-bg-info {
@@ -7753,7 +7753,7 @@ textarea.form-control-lg {
   color: #0cbc87 !important;
 }
 .link-success:hover, .link-success:focus {
-  color: #0a966c !important;
+  color: #0cbc87 !important;
 }
 
 .link-info {
@@ -9341,7 +9341,7 @@ textarea.form-control-lg {
 
 .text-success {
   --bs-text-opacity: 1;
-  color: rgba(var(--bs-success-rgb), var(--bs-text-opacity)) !important;
+  color: #0cbc87 !important;
 }
 
 .text-info {
@@ -9432,7 +9432,7 @@ textarea.form-control-lg {
 
 .bg-success {
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-success-rgb), var(--bs-bg-opacity)) !important;
+  background-color: #0cbc87 !important;
 }
 
 .bg-info {
@@ -15429,7 +15429,7 @@ textarea.form-control-lg {
 }
 
 .navbar-nav .nav-link {
-  font-size: 0.9375rem;
+  font-size: 12px;
   font-weight: 500;
   text-transform: capitalize;
   line-height: 90px;
@@ -16745,7 +16745,7 @@ html.font-sm {
 }
 
 /* rtl:raw:
-  .rotating-text-badge { 
+  .rotating-text-badge {
     direction: ltr !important;
   }
 */
@@ -17555,5 +17555,396 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
     margin-left: calc(-140px + 20px);
   }
 }
+
+.alaune_title{
+  font-size: 20px;
+}
+
+.alaune_logo{
+  height: 40px
+}
+
+.togoPolitique_title{
+  font-size: 20px;
+}
+
+.togoPolitique_logo{
+  height: 40px
+}
+
+.toutelactualite_logo{
+  height: 40px
+}
+
+.toute_lactualite_title{
+  font-size: 20px;
+}
+
+.toute_lactualite{
+  height: 280px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.alaune_first_section_img_responsive{
+  height: 520px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+
+.alauneH_first_section_img_responsive{
+  height: 560px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+.article_first_section_img_responsive{
+    height: 500px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+}
+
+.opinion_faits_divers_first_section_img_responsive{
+    height: 430px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+}
+
+.international_first_section_img_responsive{
+  height: 330px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+.important_first_section_img_responsive{
+    height: 650px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+}
+
+
+.a_ne_pas_manquer_section_img_responsive{
+    height: 650px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+}
+
+.societe_first_section_img_responsive{
+    height: 385px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+}
+.societe_second_section_img_responsive{
+    height: 40px;
+    width: 100% ;
+    object-fit: cover;
+    object-position: center;
+  }
+.alaune_second_section_img_responsive{
+  height: 100px;
+  width: 100% ;
+  object-fit: cover;
+  object-position: center;
+}
+
+.one_slug_page_article_img_responsive{
+  height: auto;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.responsive_nav_link{
+  font-size: 5px;
+}
+
+@media only screen and (min-width: 991px) and (max-width: 1200px) {
+
+  .navbar-nav .nav-link {
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: capitalize;
+    line-height: 90px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+}
+
+.image_hover_nav{
+    height: 150px;
+    object-fit: cover
+}
+
+@media only screen and (max-width: 575px) {
+
+    .image_hover_nav{
+        height: 150px;
+        object-fit: cover
+    }
+
+  .one_slug_page_article_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .alaune_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+
+  .alauneH_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  .article_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  .international_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  .important_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  .a_ne_pas_manquer_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+  }
+
+  .societe_first_section_img_responsive{
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  .alaune_second_section_img_responsive{
+    height: 90px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    object-fit: cover;
+    display: block;
+  }
+
+
+.opinion_faits_divers_first_section_img_responsive{
+  height: 320px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+  .toute_lactualite{
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .files_select
+    {
+        height: 280px;
+        object-fit: cover;
+        cursor:pointer
+    }
+
+    .og_files_select
+    {
+        height: 230px;
+        object-fit: cover;
+        cursor:pointer
+    }
+}
 /*User CSS*/
 /*# sourceMappingURL=style.css.map */
+.alert_info.text-in{
+  display: block;
+  animation: textIn .5s ease;
+}
+
+.alert_info.text-out{
+  animation: textOut .5s ease;
+}
+@keyframes textIn{
+  0%{
+      transform: translateY(100%);
+  }
+  100%{
+      transform: translateY(0%);
+  }
+}
+@keyframes textOut{
+  0%{
+      transform: translateY(0%);
+  }
+  100%{
+      transform: translateY(-100%);
+
+  }
+}
+.og_files_select
+{
+    height: 230px;
+    object-fit: cover;
+    cursor:pointer
+}
+ .file-upload{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 4em 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5em;
+    background-color: #e4f1f2;
+}
+
+.file-upload input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+}
+.file-upload .icon{
+    position: relative;
+    margin-bottom: 3em;
+    color: #000;
+}
+.file-upload .icon .arrow{
+    font-size: 4em;
+    color: hsla(235, 100%, 93%, 1);
+    z-index: 1;
+    position: relative;
+}
+
+.file-upload .icon::before, .file-upload .icon::after{
+    content: '';
+    width: 56px;
+    height: 56px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50px;
+    border: 3px solid hsla(235, 100%, 78%, 1);
+    background-color: hsla(235, 100%, 99%, 1);
+    transform: scale(1.5);
+    z-index: 1;
+}
+.file-upload .icon::after{
+    border: 0;
+    transform: scale(2.5);
+    z-index: 0;
+    background-color: hsla(235, 100%, 95%, 1);
+}
+
+.file-upload h3{
+    font-weight: 400;
+    font-size: 1.5em;
+    color: hsla(235, 100%, 78%, 1);
+}
+.file-upload button{
+    border: 0;
+    outline: 0;
+    border-radius: 50%;
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-background: linear-gradient(135deg, hsla(235, 100%, 78%, 1) 0%, hsla(222, 100%, 67%, 1) 100%);
+    background: linear-gradient(135deg, hsla(235, 100%, 78%, 1) 0%, hsla(222, 100%, 67%, 1) 100%);
+    box-shadow: hsla(222, 100%, 67%, .5) 0 4px 18px;
+    -webkit-transition: all .3 ease-in-out;
+    transition: all .3 ease-in-out;
+}
+.file-upload button ion-icon{
+    font-size: 1.5em;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.file-upload:hover button{
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+}
+.files_select
+{
+    height: 127px;
+    object-fit: cover;
+    cursor:pointer
+}
