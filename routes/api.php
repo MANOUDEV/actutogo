@@ -1,13 +1,28 @@
 <?php
-use App\Http\Controllers\Api\Web\Frontoffice\IncludesController; 
+
+use App\Http\Controllers\Api\Web\Frontoffice\IncludesController;
+use App\Http\Controllers\Api\Web\Frontoffice\HomeController; 
 
 use App\Http\Controllers\Api\Web\Authentication\RegisterController;
 use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\Authentication\LoginController;
 use App\Http\Controllers\Api\Web\Authentication\LogoutController;
 use App\Http\Controllers\Api\Web\Authentication\ProfileController;
-use App\Http\Controllers\Api\Web\Frontoffice\HomeController;
 use App\Http\Controllers\Api\Web\Frontoffice\UserActionAuthController;
+
+
+use App\Http\Controllers\Api\Web\Backoffice\Publicateur\TagsController;
+use App\Http\Controllers\Api\Web\Backoffice\Publicateur\AuthorsController;
+
+use App\Http\Controllers\Api\Web\Backoffice\Admin\NewsLetterController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\TypePublicationController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\CategoryController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\TagsAdminController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\AuthorsAdminController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\CRUD\AlertInfosAnnonceController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\CRUD\ArticlesController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\CRUD\PublicitesController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\PublicationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
