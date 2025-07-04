@@ -2,12 +2,20 @@
 namespace App\Http\Controllers\Api\Web\Frontoffice;
 use App\Http\Controllers\Api\BaseController;
 use App\Models\Category;
-use App\Models\Message;
 use App\Models\NewsLetter;
 use App\Models\Tag;
-use App\Models\Publication;
+use App\Models\Publication;  
+use Illuminate\Http\Request;
+use App\Models\Message;
+use App\Models\PushSubscription;
 use App\Models\SenderMessage;
-use Illuminate\Http\Request; 
+use App\Models\PublicationViews;
+use App\Models\PublicationLikes;
+use App\Models\Comment;
+use App\Models\VisitorMatriculeViews;
+use App\Models\VisitorMatriculeComments;
+use App\Models\VisitorMatriculeLikes;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
