@@ -30,7 +30,7 @@ function showPub($content, $category_id, $article_id){
                             <br>
                             <div class=\"row g-4\">
                                 <div class=\"col-lg-12 col-sm-12 col-xs-12\">
-                                    <script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5594963864359932\"
+                                    <script defer async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5594963864359932\"
                                         crossorigin=\"anonymous\"></script>
                                     <!-- horizontale 970px / 80px -->
                                     <ins class=\"adsbygoogle\"

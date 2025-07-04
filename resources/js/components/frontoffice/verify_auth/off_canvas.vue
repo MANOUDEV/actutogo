@@ -8,7 +8,10 @@ const dataReady = ref(0);
 const meProfileUserName = ref(null);
 const meProfileRoleName = ref(null);
 const loadingConnect = ref(false);
-const remember_me = ref(false); 
+const remember_me = ref(false);
+
+
+
 
 const show = async () => {
   if (localStorage.getItem('access_token') && localStorage.getItem('nbRsp')) {
@@ -71,17 +74,17 @@ onMounted(() => {
   <span v-if="dataReady === 0"></span>
   <span v-else-if="dataReady === 1">
     <span v-if="meProfileRoleName === 'Administrateur'">
-      <a class="dropdown-item fw-normal" href="/admin/dashboard">Tableau de bord</a>
+      <a class="nav-link text-dark" href="/admin/dashboard">Tableau de bord</a>
     </span>
     <span v-else-if="meProfileRoleName === 'Publicateur d\' articles'">
-      <a class="dropdown-item fw-normal" href="/pub/dashboard">Tableau de bord</a>
+      <a class="nav-link text-dark" href="/pub/dashboard">Tableau de bord</a>
     </span>
     <span v-else-if="meProfileRoleName === 'Visiteur'">
-      <a class="dropdown-item fw-normal" href="/auth/profile">Voir mon profil</a>
+      <a class="nav-link text-dark" href="/profile">Voir mon profil</a>
     </span>
   </span>
   <span v-else-if="dataReady === 2 || dataReady === 3">
-    <span class="dropdown-item fw-normal" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">Se connecter</span>
-    <span class="dropdown-item fw-normal" v-else>Connexion en cours ...</span>
+    <span class="nav-link text-dark" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">Se connecter</span>
+    <span class="nav-link text-dark" v-else>Connexion en cours ...</span>
   </span>
 </template>

@@ -48,7 +48,8 @@
                 </div>
             </div>
         </section>
-
+        
+        @include('includes.newletter')
     </main>
 
     @include('includes.footer')

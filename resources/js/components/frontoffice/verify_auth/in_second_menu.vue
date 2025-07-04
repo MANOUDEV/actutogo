@@ -71,7 +71,7 @@ onMounted(() => {
   <div class="nav-item ms-2 ms-md-3 dropdown" v-else-if="dataReady === 1">
     <a class="avatar avatar-xs" href="#" role="button" data-bs-toggle="dropdown">
       <div class="avatar-img rounded-circle bg-primary">
-        <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
+        <span  style="font-size: 25px" class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
           {{ meProfileUserName[0].toUpperCase() }}
         </span>
       </div>

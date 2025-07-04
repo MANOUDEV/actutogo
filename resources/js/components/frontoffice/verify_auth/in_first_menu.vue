@@ -7,22 +7,21 @@ const store = useStore();
 const dataReady = ref(0);
 const meProfileUserName = ref(null);
 const meProfileRoleName = ref(null);
-const meProfileEmail = ref(null); 
-const logoutCheck = ref(false);
 const loadingConnect = ref(false);
 const remember_me = ref(false);
- 
+
+
+
+
 const show = async () => {
   if (localStorage.getItem('access_token') && localStorage.getItem('nbRsp')) {
     await store.dispatch('meProfile/getMeProfile');
     const gettersMeProfileUserName =  store.getters['meProfile/getMeProfileUserName'];
     const gettersMeProfileRoleName =  store.getters['meProfile/getMeProfileRoleName'];
-     const gettersMeProfileEmail =  store.getters['meProfile/getMeProfileEmail'];
     const gettersMeProfileStatus =  store.getters['meProfile/getMeProfileStatus'];
     if (gettersMeProfileStatus === 'success') {
       meProfileRoleName.value = gettersMeProfileRoleName;
       meProfileUserName.value = gettersMeProfileUserName;
-      meProfileEmail.value = gettersMeProfileEmail;
       dataReady.value = 1;
     } else if (gettersMeProfileStatus === 'failed') {
       dataReady.value = 3;
@@ -65,35 +64,6 @@ const loginClick = async () => {
     window.location = '/auth/login';
   }
 };
-const logout = async () => {
-  logoutCheck.value = true;
-  await store.dispatch('logout/getLogoutApi');
-  const getterLogoutStatus =  store.getters['logout/getLogoutStatus'];
-  const getterLogoutMessage =  store.getters['logout/getLogoutMessage'];
-  if (getterLogoutStatus === 'success') {
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: getterLogoutMessage,
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true
-    });
-    const  clearToken = {
-      access_token: null,
-      expires_in: null
-    }
-
-    store.getters["login/getAuthData"].access_token = clearToken.access_token
-    store.getters["login/getAuthData"].expires_in = clearToken.expires_in
-
-    window.location = '/auth/login'
-
-    this.logoutCheck = false
-    window.location = '/auth/login';
-  }
-};
 
 onMounted(() => {
   show();
@@ -101,45 +71,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="dataReady === 0"></div>
-  <div class="nav-item ms-2 ms-md-3 dropdown" v-else-if="dataReady === 1">
-    
-    <a class="avatar avatar-xs" href="#" role="button" data-bs-toggle="dropdown">
-      <div class="avatar-img rounded-circle bg-primary">
-        <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
-          {{ meProfileUserName[0].toUpperCase() }}
-        </span>
-      </div>
-    </a>
-    <ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3">
-      <li class="px-3">
-        <div class="d-flex align-items-center">
-          <div class="avatar avatar-xs">
-            <div class="avatar-img rounded-circle bg-primary">
-              <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
-                {{ meProfileUserName[0].toUpperCase() }}
-              </span>
-            </div>
-          </div>
-          &nbsp; &nbsp; &nbsp;
-          <div>
-            <a class="h6 mt-2 mt-sm-0" href="#">{{ meProfileUserName }}</a>
-            <p class="small m-0">{{ meProfileEmail }}</p>
-          </div>
-        </div>
-        <hr>
-      </li>
-      <li><a class="dropdown-item" href="/auth/profile"><i class="bi bi-person fa-fw me-2"></i>Editer mon profil</a></li>
-      <li v-if="meProfileRoleName === 'Administrateur'"><a class="dropdown-item" href="/admin/dashboard"><i class="bi bi-house-door fa-fw me-2"></i>Tableau de bord</a></li>
-      <li v-else-if="meProfileRoleName === 'Publicateur d\' articles'"><a class="dropdown-item" href="/pub/dashboard"><i class="bi bi-house-door fa-fw me-2"></i>Tableau de bord</a></li>
-      <li>
-        <span class="dropdown-item" v-if="!logoutCheck" style="cursor: pointer" @click="logout"><i class="bi bi-power fa-fw me-2"></i>Se déconnecter</span>
-        <span class="dropdown-item" v-else><i class="bi bi-power fa-fw me-2"></i>Déconnexion en cours ...</span>
-      </li>
-    </ul> 
-  </div>
-  <div v-else-if="dataReady === 2 || dataReady === 3"> 
-    <span class="btn btn-sm btn-danger mb-0 mx-2" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">Se connecter</span>
-    <span  class="btn btn-sm btn-primary mb-0 mx-2" v-else>Connexion ...</span>
-  </div>
+  <span v-if="dataReady === 0"></span>
+  <span v-else-if="dataReady === 1">
+    <span v-if="meProfileRoleName === 'Administrateur'">
+      <a class="nav-link text-dark" href="/admin/dashboard">Tableau de bord</a>
+    </span>
+    <span v-else-if="meProfileRoleName === 'Publicateur d\' articles'">
+      <a class="nav-link text-dark" href="/pub/dashboard">Tableau de bord</a>
+    </span>
+    <span v-else-if="meProfileRoleName === 'Visiteur'">
+      <a class="nav-link text-dark" href="/profile">Voir mon profil</a>
+    </span>
+  </span>
+  <span v-else-if="dataReady === 2 || dataReady === 3">
+    <span class="nav-link text-dark" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">Se connecter</span>
+    <span class="nav-link text-dark" v-else>Connexion en cours ...</span>
+  </span>
 </template>

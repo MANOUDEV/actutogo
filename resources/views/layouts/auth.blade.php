@@ -19,6 +19,7 @@
         <!-- Theme CSS -->
         <link id="style-switch" rel="stylesheet" type="text/css" href="/assets/css/style.css">
         
+        
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     </head>

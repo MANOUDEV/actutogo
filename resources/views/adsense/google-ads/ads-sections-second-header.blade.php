@@ -1,4 +1,4 @@
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5594963864359932"
+<script defer async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5594963864359932"
      crossorigin="anonymous"></script>
 <!-- horizontale 970px / 80px -->
 <ins class="adsbygoogle"
