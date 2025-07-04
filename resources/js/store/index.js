@@ -94,6 +94,18 @@ const store = createStore({
 
         newsletter: newsletterModule,
 
+        sectionsPublicationsHomePage: sectionsPublicationsHomePageModule,
+        
+                //Déclaration du module gérant les données de création de matricule pour visiteurs
+               
+                visitorsActionsViews: visitorsActionsViewsModule,
+                visitorsActionsLikes: visitorsActionsLikesModule,
+                visitorsActionsComments: visitorsActionsCommentsModule,
+        
+                //Déclaration du module gérant les données d'envoi des messages
+        
+                contact: contactModule,
+
         
                 //Déclaration du module gérant les données sur un article
         
