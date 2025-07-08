@@ -1146,6 +1146,7 @@ export default{
             async getResults(){
 
                 this.initialData = window.location.href.replace('https://togoactu.com/', '')
+                console.log(this.initialData)
                 this.loading = 1
 
                 if(localStorage.getItem('mtrv') == null){
