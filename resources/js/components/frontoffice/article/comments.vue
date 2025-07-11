@@ -1,22 +1,7 @@
 <template>
-    <ul class="list-inline mb-2 mt-2" v-if="loading == 1">
-        <li class="list-inline-item">
-            <button class="btn btn-outline-light btn-sm ">
-                <i  style="color: green; font-size: 20px;" class="fa fa-spinner fa-spin fa-1x fa-fw"></i><span class="sr-only">Loading...</span>
-                Chargement des données ...
-            </button>
-        </li>
-    </ul>
-    <ul class="list-inline mb-2 mt-2" v-if="loading == 2">
-        <li class="list-inline-item">
-            <button class="btn btn-danger btn-sm">
-                <i class="fa fa-exclamation-triangle fa-1x fa-fw"></i>
-                Impossible de charger les données.
-            </button>
-        </li>
-    </ul>
+    
     <hr>
-    <div v-if="loading == 0" class="mt-2">
+    <div  class="mt-2">
         <h4>Ajouter un commentaire</h4>
         <form class="row g-3 mt-2">
             <div v-if="errorComment">
