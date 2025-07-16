@@ -6,7 +6,7 @@
 			<div class="w-100  d-flex">
 				<!-- Logo START -->
 				<a class="navbar-brand" href="/">
-					<img class="navbar-brand-item light-mode-item" style="width: 250px height: 250px" src="/assets/images/togoactu.png" alt="logo">			
+					<img class="navbar-brand-item light-mode-item" style="width: 550px height: 550px" src="/assets/images/togoactu.png" alt="logo">			
 					<img class="navbar-brand-item dark-mode-item" src="/assets/images/logo-light.svg" alt="logo">			
 				</a>
 				<!-- Logo END -->
