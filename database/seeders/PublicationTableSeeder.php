@@ -84,9 +84,9 @@ class PublicationTableSeeder extends Seeder
 
                     if(isset($value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl'])){
 
-                        $image_cover_url = str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']);
+                        $image_cover_url = str_replace('https://togoactualite.com/wp-content/uploads', 'https://news228.com/storage/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']);
 
-                        $link_file = str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']);
+                        $link_file = str_replace('https://togoactualite.com/wp-content/uploads', 'https://news228.com/storage/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']);
 
                         $verify_link_file = File::where('file_url',  $link_file)->first();
 
@@ -307,7 +307,7 @@ class PublicationTableSeeder extends Seeder
 
                     if(isset($value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl'])){
 
-                        $info =  File::where('file_url',  str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']))->first();
+                        $info =  File::where('file_url',  str_replace('https://togoactualite.com/wp-content/uploads', 'https://news228.com/storage/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']))->first();
 
                         if($info){
 

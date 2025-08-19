@@ -89,7 +89,7 @@ class FileTableSeeder extends Seeder
                         }
 
                         $fichier_original = File::create([
-                            'file_url' => str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $link),
+                            'file_url' => str_replace('https://togoactualite.com/wp-content/uploads', 'https://news228.com/storage/uploads', $link),
                             'date_name' => $date_name,
                             'file_name' => $media['title']['rendered'],
                             'caption' => $media['caption']['rendered'] ? strip_tags($media['caption']['rendered']) : null,
