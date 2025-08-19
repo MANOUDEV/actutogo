@@ -27,6 +27,10 @@ import forgot_passwordModule from './modules/auth/forgot_password';
 //Sécurité pour les pages d'administration
 
 import roleModule from './modules/backoffice/role'
+
+//Importation du module gérant les données d'envoi de messages
+
+import contactModule from "./modules/frontoffice/includes/contact"
   
 const store = createStore({
     modules:{
@@ -50,6 +54,11 @@ const store = createStore({
         //Déclaration des modules gérant les données du système de la securité su site
 
         roleSecurity: roleModule,
+        
+        //Déclaration du module gérant les données d'envoi des messages
+        
+        contact: contactModule,
+
     }
   });
 

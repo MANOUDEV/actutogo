@@ -20,7 +20,11 @@ import PolitiqueHeader from './components/frontoffice/header/politique.vue'
 
 //Importation, déclaration et chargement des composants inclus dans le footer
 
-import NewsletterFooter from './components/frontoffice/footer/newsletter.vue' 
+import NewsletterFooter from './components/frontoffice/footer/newsletter.vue'
+
+//Importation du Composant de contact à afficher sur la page d'accueil
+
+import contactF from './components/frontoffice/includes/contact.vue' 
 
 //Verifier les connexions pour configurer les menus
 
@@ -90,7 +94,9 @@ app.component('login', loginH)
 
 app.component('register', registerH)
 
-app.component('forgot-password', forgot_passwordH) 
+app.component('forgot-password', forgot_passwordH)
+
+app.component('contact', contactF) 
  
 app.use(VueSweetalert2).use(store).mount('#app')
 
