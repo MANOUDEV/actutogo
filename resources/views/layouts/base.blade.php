@@ -21,7 +21,7 @@
         <link rel="stylesheet" type="text/css" href="/assets/vendor/tiny-slider/tiny-slider.css">
 
         <!-- Theme CSS -->
-        <link id="style-switch" rel="stylesheet" type="text/css" href="/assets/css/style.css">
+        <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
         @vite(['resources/js/app.js', 'resources/css/app.css'])
     </head>
     <body >
@@ -41,8 +41,8 @@
         <!-- Bootstrap JS -->
         <script defer src="/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Vendors -->
-        <script defer src="assets/vendor/tiny-slider/tiny-slider.js"></script>
-        <script defer src="assets/vendor/sticky-js/sticky.min.js"></script>
+        <script defer src="/assets/vendor/tiny-slider/tiny-slider.js"></script>
+        <script defer src="/assets/vendor/sticky-js/sticky.min.js"></script>
 
         <!-- Template Functions -->
         <script defer src="/assets/js/functions.js"></script>

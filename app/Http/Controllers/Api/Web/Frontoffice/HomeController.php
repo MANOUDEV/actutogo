@@ -12,7 +12,7 @@ class HomeController extends BaseController
 
         $articles_count = Publication::where('status', 1)->count();
 
-        if($articles_count === 0){
+        if($articles_count !== 0){
 
             return view('errors.HomePageControlEmpty');
 
