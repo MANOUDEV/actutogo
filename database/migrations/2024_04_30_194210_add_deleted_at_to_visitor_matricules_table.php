@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('visitor_matricule_comments', function (Blueprint $table) {
-            $table->id();
-            $table->string('matricule_reference');
-            $table->timestamps();
+        Schema::table('visitor_matricules', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('visitor_matricule_comments');
+        Schema::table('visitor_matricules', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };

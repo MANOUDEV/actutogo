@@ -7,9 +7,14 @@ use App\Models\NewsLetter;
 use App\Models\Tag;
 use App\Models\Publication;
 use App\Models\SenderMessage;
+use App\Models\PublicationViews;
+use App\Models\PublicationLikes;
+use App\Models\Comment;
+use App\Models\VisitorMatricule; 
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class IncludesController extends BaseController
 {
@@ -310,5 +315,60 @@ class IncludesController extends BaseController
 
     }
   
+        public function generateVisitorMatricule(){
 
+        $matricule_visitors_count = VisitorMatricule::count();
+
+        if($matricule_visitors_count == 0){
+
+            $visitor_matricule_create = VisitorMatricule::create([
+                'matricule_reference' => $this->str_replace_all("/", "", Hash::make(time().'-1'))
+            ]);
+
+            return $this->sendResponse(['visitor_matricule_create' => $visitor_matricule_create, 'status' => 200], 'Matricule de référence pour un visiteur géneré.');
+
+        }else{
+
+            $matricule_visitor_latest = VisitorMatricule::latest()->first();
+
+            if($matricule_visitor_latest){
+
+                $visitor_matricule_create = VisitorMatricule::create([
+                    'matricule_reference' => $this->str_replace_all("/", "", Hash::make(time().'-'.$matricule_visitor_latest->id + 1))
+                ]);
+
+                return $this->sendResponse(['visitor_matricule_create' => $visitor_matricule_create, 'status' => 200], 'Matricule de référence pour un visiteur géneré.');
+
+            }else{
+                return $this->sendResponse(['result' => 'Error', 'status' => 401], 'Impossible de générer un matricule de référence pour ce visiteur.');
+            }
+
+        }
+
+    }
+
+    public function checkVisitorMatricule($matricule) {
+
+        $matricule_visitors_count = VisitorMatricule::count();
+
+        if($matricule_visitors_count !== 0){
+
+            $check_matricule_reference = VisitorMatricule::where('matricule_reference', $matricule)->first();
+
+            if($check_matricule_reference){
+
+                return $this->sendResponse(['check_matricule_reference' => $check_matricule_reference, 'status' => 200], 'Ce matricule de réference existe déjà.');
+
+            }else{
+
+                return $this->sendResponse(['result' => 'Error', 'status' => 401], 'Ce matricule de réference n\'existe pas encore.');
+
+            }
+        }else{
+
+            return $this->sendResponse(['result' => 'Error', 'status' => 401], 'Aucun matricule de réference n\'existe encore.');
+
+        }
+
+    }
 }

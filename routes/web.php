@@ -5,7 +5,9 @@ use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\Authentication\LoginController;
 use App\Http\Controllers\Api\Web\Authentication\RegisterController;
 use App\Http\Controllers\Api\Web\Backoffice\WebRouteController;
+
 use App\Http\Controllers\Api\Web\Frontoffice\OneSlugController;
+
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------

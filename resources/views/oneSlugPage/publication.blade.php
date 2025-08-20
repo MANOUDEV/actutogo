@@ -10,9 +10,7 @@
 
         <section>
             <div class="container">
-                
-                @include('adsense.google-ads.ads-sections-second-header')
-               
+                   
                 <div class="d-md-flex justify-content-between text-md-start my-2 ">
 					<!-- Tag -->
 					<ul class="list-inline mb-0">
@@ -112,11 +110,10 @@
                                 <!-- Social icons -->
 
                             </div>
-                        </div>
-                        <br>
+                        </div> 
                         <div class="row g-4" style="margin-top: -20px">
                             <div class="col-lg-12 col-sm-12 col-xs-12">
-                               
+                               <states></states>
                             </div>
                         </div> 
                         <p> {!! showPub($article->content, $categoriesH[0]->id, $article->id)  !!} </p>
@@ -145,7 +142,7 @@
                                             data-dots="true"
                                             data-items="1">
 
-                                            @foreach ($alireaussi as  $result)
+                                            @foreach ($similars as  $result)
 
                                                 <!-- Card item START -->
                                             <div class="card">

@@ -27,6 +27,7 @@
     <body >
 
         <div id="app">
+            <visitors-actions></visitors-actions>
             @yield('content')
         </div>
            

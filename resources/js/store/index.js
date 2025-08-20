@@ -28,9 +28,22 @@ import forgot_passwordModule from './modules/auth/forgot_password';
 
 import roleModule from './modules/backoffice/role'
 
+//Importation du module gérant les données de création de matricule pour visiteurs
+
+import visitorsActionsModule from './modules/frontoffice/visitors_actions/visitors_actions'
+ 
 //Importation du module gérant les données d'envoi de messages
 
 import contactModule from "./modules/frontoffice/includes/contact"
+ 
+//Importation du module gérant les données sur article
+
+import articleModule from './modules/frontoffice/article/article'
+
+//Importation du module gérant les données des publications sur la page d'accueil
+
+import sectionsPublicationsHomePageModule from './modules/frontoffice/sectionsPublicationsHomePage/sectionsPublicationsHomePage'
+ 
   
 const store = createStore({
     modules:{
@@ -55,9 +68,21 @@ const store = createStore({
 
         roleSecurity: roleModule,
         
-        //Déclaration du module gérant les données d'envoi des messages
+        //Déclaration du module gérant les données de création de matricule pour visiteurs
         
+        visitorsActions: visitorsActionsModule, 
+
+        //Déclaration du module gérant les données d'envoi des messages
+
         contact: contactModule,
+
+        //Déclaration du module gérant les données sur un article
+
+        article: articleModule,
+         //Déclaration du module gérant les données des publications sur la page d'accueil
+        
+        sectionsPublicationsHomePage: sectionsPublicationsHomePageModule,
+         
 
     }
   });

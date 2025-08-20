@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('visitor_matricule_likes', function (Blueprint $table) {
+        Schema::create('visitor_matricules', function (Blueprint $table) {
             $table->id();
             $table->string('matricule_reference');
             $table->timestamps();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('visitor_matricule_likes');
+        Schema::dropIfExists('visitor_matricules');
     }
 };
