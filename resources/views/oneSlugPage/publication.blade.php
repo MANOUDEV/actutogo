@@ -9,7 +9,32 @@
     <main style="margin-top: -45px; margin-bottom: -25px">
 
         <section>
+
             <div class="container">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="tiny-slider arrow-dark arrow-hover arrow-round rounded-3">
+                            <div class="tiny-slider-inner"
+                                data-autoplay="true"
+                                data-hoverpause="true"
+                                data-gutter="24"
+                                data-arrow="true"
+                                data-dots="false"
+                                data-items-xl="1"
+                                data-items-lg="1"
+                                data-items-md="1"
+                                data-items-sm="1"
+                                data-items-xs="1">
+                                    <div>
+                                        <div class="card card-fold bg-dark">
+                                            <img src="{{$article->image_cover_url}}" class="card-img-top alauneH_first_section_img_rectangle" alt="{{$article->title}}">
+                                         </div>
+                                    </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
                    
                 <div class="d-md-flex justify-content-between text-md-start my-2 ">
 					<!-- Tag -->
@@ -62,8 +87,8 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-8 col-lg-8">
-                        <div id="states"></div>
+                    <div class="col-md-8 col-lg-8"> 
+                       
                         @if ($tagsCount !== 0)  <h5>Mots clés</h5> @endif
                         <div class="d-md-flex justify-content-between  text-md-start my-3">
 
@@ -86,6 +111,7 @@
                             <!-- Info -->
 
                         </div>
+                         <states></states> 
                         <div class="d-flex p-2 p-md-4 my-3 bg-primary bg-opacity-10 rounded">
                             <!-- Avatar -->
                             <a href="#">
@@ -111,13 +137,67 @@
 
                             </div>
                         </div> 
-                        <div class="row g-4" style="margin-top: -20px">
-                            <div class="col-lg-12 col-sm-12 col-xs-12">
-                               <states></states>
-                            </div>
-                        </div> 
+                       
                         <p> {!! showPub($article->content, $categoriesH[0]->id, $article->id)  !!} </p>
+
+                        @if ($previous && $next)
+                            <div class="row g-0">
+                                <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative border-end border-1 rounded-start">
+                                    <span><i class="bi bi-arrow-left me-3 rtl-flip"></i>Article Précedent</span>
+                                    <h6 class="m-0"><a href="/{{ $previous->slug}}" class="stretched-link btn-link text-reset"> {!! $previous->title !!} </a></h6>
+                                </div>
+                                <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative text-sm-end rounded-end">
+                                    <span>Article Suivant <i class="bi bi-arrow-right ms-3 rtl-flip"></i></span>
+                                    <h6 class="m-0"><a href="/{{ $next->slug}}" class="stretched-link btn-link text-reset">{!! $next->title !!}</a></h6>
+                                </div>
+                            </div>
+                            <!-- Related post START -->
+                        @endif
+                        <br>
+
+                        <div class="mt-2">
+                            <h2 class="my-3"><i class="bi bi-symmetry-vertical me-2"></i>Voir aussi</h2>
+                            <div class="tiny-slider arrow-hover arrow-blur arrow-dark arrow-round">
+                                <div class="tiny-slider-inner"
+                                    data-autoplay="true"
+                                    data-hoverpause="true"
+                                    data-gutter="24"
+                                    data-arrow="true"
+                                    data-dots="false"
+                                    data-items-xl="3"
+                                    data-items-xs="1">
+
+                                    @foreach ($similars as $similar )
+                                        <!-- Card item START -->
+                                    <div class="card">
+                                        <!-- Card img -->
+                                        <div class="position-relative">
+                                            <img class="card-img" src="{{$similar->image_cover_url}}" alt="{{$article->title}}" style="height: 220px; object-fit: cover">
+                                            <div class="card-img-overlay d-flex align-items-start flex-column p-3">
+
+                                                <!-- Card overlay bottom -->
+                                                <div class="w-100 mt-auto">
+                                                    <a href="/{{ $similar->category_slug }}" class="badge text-bg-info mb-2"><i class="fas fa-circle me-2 small fw-bold"></i>{{ $similar->category_name }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body px-0 pt-3">
+                                            <h6 class="card-title"><a href="/{{ $similar->slug }}" class="btn-link text-reset stretched-link fw-bold"> {!! $similar->title !!} </a></h6>
+                                            <!-- Card info -->
+                                            <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
+
+                                                <li class="nav-item">{{ date('d/m/Y', strtotime($similar->date_publish)) }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    @endforeach
+
+                                </div>
+                            </div> <!-- Slider END -->
+                        </div>
  
+                        <comments></comments>
                        
                     </div>
                     <div class="col-lg-3 mt-5 mt-lg-0">
@@ -142,7 +222,7 @@
                                             data-dots="true"
                                             data-items="1">
 
-                                            @foreach ($similars as  $result)
+                                            @foreach ($alireaussi as  $result)
 
                                                 <!-- Card item START -->
                                             <div class="card">

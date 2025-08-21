@@ -39,10 +39,6 @@ import contactModule from "./modules/frontoffice/includes/contact"
 //Importation du module gérant les données sur article
 
 import articleModule from './modules/frontoffice/article/article'
-
-//Importation du module gérant les données des publications sur la page d'accueil
-
-import sectionsPublicationsHomePageModule from './modules/frontoffice/sectionsPublicationsHomePage/sectionsPublicationsHomePage'
  
   
 const store = createStore({
@@ -56,6 +52,7 @@ const store = createStore({
         //Déclaration des modules gérant les données contenu dans le pied de page
 
         newsletter: newsletterModule,
+        
         //Déclaration des modules gérant les données du système d'authenitification
         
         login: loginModule,
@@ -78,12 +75,7 @@ const store = createStore({
 
         //Déclaration du module gérant les données sur un article
 
-        article: articleModule,
-         //Déclaration du module gérant les données des publications sur la page d'accueil
-        
-        sectionsPublicationsHomePage: sectionsPublicationsHomePageModule,
-         
-
+        article: articleModule, 
     }
   });
 

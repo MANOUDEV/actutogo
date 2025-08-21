@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('publication_likes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('visitor_matricule_id')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('visitor_matricule_id')->nullable(); 
             $table->unsignedBigInteger('publication_id')->nullable();
             $table->integer('visible')->default(1);
             $table->timestamps();

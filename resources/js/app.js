@@ -28,6 +28,8 @@ import contactF from './components/frontoffice/includes/contact.vue'
 
 import states from './components/frontoffice/article/states.vue';
 
+import comments from './components/frontoffice/article/comments.vue';
+
 //Verifier les connexions pour configurer les menus
 
 import in_second_menuF from './components/frontoffice/verify_auth/in_second_menu.vue'
@@ -48,20 +50,6 @@ import forgot_passwordH from './components/authentication/forgot_password.vue'
 
 import VisitorsMatricule from './components/frontoffice/visitor_actions/visitor_matricule.vue'
 
-//Importation, déclaration et chargement des composants des sections de publications inclus dans la page d'accueil
-
-import togoPolitiqueComponent from './components/frontoffice/sectionsPublicationsHomePage/togoPolitiqueComponent.vue'
-
-import aNePasManquerTogoComponent from './components/frontoffice/sectionsPublicationsHomePage/aNePasManquerTogoComponent.vue'
-
-import internationalComponent from './components/frontoffice/sectionsPublicationsHomePage/internationalComponent.vue'
-
-import opinionFaitsDiversComponent from './components/frontoffice/sectionsPublicationsHomePage/opinionFaitsDiversComponent.vue'
-
-import societeComponent from './components/frontoffice/sectionsPublicationsHomePage/societeComponent.vue'
-
-import importantComponent from './components/frontoffice/sectionsPublicationsHomePage/importantComponent.vue'
-  
 //Gestion de tous les composants administrateurs
 
 import * as adminRouter from './router/adminRouter';
@@ -103,20 +91,7 @@ app.component('InternationalHeader', InternationalHeader)
 app.component('PolitiqueHeader', PolitiqueHeader)
 
 app.component('NewsletterFooter', NewsletterFooter)
-
-app.component('togoPolitique', togoPolitiqueComponent)
-
-app.component('aNePasManquerTogo', aNePasManquerTogoComponent)
-
-app.component('international', internationalComponent)
-
-app.component('societe', societeComponent)
-
-app.component('opinionFaitsDivers', opinionFaitsDiversComponent)
-
-app.component('important', importantComponent)
-
-
+ 
 app.component('inSecondMenu', in_second_menuF)
  
 app.component('offCanvas', off_canvasF)
@@ -134,6 +109,8 @@ app.component('contact', contactF)
 app.component('VisitorsActions', VisitorsMatricule) 
 
 app.component('states', states) 
+
+app.component('comments', comments) 
  
 app.use(VueSweetalert2).use(store).mount('#app')
 

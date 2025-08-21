@@ -1,6 +1,5 @@
 <?php
 use App\Http\Controllers\Api\Web\Frontoffice\IncludesController; 
-use App\Http\Controllers\Api\Web\Frontoffice\HomeController; 
  
 use App\Http\Controllers\Api\Web\Authentication\RegisterController;
 use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
@@ -48,26 +47,15 @@ Route::get('/home/visitor/{matricule}/check', [IncludesController::class, 'check
 
 Route::post('/home/contact', [IncludesController::class, 'submitContact']); 
 
-//Les routes pour les données de la page d'accueil
-
-Route::get('/frontoffice/home_page/togo_politique', [HomeController::class, 'togoPolitiqueDataRequest']);
-
-Route::get('/frontoffice/home_page/a_ne_pas_manquer_togo', [HomeController::class, 'aNePasManquerTogoDataRequest']);
-
-Route::get('/frontoffice/home_page/international_fenetre_afrique_sports', [HomeController::class, 'internationalFenetreSurLAfriqueSportsDataRequest']);
-
-Route::get('/frontoffice/home_page/societe', [HomeController::class, 'societeDataRequest']);
-
-Route::get('/frontoffice/home_page/opinion_faits_divers', [HomeController::class, 'opinionFaitsDiversDataRequest']);
-
-Route::get('/frontoffice/home_page/important', [HomeController::class, 'importantDataRequest']);
-
-Route::get('/frontoffice/home_page/populars_comments', [HomeController::class, 'popularsCommentsDataRequest']);
-
-
 //Les routes pour les données de la page d'un article
 
-Route::get('/article/{slug}/article_states/{local_storage_views}/check_likes_views/{local_storage_likes}', [IncludesController::class, 'articleState']);
+Route::get('/article/{slug}/article_states/{mtr}', [IncludesController::class, 'articleState']);
+
+Route::get('/article/{slug}/article_likes/{mtr}/check_likes', [IncludesController::class, 'actionsLikes']);
+
+Route::get('/article/{slug}/article_comments/{mtr}/check_comments', [IncludesController::class, 'articleComments']);
+
+Route::post('/article/{slug}/article_comments/{mtr}/create_comments', [IncludesController::class, 'submitComment']);
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
@@ -108,6 +96,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     //Gestion d'envoi de message avec connexion de l'utilisateur
 
     Route::post('/home/contact_auth', [UserActionAuthController::class, 'submitContactAuth'])->middleware('auth:api');
-
- 
+    
+    Route::post('/article/{slug}/article_comments/{mtr}/create_auth_comments', [UserActionAuthController::class, 'submitCommentAuth']);
+    
 });

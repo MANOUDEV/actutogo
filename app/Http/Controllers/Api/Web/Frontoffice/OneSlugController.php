@@ -240,6 +240,8 @@ class OneSlugController extends BaseController
 
                         }
 
+                        $alireaussi =  Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(9)->get();
+
                         return view('oneSlugPage.publication',[
                             'article' => $article,
                             'files' => $files,
@@ -248,6 +250,7 @@ class OneSlugController extends BaseController
                             'previous' => $previous,
                             'next' => $next,
                             'similars' => $similars,
+                            'alireaussi' => $alireaussi,
                             'categoriesH' => $categoriesH
                         ]);
 
