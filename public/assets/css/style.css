@@ -17557,3 +17557,24 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
 }
 /*User CSS*/
 /*# sourceMappingURL=style.css.map */
+
+.alaune_first_section_img_responsive{
+  height: 620px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(50%);
+}
+
+@media only screen and (max-width: 575px) {
+
+  .alaune_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+}

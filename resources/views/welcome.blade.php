@@ -7,6 +7,12 @@
     @include('includes.header')
 
     <main>
+
+        <section class="position-relative" style="margin-top: -45px; margin-bottom: -25px">
+
+            @include('sectionHomePage.alaUne.alaUne')
+
+        </section>
  
         @include('includes.newletter')  
     </main>
