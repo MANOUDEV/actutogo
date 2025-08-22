@@ -1,8 +1,8 @@
 <?php
 use App\Models\Publication;
-  function alertsInfos()
+  function tendances()
     {
-        $articles_count = Publication::where('status', 1)->where("publications.type_publication_id", 2)->count();
+        $articles_count = Publication::where('status', 1)->where("publications.type_publication_id", 1)->count();
 
         if($articles_count === 0){
 
@@ -11,9 +11,9 @@ use App\Models\Publication;
         }else{
 
             
-            $alert_infos = Publication::where('status', 1)->where("publications.type_publication_id", 2)->get();
+            $tendances = Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(3)->get();
 
-            return  $alert_infos;
+            return  $tendances;
 
         }
     }

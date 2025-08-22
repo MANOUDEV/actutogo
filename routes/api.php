@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\Authentication\LoginController;
 use App\Http\Controllers\Api\Web\Authentication\LogoutController;
 use App\Http\Controllers\Api\Web\Authentication\ProfileController;
+use App\Http\Controllers\Api\Web\Frontoffice\HomeController;
 use App\Http\Controllers\Api\Web\Frontoffice\UserActionAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,15 @@ Route::get('/article/{slug}/article_likes/{mtr}/check_likes', [IncludesControlle
 Route::get('/article/{slug}/article_comments/{mtr}/check_comments', [IncludesController::class, 'articleComments']);
 
 Route::post('/article/{slug}/article_comments/{mtr}/create_comments', [IncludesController::class, 'submitComment']);
+
+//Les routes pour les données de la page d'accueil
+
+Route::get('/frontoffice/home_page/societe', [HomeController::class, 'nationalDataRequest']);
+
+Route::get('/frontoffice/home_page/opinion_faits_divers', [HomeController::class, 'opinionFaitsDiversDataRequest']);
+
+Route::get('/frontoffice/home_page/international_fenetre_afrique_sports', [HomeController::class, 'editorialDataRequest']);
+
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 

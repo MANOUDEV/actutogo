@@ -17567,6 +17567,62 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
   filter: brightness(50%);
 }
 
+.alaune_title{
+  font-size: 20px;
+}
+
+.alaune_logo{
+  height: 40px
+}
+
+
+.international_first_section_img_responsive{
+  height: 330px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+.opinion_faits_divers_first_section_img_responsive{
+    height: 430px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+}
+
+
+.toutelactualite_logo{
+  height: 40px
+}
+
+.toute_lactualite_title{
+  font-size: 20px;
+}
+
+.toute_lactualite{
+  height: 280px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+.international_first_section_img_responsive{
+  height: 330px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+
+
 @media only screen and (max-width: 575px) {
 
   .alaune_first_section_img_responsive{
@@ -17577,4 +17633,42 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
     display: block;
     filter: brightness(70%);
   }
+
+  .international_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+    
+  .opinion_faits_divers_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  
+  .international_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+  
+  .toute_lactualite{
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
 }

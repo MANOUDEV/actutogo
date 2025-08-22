@@ -68,9 +68,9 @@
 						data-dots="false"
 						data-items="1">
 						<!-- Slider items -->
-						<div> <a href="#" class="text-reset btn-link">The most common business debate isn't as black and white as you might think</a></div>
-						<div> <a href="#" class="text-reset btn-link">How the 10 worst business fails of all time could have been prevented </a></div>
-						<div> <a href="#" class="text-reset btn-link">The most common business debate isn't as black and white as you might think </a></div>
+						@for ($i=0; $i<= count(tendances()) - 1; $i++ )
+							<div> <a href="/{{ $sports[$i]['slug'] }}" class="text-reset btn-link">{!! $sports[$i]['title_truncate'] !!}</a></div> 
+						@endfor
 					</div>
 				</div>
 			</div>

@@ -30,6 +30,14 @@ import states from './components/frontoffice/article/states.vue';
 
 import comments from './components/frontoffice/article/comments.vue';
 
+//Importation, déclaration et chargement des composants des sections de publications inclus dans la page d'accueil
+
+import nationalComponent from './components/frontoffice/sectionsPublicationsHomePage/nationalComponent.vue'
+
+import opinionFaitsDiversComponent from './components/frontoffice/sectionsPublicationsHomePage/opinionFaitsDiversComponent.vue'
+
+import internationalComponent from './components/frontoffice/sectionsPublicationsHomePage/internationalComponent.vue'
+
 //Verifier les connexions pour configurer les menus
 
 import in_second_menuF from './components/frontoffice/verify_auth/in_second_menu.vue'
@@ -111,6 +119,12 @@ app.component('VisitorsActions', VisitorsMatricule)
 app.component('states', states) 
 
 app.component('comments', comments) 
+
+app.component('national', nationalComponent)
+
+app.component('international', internationalComponent)
+
+app.component('opinionFaitsDivers', opinionFaitsDiversComponent)
  
 app.use(VueSweetalert2).use(store).mount('#app')
 
