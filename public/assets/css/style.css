@@ -17559,14 +17559,13 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
 /*# sourceMappingURL=style.css.map */
 
 .alaune_first_section_img_responsive{
-  height: 620px;
+  height: 520px;
   width: 100%;
   max-width: 100%;
   object-fit: cover;
   display: block;
-  filter: brightness(50%);
+  filter: brightness(70%);
 }
-
 .alaune_title{
   font-size: 20px;
 }
@@ -17575,6 +17574,15 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
   height: 40px
 }
 
+
+.internationalH_first_section_img_responsive{
+  height: 255px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
 
 .international_first_section_img_responsive{
   height: 330px;

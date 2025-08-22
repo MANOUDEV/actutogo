@@ -69,7 +69,7 @@
 						data-items="1">
 						<!-- Slider items -->
 						@for ($i=0; $i<= count(tendances()) - 1; $i++ )
-							<div> <a href="/{{ $sports[$i]['slug'] }}" class="text-reset btn-link">{!! $sports[$i]['title_truncate'] !!}</a></div> 
+							<div> <a href="/{{ tendances()[$i]['slug'] }}" class="text-reset btn-link">{!! tendances()[$i]['title_truncate'] !!}</a></div> 
 						@endfor
 					</div>
 				</div>
@@ -95,10 +95,20 @@
 <div class="container">
 	<div class="d-sm-flex justify-content-sm-between align-items-sm-center my-2">
 		<!-- Logo START -->
-		<div class="row g-4"> 
-			<a class="navbar-brand d-block" href="/">
-				<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
-			</a>
+		<div class="container">
+			<div class="row g-4 mt-2">
+				<div class="d-sm-flex justify-content-sm-between align-items-sm-center my-2">
+					<div class="col-lg-3 col-sm-12 col-xs-12">
+
+						<a class="navbar-brand d-block" href="/">
+							<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
+						</a>
+					</div>
+					<div class="col-lg-9 col-sm-12 col-xs-12">
+						@include('adsense.google-ads.ads-sections-second-header') 
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
