@@ -49,7 +49,7 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-lg-8 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-sm-12 col-xs-12">
                 <div class="col-12">
                     <div class="tiny-slider arrow-hover arrow-blur arrow-round rounded-3 overflow-hidden">
                         <div class="tiny-slider-inner"
@@ -117,41 +117,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-sm-12 col-xs-12">
-                 @for ($i=16; $i<= count($alaUne) - 1; $i++ )
-
-                    @if ($i> 15)
-                        <div class="mb-2">
-                            <div class="card card-overlay-bottom card-img-scale">
-                                <!-- Card Image -->
-                                <img class="card-img internationalH_first_section_img_responsive" src="{{$alaUne[$i]['image_cover_url']}}" alt="{!! $alaUne[$i]['title'] !!}">
-                                <!-- Card Image overlay -->
-                                <div class="card-img-overlay d-flex flex-column p-3 p-sm-4">
-
-                                    <div class="w-100 mt-auto">
-                                        
-                                        <!-- Card title -->
-                                        <h5 class="text-white"><a href="/{{ $alaUne[$i]['slug'] }}" class="btn-link text-reset stretched-link">{!! \Illuminate\Support\Str::words($alaUne[$i]['title'], 9, ' ...') !!}</a></h5>
-                                       
-                                        <!-- Card info -->
-                                        <ul class="nav nav-divider text-white-force align-items-center d-none d-sm-inline-block">
-                                            <li class="nav-item">
-                                                <div class="nav-link">
-                                                    <div class="d-flex align-items-center position-relative">
-                                                        
-                                                        <span class="ms-3"><a href="/auteurs/{{ $alaUne[$i]['author_slug'] }}" class="stretched-link text-reset btn-link">{{ $alaUne[$i]['author_name'] }}</a></span>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="nav-item">{{ date('d/m/Y', strtotime($alaUne[$i]['date_publish'])) }}</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                @endfor
-            </div>
+            
         </div>
 
     </div>

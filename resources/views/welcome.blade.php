@@ -33,8 +33,6 @@
             @include('adsense.google-ads.ads-sections-home-page')
 
         </section>
- 
-        @include('includes.newletter')  
     </main>
     <br>
     @include('includes.footer')
