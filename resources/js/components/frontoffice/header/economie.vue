@@ -89,7 +89,7 @@ onMounted(() => {
           <img class="card-img rounded" :src="getImage(result.image_cover_url)" style="height: 150px; object-fit: cover" :alt="result.title" />
           <div class="card-body px-0 pt-3">
             <h6 class="card-title mb-0">
-              <span @click="article(result.slug)" class="btn-link text-reset fw-bold" v-html="result.title"></span>
+              <span @click="article(result.slug)" class="btn-link text-reset fw-bold" style="cursor: pointer" v-html="result.title"></span>
             </h6>
             <ul class="nav nav-divider align-items-center text-uppercase small mt-2">
               <li class="nav-item">
