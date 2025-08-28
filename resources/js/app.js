@@ -41,6 +41,26 @@ import loginH from './components/authentication/login.vue'
 import registerH from './components/authentication/register.vue'
 
 import forgot_passwordH from './components/authentication/forgot_password.vue'
+
+//Importation, déclaration et chargement des composants des sections de publications inclus dans la page d'accueil
+
+import nationalComponent from './components/frontoffice/sectionsPublicationsHomePage/nationalComponent.vue'
+
+import opinionFaitsDiversComponent from './components/frontoffice/sectionsPublicationsHomePage/opinionFaitsDiversComponent.vue'
+
+import internationalComponent from './components/frontoffice/sectionsPublicationsHomePage/internationalComponent.vue'
+
+//Importation du Composant de contact à afficher sur la page d'accueil
+
+import contactF from './components/frontoffice/includes/contact.vue' 
+
+import states from './components/frontoffice/article/states.vue';
+
+import comments from './components/frontoffice/article/comments.vue';
+
+//Importation des composants pour le matricule
+
+import VisitorsMatricule from './components/frontoffice/visitor_actions/visitor_matricule.vue'
   
 const app = createApp({})
  
@@ -67,6 +87,20 @@ app.component('login', loginH)
 app.component('register', registerH)
 
 app.component('forgot-password', forgot_passwordH) 
+
+app.component('national', nationalComponent)
+
+app.component('international', internationalComponent)
+
+app.component('opinionFaitsDivers', opinionFaitsDiversComponent)
+
+app.component('VisitorsActions', VisitorsMatricule) 
+
+app.component('states', states) 
+
+app.component('comments', comments) 
+
+app.component('contact', contactF) 
 
 app.use(VueSweetalert2).use(store).mount('#app')
 

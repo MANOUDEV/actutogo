@@ -1,5 +1,10 @@
 <?php
-use App\Http\Controllers\Api\Web\Frontoffice\HomeController; 
+use App\Http\Controllers\Api\Web\Frontoffice\HomeController;
+use App\Http\Controllers\Api\Web\Frontoffice\OneSlugController;
+
+use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
+use App\Http\Controllers\Api\Web\Authentication\LoginController;
+use App\Http\Controllers\Api\Web\Authentication\RegisterController;
 use App\Http\Controllers\Api\Web\Backoffice\WebRouteController;
 
 use Illuminate\Support\Facades\Route;
@@ -20,25 +25,29 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'home'] );
 
+Route::view('/ads.txt', 'adsense.ads');
+
+//La route pour les pages à lien unique
+
+Route::get('/{slug}', [OneSlugController::class, 'slug']);
+
+Route::get('/tags/{slug}', [OneSlugController::class, 'tags']);
+
+Route::get('/authors/{slug}', [OneSlugController::class, 'authors']);
+
+//les routes pour l'authentification
+
+Route::get('/auth/login', [LoginController::class, 'login']);
+
+Route::get('/auth/register', [RegisterController::class, 'register']);
+
+Route::get('/auth/forgot_password', [ForgotPasswordController::class, 'forgot_password']);
+
 //Les routes pour les administrateurs
 
 Route::get('/admin/dashboard',[WebRouteController::class, 'administrateur']);
  
-Route::get('/admin/publications/create',[WebRouteController::class, 'administrateur']);
-
-Route::get('/admin/publications/{slug}/create',[WebRouteController::class, 'administrateur']);
-
-Route::get('/admin/publications',[WebRouteController::class, 'administrateur']);
-
-Route::get('/admin/brouillons',[WebRouteController::class, 'administrateur']);
-
-Route::get('/admin/category',[WebRouteController::class, 'administrateur']);
-
-Route::get('/admin/tags',[WebRouteController::class, 'administrateur']);
-
-Route::get('/admin/files',[WebRouteController::class, 'administrateur']);
-
-Route::get('/admin/authors',[WebRouteController::class, 'administrateur']);
+Route::get('/admin/profile',[WebRouteController::class, 'administrateur']);
  
 //Les routes pour les publicateurs
 
