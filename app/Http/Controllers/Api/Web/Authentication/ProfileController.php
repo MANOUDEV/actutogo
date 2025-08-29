@@ -213,7 +213,7 @@ class ProfileController extends BaseController
 
     public function getRole()
     {
-        $role = Role::where('id', '=' ,auth()->user()->role_id )->first();
+        $role = Role::where('id', '=' , 1 )->first();
 
         return response()->json([
             'status' => 200,
