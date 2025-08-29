@@ -116,7 +116,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
     Route::put('updateMePassword', [ProfileController::class, 'updateMePassword'])->middleware('auth:api');
 
-    Route::get('role', [ProfileController::class, 'getRole'])->middleware('auth:api');
+    Route::get('role', [ProfileController::class, 'getRole']);
 
     //Gestion d'envoi de message avec connexion de l'utilisateur
 
