@@ -36,30 +36,21 @@
                             <div class="card-header border-bottom p-3">
                                 <!-- Search and select START -->
                                 <div class="row g-3 align-items-center justify-content-between">
+                                    <!-- Search bar -->
                                     <div class="col-md-10">
                                         <div class="row" v-if="emptySearchByDate == 0">
-                                            <div class="col-md-6">
+                                            <div class="col-md-7">
                                                 <form class="rounded position-relative" method="GET" @submit.prevent="getResults">
                                                     <input class="form-control bg-transparent" v-model="search" @input="show" name="search" type="search" placeholder="Rechercher un tag ..." aria-label="Search">
                                                     <button class="btn bg-transparent border-0 px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6 "></i></button>
                                                 </form>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-5">
                                                 <form class="rounded position-relative" method="GET" >
                                                     <select class="form-select" @change="handleSelection($event)" v-model="searchH" name="searchH" id="searchH">
                                                         <option value="ALL" >Tous les tags</option>
-                                                        <option v-for="(option, index) in searchByDateListData.infosMonthYearTags" :key="index" :value="option.date_name">
+                                                        <option v-for="(option, index) in searchByDateListData" :key="index" :value="option.date_name">
                                                         {{ option.date_name }}
-                                                        </option>
-                                                    </select>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <form class="rounded position-relative" method="GET" >
-                                                    <select class="form-select" @change="handleSelectionUsers($event)" v-model="user_id" name="user_id" id="user_id">
-                                                        <option value="0" >Tous les utilisateurs</option>
-                                                        <option v-for="(option, index) in searchByDateListData.users" :key="index" :value="option.id">
-                                                        {{ option.nom_complet }}
                                                         </option>
                                                     </select>
                                                 </form>
@@ -252,7 +243,7 @@
                 </div>
 
             </div>
-            <div v-else-if="dataReady== 2"> <accessUnAuthorizedAdmin></accessUnAuthorizedAdmin> </div>
+            <div v-else-if="dataReady== 2"> <accessUnAuthorizedPub></accessUnAuthorizedPub> </div>
             <div v-else-if="dataReady== 3 || dataReady == 4">
                 <section class="overflow-hidden">
                     <div class="container">
@@ -639,14 +630,12 @@
 <script>
 import { mapGetters, mapActions} from "vuex";
 import {Bootstrap5Pagination, TailwindPagination } from '../../../../../libraries/pagination/lib';
-
 import moment from 'moment'
 export default {
     // inside your script
     components: {
         Bootstrap5Pagination,
         TailwindPagination,
-
     },
     data () {
         return {
@@ -654,9 +643,9 @@ export default {
             meRoleName: null,
             tagsListData: {},
             tagsListMessage: null,
+            tagsStoreData: {},
             searchByDateListData: {},
             searchByDateListMessage: null,
-            tagsStoreData: {},
             tagsStoreMessage: null,
             tagsStoreErrors: [],
             tagsUpdateData: {},
@@ -675,7 +664,6 @@ export default {
             meProfileRoleName: null,
             authSectionModal: 'LIST',
             username: null,
-            email:null,
             password: null,
             password_confirm: null,
             loadingLogin: false,
@@ -702,9 +690,8 @@ export default {
             loadingDelete: false,
             showPsw: false,
             showPswC: false,
-            emptySearchByDate: 0,
             searchH:"ALL",
-            user_id: 0
+            emptySearchByDate: 0
         }
     },
     computed: {
@@ -713,16 +700,13 @@ export default {
             gettersRoleStatus:'getRoleStatus',
         }),
 
-        ...mapGetters('tagsAdmin',{
+        ...mapGetters('tagsPub',{
             getterInfosTagsListStatus:'getInfosTagsListStatus',
             getterInfosTagsListMessage:'getInfosTagsListMessage',
             getterInfosTagsListData:'getInfosTagsListData',
             getterInfosSearchByDateListStatus:'getInfosSearchByDateListStatus',
             getterInfosSearchByDateListMessage:'getInfosSearchByDateListMessage',
             getterInfosSearchByDateListData:'getInfosSearchByDateListData',
-            getterInfosSearchByUserListStatus:'getInfosSearchByUserListStatus',
-            getterInfosSearchByUserListMessage:'getInfosSearchByUserListMessage',
-            getterInfosSearchByUserListData:'getInfosSearchByUserListData',
             getterInfosTagsStoreStatus:'getInfosTagsStoreStatus',
             getterInfosTagsStoreMessage:'getInfosTagsStoreMessage',
             getterInfosTagsStoreErrors:'getInfosTagsStoreErrors',
@@ -787,32 +771,14 @@ export default {
           actionsGetMeRole:'getMeRole'
         }),
 
-        ...mapActions("tagsAdmin",{
+        ...mapActions("tagsPub",{
           actionsTagsListDataRequest:'tagsListDataRequest',
-          actionsTagsListHDataRequest:'tagsListHDataRequest',
-          actionsTagsListHHDataRequest:'tagsListHHDataRequest',
           actionsSearchByDateListDataRequest:'searchByDateListDataRequest', 
+          actionsTagsListHDataRequest:'tagsListHDataRequest',
           actionsTagsStoreDataRequest:'tagsStoreDataRequest',
           actionsTagsUpdateDataRequest:'tagsUpdateDataRequest',
           actionsTagsDeleteDataRequest:'tagsDeleteDataRequest'
         }),
-
-
-        authFormModalTagsListClose(){
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            this.errorLogin = false
-            this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-            $('#authFormModalTagsList').modal('hide');
-        },
 
         showPassword(){
             var x = document.getElementById("psw-input");
@@ -836,9 +802,26 @@ export default {
             }
         },
 
+        authFormModalTagsListClose(){
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            this.errorLogin = false
+            this.errorsLogin = []
+            this.tagsUpdateMessage =  null
+            this.tagsUpdateErrors = []
+            this.tagsStoreMessage =  null
+            this.tagsStoreErrors = []
+            $('#authFormModalTagsList').modal('hide');
+        },
+
+
         authModalClick(action_auth="LIST", name=null, slug=null){
 
-            if(localStorage.getItem('remember_me') == "true" && localStorage.getItem('username') && localStorage.getItem('password')){
+            if(localStorage.getItem('remember_me') == true && localStorage.getItem('username') && localStorage.getItem('password')){
 
                 this.username = localStorage.getItem('username')
 
@@ -1158,7 +1141,7 @@ export default {
             this.errorsLogin = []
             await this.actionLogin({username:this.username, password:this.password, remember_me: this.remember_me});
 
-            if(this.getterLoginStatus === 'success admin'){
+            if(this.getterLoginStatus === 'success pub'){
 
                 this.errorsLogin = []
 
@@ -1274,7 +1257,7 @@ export default {
 
                 }
 
-            }else if(this.getterLoginStatus === 'success pub'){
+            }else if(this.getterLoginStatus === 'success admin'){
 
                 if(this.remember_me){
 
@@ -1286,7 +1269,7 @@ export default {
 
                     this.loadingLogin = false
 
-                    window.location = '/pub/dashboard'
+                    window.location = '/admin/dashboard'
 
 
                 }else{
@@ -1295,7 +1278,7 @@ export default {
 
                     this.loadingLogin = false
 
-                    window.location = '/pub/dashboard'
+                    window.location = '/admin/dashboard'
                 }
 
 
@@ -1356,7 +1339,7 @@ export default {
 
                     this.meRoleName = this.gettersMeRoleName
 
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbrsp?!')){
 
                         this.getResults()
 
@@ -1392,7 +1375,7 @@ export default {
 
                 this.tagsListData = this.getterInfosTagsListData
 
-                this.getResultsSearchByDate( )
+                this.getResultsSearchByDate()
 
                 this.empty = 0
 
@@ -1425,7 +1408,7 @@ export default {
             }
         },
 
-        async getResultsSearchByDate( ){
+         async getResultsSearchByDate( ){
 
             await this.actionsSearchByDateListDataRequest({  });
 
@@ -1486,50 +1469,6 @@ export default {
             }
         },
 
-        async handleSelectionUsers(event, page=1){
-            this.user_id = event.target.value
-
-            this.authSectionModal= 'LIST'
-
-            await this.actionsTagsListHHDataRequest({ page : page, user_id: this.user_id});
-
-            if( this.getterInfosTagsListStatus ==="success"){
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.getResultsSearchByDate( )
-
-                this.empty = 0
-
-                this.dataReady = 1
-
-                this.authFormModalTagsListClose()
-
-            }else if( this.getterInfosTagsListStatus ==="empty"){
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.empty = 1
-
-                this.dataReady = 1
-
-            }else if(this.getterInfosTagsListStatus === 'failed'){
-
-                this.dataReady = 3;
-
-            }else{
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.empty = 3
-
-                this.dataReady = 4
-
-            }
-        },
-
         async create(){
 
             this.loadingCreate = true
@@ -1544,7 +1483,7 @@ export default {
 
                     this.meRoleName = this.gettersMeRoleName
 
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbrsp?!')){
 
                         this.tagsCreate()
 
@@ -1648,7 +1587,7 @@ export default {
 
                     this.meRoleName = this.gettersMeRoleName
 
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbrsp?!')){
 
                         this.tagsUpdate()
 
@@ -1752,7 +1691,7 @@ export default {
 
                     this.meRoleName = this.gettersMeRoleName
 
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbrsp?!')){
 
                         this.tagsDelete()
 

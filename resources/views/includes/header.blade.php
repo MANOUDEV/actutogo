@@ -68,9 +68,9 @@
 						data-dots="false"
 						data-items="1">
 						<!-- Slider items -->
-						@for ($i=0; $i<= count(tendances()) - 1; $i++ )
+						{{-- @for ($i=0; $i<= count(tendances()) - 1; $i++ )
 							<div> <a href="/{{ tendances()[$i]['slug'] }}" class="text-reset btn-link">{!! tendances()[$i]['title_truncate'] !!}</a></div> 
-						@endfor
+						@endfor --}}
 					</div>
 				</div>
 			</div>

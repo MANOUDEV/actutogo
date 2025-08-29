@@ -148,7 +148,7 @@ administrateur.component('accessUnAuthorizedAdmin', accessUnAuthorizedAdminCompo
 
 administrateur.component('sessionExpiredMessageAdmin', sessionExpiredMessageAdminComponent)
 
-administrateur.use(adminRouter.routeConfig).use(store).mount('#admin');
+administrateur.use(adminRouter.routeConfig).use(VueSweetalert2).use(store).mount('#admin');
 
 const publicateur = createApp(publicateurA)  
 
@@ -162,4 +162,4 @@ publicateur.component('accessUnAuthorizedPub', accessUnAuthorizedPubComponent)
 
 publicateur.component('sessionExpiredMessagePub', sessionExpiredMessagePubComponent)
 
-publicateur.use(pubRouter.routeConfig).use(store).mount('#pub');
+publicateur.use(VueSweetalert2).use(pubRouter.routeConfig).use(store).mount('#pub');

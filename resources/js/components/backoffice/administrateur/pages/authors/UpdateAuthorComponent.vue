@@ -1,8 +1,6 @@
 <template>
-    <!-- =======================Author list START -->
     <section class="py-4">
         <div class="container">
-
             <div  v-if="dataReady == 0" >
                 <br/><br/><br/><br/><br/><br/><br/>
                 <div class="d-flex justify-content-center">
@@ -16,206 +14,156 @@
                 <br/><br/><br/><br/><br/><br/><br/>
             </div>
             <div v-else-if="dataReady== 1">
-
                 <!-- Author list title START -->
                 <div class="row g-4 pb-4">
                     <div class="col-12">
                         <!-- Title -->
                         <div class="d-sm-flex justify-content-sm-between align-items-center">
-                            <h1 class="mb-2 mb-sm-0 h2">Mes Tags <span class="badge bg-primary bg-opacity-10 text-primary"> {{ tagsListData.tagsCount  }} </span></h1>
-                            <span style="cursor: pointer" @click="authModalClick('CREATE')" class="btn btn-sm btn-primary mb-0"><i class="fas fa-plus me-2"></i>Ajouter un tag</span>
+                            <h1 class="mb-2 mb-sm-0 h2">Modifier un auteur </h1>
+                            <router-link style="cursor: pointer" :to="{'name': 'admin.authors'}" class="btn btn-sm btn-primary mb-0"><i class="fas fa-eye me-2"></i>Voir les auteurs</router-link>
                         </div>
                     </div>
                 </div>
-
                 <div class="row g-4">
-                    <div class="col-12">
-                        <!-- Card START -->
-                        <div class="card border">
-                            <!-- Card header START -->
+                    <!-- Left sidebar START -->
+                    <div class="col-lg-12 col-xxl-8">
+                        <!-- Profile START -->
+                        <div class="card border mb-4">
                             <div class="card-header border-bottom p-3">
-                                <!-- Search and select START -->
-                                <div class="row g-3 align-items-center justify-content-between">
-                                    <div class="col-md-10">
-                                        <div class="row" v-if="emptySearchByDate == 0">
-                                            <div class="col-md-6">
-                                                <form class="rounded position-relative" method="GET" @submit.prevent="getResults">
-                                                    <input class="form-control bg-transparent" v-model="search" @input="show" name="search" type="search" placeholder="Rechercher un tag ..." aria-label="Search">
-                                                    <button class="btn bg-transparent border-0 px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6 "></i></button>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <form class="rounded position-relative" method="GET" >
-                                                    <select class="form-select" @change="handleSelection($event)" v-model="searchH" name="searchH" id="searchH">
-                                                        <option value="ALL" >Tous les tags</option>
-                                                        <option v-for="(option, index) in searchByDateListData.infosMonthYearTags" :key="index" :value="option.date_name">
-                                                        {{ option.date_name }}
-                                                        </option>
-                                                    </select>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <form class="rounded position-relative" method="GET" >
-                                                    <select class="form-select" @change="handleSelectionUsers($event)" v-model="user_id" name="user_id" id="user_id">
-                                                        <option value="0" >Tous les utilisateurs</option>
-                                                        <option v-for="(option, index) in searchByDateListData.users" :key="index" :value="option.id">
-                                                        {{ option.nom_complet }}
-                                                        </option>
-                                                    </select>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <div class="row" v-else>
-                                            <div class="col-md-12">
-                                                <form class="rounded position-relative" method="GET" @submit.prevent="getResults">
-                                                    <input class="form-control bg-transparent" v-model="search" @input="show" name="search" type="search" placeholder="Rechercher un tag ..." aria-label="Search">
-                                                    <button class="btn bg-transparent border-0 px-2 py-0 position-absolute top-50 end-0 translate-middle-y" type="submit"><i class="fas fa-search fs-6 "></i></button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <!-- Search bar -->
-                                    </div>
-                                    <!-- Tab buttons -->
-                                    <div class="col-md-2">
-                                        <!-- Tabs START -->
-                                        <ul class="list-inline mb-0 nav nav-pills nav-pill-dark-soft border-0 justify-content-end" id="pills-tab" role="tablist">
-
-                                             <!-- Grid tab -->
-                                            <li class="nav-item">
-                                                <a href="#nav-grid-tab" class="nav-link mb-0 me-2 active" data-bs-toggle="tab">
-                                                    <i class="fas fa-fw fa-th-large"></i>
-                                                </a>
-                                            </li>
-
-                                            <!-- List tab -->
-                                            <li class="nav-item">
-                                                <a href="#nav-list-tab" class="nav-link mb-0" data-bs-toggle="tab">
-                                                    <i class="fas fa-fw fa-list-ul"></i>
-                                                </a>
-                                            </li>
-
-                                        </ul>
-                                        <!-- Tabs end -->
-                                    </div>
-                                </div>
-                                <!-- Search and select END -->
+                                <h5 class="card-header-title mb-0">Modifier un auteur</h5>
                             </div>
-                            <!-- Card header END -->
-                            <div class="card-body p-3 pb-0" v-if="empty == 0">
-                                <div class="tab-content py-0 my-0">
+                            <div class="card-body" v-if="empty == 0">
 
-                                    <!-- Tabs content item START -->
-                                    <div class="tab-pane fade" id="nav-list-tab">
-                                        <!-- Table START -->
-                                        <div class="table-responsive border-0">
-                                            <table class="table align-middle p-4 mb-0 table-hover">
-                                                <!-- Table head -->
-                                                <thead class="table-dark">
-                                                    <tr>
-                                                        <th scope="col" class="border-0 rounded-start">Tag</th>
-                                                        <th scope="col" class="border-0">Publications</th>
-                                                        <th scope="col" class="border-0">Ajouté le</th>
-                                                        <th scope="col" class="border-0">Actions</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <!-- Table body START -->
-                                                <tbody class="border-top-0">
-                                                    <!-- Table row -->
-                                                    <tr v-for="result in tagsListData.tags.data" :key="result.id">
-
-                                                        <!-- Table data -->
-                                                        <th> {{ result.name }} </th>
-                                                        <!-- Table data -->
-                                                        <td>
-                                                            <span v-if="result.count_publications === 0" class="badge bg-danger bg-opacity-10 text-danger mb-2">Aucune publication</span>
-                                                            <span v-else-if="result.count_publications == 1" class="badge bg-success bg-opacity-10 text-white-force mb-2">1 publication</span>
-                                                            <span v-else class="badge bg-success bg-opacity-10 text-white-force mb-2"> {{ result.count_publications }} publications</span>
-                                                        </td>
-                                                        <!-- Table data -->
-                                                        <td>{{ moment(result.date_publish).format("DD/MM/YYYY") }}</td>
-                                                        <!-- Table data -->
-
-                                                        <!-- Table data -->
-                                                        <td>
-                                                            <div class="d-flex gap-2">
-                                                                <span style="cursor: pointer" @click="authModalClick('UPDATE',result.name, result.slug )" class="btn btn-primary btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Message" aria-label="Message">
-                                                                <i class="bi bi-pencil-fill"></i>
-                                                                </span>
-                                                                <span @click="authModalClick('DELETE',result.name, result.slug )" class="btn btn-danger btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Block" aria-label="Block">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </span>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-
-                                            </table>
-                                        </div>
+                                <div v-if="authorsUpdateMessage">
+                                    <div class="alert alert-danger"  role="alert">
+                                        {{ authorsUpdateMessage }}
                                     </div>
-                                     <!-- Tabs content item START -->
-                                    <div class="tab-pane fade show active" id="nav-grid-tab">
-                                        <div class="row g-4">
-                                            <div class="col-md-6 col-xl-4" v-for="result in tagsListData.tags.data" :key="result.id">
-                                                <!-- tags item START -->
-                                                <div class="card border h-100">
-                                                    <!-- Card header -->
-                                                    <div class="card-header border-bottom p-3">
-                                                        <div class="d-flex align-items-center">
-                                                            <h5 class="mb-0 ms-3"> {{ result.name }} </h5>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Card body START -->
-                                                    <div class="card-body p-3">
-                                                        <p> ajouté le {{ moment(result.date_publish).format("DD/MM/YYYY") }} </p>
-
-                                                        <!-- Followers and Post -->
-                                                        <div class="d-sm-flex justify-content-sm-between mt-3">
-                                                            <div class="d-flex text-start align-items-center mt-3">
-                                                                <div class="icon-md bg-success text-light rounded-circle flex-shrink-0">
-                                                                    <i class="bi bi-file-earmark-text-fill fa-fw"></i>
-                                                                </div>
-                                                                <div class="ms-2" v-if="result.count_publications === 0">
-                                                                    <h5 class="mb-0">Aucune</h5>
-                                                                    <h6 class="mb-0 fw-light">publication</h6>
-                                                                </div>
-
-                                                                <div class="ms-2" v-else-if="result.count_publications === 1">
-                                                                    <h5 class="mb-0">1</h5>
-                                                                    <h6 class="mb-0 fw-light">publication</h6>
-                                                                </div>
-
-                                                                <div class="ms-2" v-else>
-                                                                    <h5 class="mb-0">{{ result.count_publications }}</h5>
-                                                                    <h6 class="mb-0 fw-light">publications</h6>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Total post -->
-                                                            <div class="d-flex text-start align-items-center mt-3">
-                                                                <div style="cursor: pointer" @click="authModalClick('UPDATE',result.name, result.slug )" class="icon-md bg-primary text-white-force rounded-circle flex-shrink-0">
-                                                                    <i class="bi bi-pencil-fill"></i>
-                                                                </div>
-                                                                &nbsp;
-                                                                <div style="cursor: pointer" @click="authModalClick('DELETE',result.name, result.slug )" class="icon-md bg-danger text-white-force rounded-circle flex-shrink-0">
-                                                                    <i class="bi bi-trash"></i>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- Card body END -->
-
-                                                    <!-- Card footer -->
-                                                    <div class="card-footer border-top text-center p-3">
-                                                        <a href="#" class="btn btn-primary-soft w-100 mb-0">Voir les publications</a>
-                                                    </div>
-                                                </div>
-                                                <!-- tags item END -->
+                                </div>
+                                <form>
+                                  <!-- Full name -->
+                                  <div class="mb-3"  v-if="authorsUpdateErrors.nom || authorsUpdateErrors.prenoms">
+                                    <label class="form-label">Nom Complet <sup class="text-danger">*</sup></label>
+                                    <div class="input-group">
+                                      <input type="text" class="form-control is-invalid" v-model="nom" name="nom" placeholder="Entrez votre nom">
+                                      <input type="text" class="form-control is-invalid" v-model="prenoms"  name="prenoms" placeholder="Entrez votre prénom">
+                                    </div>
+                                    <div v-for="errornom in authorsUpdateErrors.nom" :key="errornom" class="text-danger">
+                                        {{ errornom }}
+                                    </div>
+                                    <div v-for="errorprenoms in authorsUpdateErrors.prenoms" :key="errorprenoms" class="text-danger">
+                                        {{ errorprenoms }}
+                                    </div>
+                                  </div>
+                                  <div class="mb-3" v-else>
+                                    <label class="form-label">Nom Complet <sup class="text-danger">*</sup></label>
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" v-model="nom" name="nom" placeholder="Entrez votre nom">
+                                      <input type="text" class="form-control" v-model="prenoms"  name="prenoms" placeholder="Entrez votre prénom">
+                                    </div>
+                                  </div>
+                                  <!-- Username -->
+                                  <div class="row">
+                                    <div class="col-lg-6">
+                                      <div class="mb-3" v-if="authorsUpdateErrors.authorName">
+                                        <label class="form-label">Nom d'auteur</label>
+                                        <div class="input-group">
+                                          <span class="input-group-text">togoactualite.com/auteurs/</span>
+                                          <input type="text" class="form-control is-invalid" v-model="authorName" name="authorName" placeholder="Entrez votre nom d'auteur">
+                                        </div>
+                                        <div v-for="errorname in authorsUpdateErrors.authorName" :key="errorname" class="text-danger">
+                                            {{ errorname }}
+                                        </div>
+                                      </div>
+                                      <div class="mb-3" v-else>
+                                        <label class="form-label">Nom d'auteur</label>
+                                        <div class="input-group">
+                                          <span class="input-group-text">togoactualite.com/auteurs/</span>
+                                          <input type="text" class="form-control" name="authorName" v-model="authorName" placeholder="Entrez votre nom d'auteur">
+                                        </div>
+                                        <div class="form-text">Par defaut le nom d'auteur sera son prénom.</div>
+                                      </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3" v-if="authorsUpdateErrors.email">
+                                            <label class="form-label">Email <sup class="text-danger">*</sup></label>
+                                            <div class="input-group">
+                                                <input type="email" class="form-control is-invalid" name="email" v-model="email" placeholder="Entrez votre email">
+                                            </div>
+                                            <div v-for="erroremail in authorsUpdateErrors.email" :key="erroremail" class="text-danger">
+                                                {{ erroremail }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3" v-else>
+                                            <label class="form-label">Email <sup class="text-danger">*</sup></label>
+                                            <div class="input-group">
+                                                <input type="email" class="form-control" name="email" v-model="email" placeholder="Entrez votre email">
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3" v-if="authorsUpdateErrors.telephone">
+                                            <label class="form-label">Télephone</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control is-invalid" name="telephone" v-model="telephone" placeholder="Entrez votre télephone">
+                                            </div>
+                                            <div v-for="errortelephone in authorsUpdateErrors.telephone" :key="errortelephone" class="text-danger">
+                                                {{ errortelephone }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3" v-else>
+                                            <label class="form-label">Télephone</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="telephone" v-model="telephone" placeholder="Entrez votre télephone">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3" v-if="authorsUpdateErrors.address">
+                                            <label class="form-label">Adresse</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control is-invalid" name="address" v-model="address" placeholder="Entrez votre Adresse">
+                                            </div>
+                                            <div v-for="erroraddress in authorsUpdateErrors.address" :key="erroraddress" class="text-danger">
+                                                {{ erroraddress }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3" v-else>
+                                            <label class="form-label">Adresse</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="address" v-model="address" placeholder="Entrez votre Adresse">
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-lg-12">
+                                      <div class="mb-3" v-if="authorsUpdateErrors.description">
+                                        <label class="form-label">Description</label>
+                                        <QuillEditor theme="snow" v-model:content="description" placeholder='Redigez le contenu de votre description!' style=" min-height: 100px;" contentType="html" />
+                                        <div v-for="errordescription in authorsUpdateErrors.description" :key="errordescription" class="text-danger">
+                                            {{ errordescription }}
+                                        </div>
+                                      </div>
+                                      <div class="mb-3" v-else>
+                                        <label class="form-label">Description</label>
+                                        <QuillEditor theme="snow" v-model:content="description" placeholder='Redigez le contenu de votre description!' style=" min-height: 100px;" contentType="html" />
+                                        <div class="form-text">Une brève description pour le profil de l'auteur.</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="d-flex justify-content-end mt-4" v-if="!loadingUpdate">
+                                    <button type="button" @click="cancel" class="btn btn-danger border-0 me-2">Annuler</button>
+                                    <button type="submit" @click="update" class="btn btn-primary">Modifier</button>
+                                  </div>
+                                  <div class="d-flex justify-content-end mt-4" v-else>
+                                    <button type="button" disabled class="btn btn-success border-0 me-2">
+                                        <i  style="color: #fff" class="fa fa-spinner fa-spin fa-1x fa-fw"></i>
+                                        <span class="sr-only">Loading...</span>Modification...</button>
+                                  </div>
+                                </form>
+
                             </div>
                             <div class="card-body p-3 pb-0" v-else-if="empty == 1">
                                 <div class="row">
@@ -224,33 +172,14 @@
                                       <div style="position: relative; height: 250px;">
                                           <img src="https://actualitetogo.com/assets/images/empty.png" style="width: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" alt="empty">
                                       </div>
-                                      <h5 style="text-align: center; margin-top: -50px"> {{ tagsListMessage  }} </h5>
+                                      <h5 style="text-align: center; margin-top: -50px"> {{ authorsShowMessage  }} </h5>
                                     </div>
                                     <div class="col-md-3"></div>
-                                </div>
-                            </div>
-
-                            <div class="card-footer p-3" v-if="empty == 0">
-                                <!-- Pagination START -->
-                                <div class="d-sm-flex justify-content-sm-between align-items-sm-center">
-
-                                    <Bootstrap5Pagination
-                                        class="mb-0"
-                                        :data="tagsListData.tags"
-                                        :limit="limit"
-                                        :keep-length="keepLength"
-                                        :show-disabled="showDisabled"
-                                        :size="size"
-                                        :align="align"
-                                        @pagination-change-page="getResults"
-                                    />
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
             <div v-else-if="dataReady== 2"> <accessUnAuthorizedAdmin></accessUnAuthorizedAdmin> </div>
             <div v-else-if="dataReady== 3 || dataReady == 4">
@@ -289,7 +218,7 @@
                                 <!-- Content -->
                                 <h1 class="display-1 text-primary">Session expiré! </h1>
                                 <h5>Votre delai de connexion est expiré, connectez vous pour acceder à cette page.</h5>
-                                <span style="cursor: pointer"  @click="authModalClick('LIST')" class="btn btn-danger-soft mt-3"><i class="fas fa-long-arrow-alt-left me-3"></i>Se connecter</span>
+                                <span style="cursor: pointer"  @click="authFormModalAuthorsUpdateShow('SHOW')" class="btn btn-danger-soft mt-3"><i class="fas fa-long-arrow-alt-left me-3"></i>Se connecter</span>
 
                             </div>
                         </div>
@@ -298,124 +227,18 @@
             </div>
         </div>
     </section>
-    <!-- Modal Form -->
-    <div class="modal fade" id="authFormModalTagsList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+     <!-- Modal Form -->
+     <div class="modal fade" id="authFormModalAuthorsUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" v-if="authSectionModal == 'CREATE'">
-                <div class="modal-header">
-                    <h5 class="modal-title">Ajouter un tag</h5>
-                    <button type="button" class="btn-close" @click="authFormModalTagsListClose" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form>
-                    <div class="modal-body">
-                        <div v-if="tagsStoreMessage">
-                            <div class="alert alert-danger"  role="alert">
-                                {{ tagsStoreMessage }}
-                            </div>
-                        </div>
 
-                        <!-- Email -->
-                        <div class="mb-3" v-if="tagsStoreErrors.name">
-                            <label class="form-label" for="exampleInputEmailTagsCreate">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control is-invalid" id="exampleInputEmailTagsCreate" placeholder="Entrez le nom du tag">
-                            <div v-for="errorname in tagsStoreErrors.name" :key="errorname" class="invalid-feedback">
-                                {{ errorname }}
-                            </div>
-                        </div>
-                        <div class="mb-3" v-else>
-                            <label class="form-label" for="exampleInputEmailLoginInvalid">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control" id="exampleInputEmailTagsCreate" placeholder="Entrez le nom du tag">
-                        </div>
-                    </div>
-                    <div class="modal-footer" >
-                        <div  v-if="!loadingCreate" style="margin-top: -5px; margin-bottom: -10px">
-                            <button type="submit" @click.prevent="create" class="btn btn-primary">Ajouter</button>
-                            &nbsp;
-                            <span><span class="btn btn-danger" @click="authFormModalTagsListClose">Fermez</span></span>
-                        </div>
-                        <div style="margin-top: -5px; margin-bottom: -10px" v-else>
-                            <button type="button" disabled class="btn btn-primary   mx-auto w-100">
-                                <i  style="color: #fff" class="fa fa-spinner fa-spin fa-1x fa-fw"></i>
-                                <span class="sr-only">Loading...</span> Ajout en cours ...
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-content" v-if="authSectionModal == 'UPDATE'">
-                <div class="modal-header">
-                    <h5 class="modal-title">Modifier un tag</h5>
-                    <button type="button" class="btn-close" @click="authFormModalTagsListClose" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form>
-                    <div class="modal-body">
-                        <div v-if="tagsUpdateMessage">
-                            <div class="alert alert-danger"  role="alert">
-                                {{ tagsUpdateMessage }}
-                            </div>
-                        </div>
 
-                        <!-- Email -->
-                        <div class="mb-3" v-if="tagsUpdateErrors.name">
-                            <label class="form-label" for="exampleInputEmailTagCreate">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control is-invalid" id="exampleInputEmailtagsCreate" placeholder="Entrez le nom du tag">
-                            <div v-for="errorname in tagsUpdateErrors.name" :key="errorname" class="invalid-feedback">
-                                {{ errorname }}
-                            </div>
-                        </div>
-                        <div class="mb-3" v-else>
-                            <label class="form-label" for="exampleInputEmailLoginInvalid">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control" id="exampleInputEmailtagsCreate" placeholder="Entrez le nom du tag">
-                        </div>
-                    </div>
-                    <div class="modal-footer" >
-                        <div  v-if="!loadingUpdate" style="margin-top: -5px; margin-bottom: -10px">
-                            <button type="submit" @click.prevent="update" class="btn btn-primary">Modifier</button>
-                            &nbsp;
-                            <span><span class="btn btn-danger" @click="authFormModalTagsListClose">Fermez</span></span>
-                        </div>
-                        <div style="margin-top: -5px; margin-bottom: -10px" v-else>
-                            <button type="button" disabled class="btn btn-primary   mx-auto w-100">
-                                <i  style="color: #fff" class="fa fa-spinner fa-spin fa-1x fa-fw"></i>
-                                <span class="sr-only">Loading...</span> Modification en cours ...
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-content" v-if="authSectionModal == 'DELETE'">
-
-                <div class="modal-body">
-                    <div class="d-flex justify-content-center">
-                        <i class="bi bi-info-circle fa-fw me-2" style="font-size: 80px; color: blue"></i>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <h6>ATTENTION</h6>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <p class="text-center">Toutes données relatives à ce tag seront aussi supprimées.</p>
-                    </div>
-                    <div class="d-flex justify-content-center" v-if="!loadingDelete" style="margin-top: -5px; margin-bottom: -10px">
-                        <span style="cursor: pointer" @click.prevent="destroy" class="btn btn-danger">Supprimez</span>
-                        &nbsp;
-                        <span><span class="btn btn-success" @click="authFormModalTagsListClose">Annuler</span></span>
-                    </div>
-                    <div class="d-flex justify-content-center" style="margin-top: -5px; margin-bottom: -10px" v-else>
-                        <button type="button" disabled class="btn btn-primary   mx-auto w-100">
-                            <i  style="color: #fff" class="fa fa-spinner fa-spin fa-1x fa-fw"></i>
-                            <span class="sr-only">Loading...</span> Suppression en cours ...
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-                <!-- Login Form -->
-            <div class="modal-content" v-else-if="authSectionModal == 'DELETE_AUTH' || authSectionModal == 'UPDATE_AUTH' || authSectionModal == 'CREATE_AUTH' || authSectionModal == 'LIST'">
+            <!-- Login Form -->
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" v-if="authSectionStepModal == 1">Se connecter</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 2">Modifier le mot de passe</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 3">S'inscrire</h5>
-                    <button type="button" class="btn-close" @click="authFormModalTagsListClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" @click="authFormModalAuthorsUpdateClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div v-if="authSectionStepModal == 1" style="margin-bottom: -15px">
@@ -636,34 +459,31 @@
         </div>
     </div>
 </template>
+
 <script>
 import { mapGetters, mapActions} from "vuex";
 import {Bootstrap5Pagination, TailwindPagination } from '../../../../../libraries/pagination/lib';
-
 import moment from 'moment'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+
 export default {
-    // inside your script
+
     components: {
+        QuillEditor,
         Bootstrap5Pagination,
         TailwindPagination,
-
     },
     data () {
         return {
             dataReady: 0,
             meRoleName: null,
-            tagsListData: {},
-            tagsListMessage: null,
-            searchByDateListData: {},
-            searchByDateListMessage: null,
-            tagsStoreData: {},
-            tagsStoreMessage: null,
-            tagsStoreErrors: [],
-            tagsUpdateData: {},
-            tagsUpdateMessage: null,
-            tagsUpdateErrors: [],
-            tagsDeleteData: {},
-            tagsDeleteMessage: null,
+            authorsUpdateData: {},
+            authorsUpdateMessage: null,
+            authorsUpdateErrors: [],
+            authorsShowData: {},
+            authorsShowMessage: null,
+            authorsShowErrors: [],
             style: 'bootstrap5',
             limit: 1,
             keepLength: false,
@@ -675,7 +495,6 @@ export default {
             meProfileRoleName: null,
             authSectionModal: 'LIST',
             username: null,
-            email:null,
             password: null,
             password_confirm: null,
             loadingLogin: false,
@@ -695,16 +514,17 @@ export default {
             errorForgotPasswordThree: false,
             errorsForgotPasswordThree: [],
             step: 1,
-            name: null,
+            nom: null,
+            prenoms: null,
+            authorName: null,
+            email:null,
+            telephone:null,
+            address:null,
+            description: "Nous tenons à rappeler aux visiteurs du site que sans partenariat avec togoactualite.com, la reprise des articles même partielle est strictement interdite.Tout contrevenant s'expose à de graves poursuites.",
             slug: null,
-            loadingCreate: false,
             loadingUpdate: false,
-            loadingDelete: false,
             showPsw: false,
-            showPswC: false,
-            emptySearchByDate: 0,
-            searchH:"ALL",
-            user_id: 0
+            showPswC: false
         }
     },
     computed: {
@@ -713,27 +533,15 @@ export default {
             gettersRoleStatus:'getRoleStatus',
         }),
 
-        ...mapGetters('tagsAdmin',{
-            getterInfosTagsListStatus:'getInfosTagsListStatus',
-            getterInfosTagsListMessage:'getInfosTagsListMessage',
-            getterInfosTagsListData:'getInfosTagsListData',
-            getterInfosSearchByDateListStatus:'getInfosSearchByDateListStatus',
-            getterInfosSearchByDateListMessage:'getInfosSearchByDateListMessage',
-            getterInfosSearchByDateListData:'getInfosSearchByDateListData',
-            getterInfosSearchByUserListStatus:'getInfosSearchByUserListStatus',
-            getterInfosSearchByUserListMessage:'getInfosSearchByUserListMessage',
-            getterInfosSearchByUserListData:'getInfosSearchByUserListData',
-            getterInfosTagsStoreStatus:'getInfosTagsStoreStatus',
-            getterInfosTagsStoreMessage:'getInfosTagsStoreMessage',
-            getterInfosTagsStoreErrors:'getInfosTagsStoreErrors',
-            getterInfosTagsStoreData:'getInfosTagsStoreData',
-            getterInfosTagsUpdateStatus:'getInfosTagsUpdateStatus',
-            getterInfosTagsUpdateMessage:'getInfosTagsUpdateMessage',
-            getterInfosTagsUpdateErrors:'getInfosTagsUpdateErrors',
-            getterInfosTagsUpdateData:'getInfosTagsUpdateData',
-            getterInfosTagsDeleteStatus:'getInfosTagsDeleteStatus',
-            getterInfosTagsDeleteMessage:'getInfosTagsDeleteMessage',
-            getterInfosTagsDeleteData:'getInfosTagsDeleteData',
+        ...mapGetters('authorsAdmin',{
+            getterInfosAuthorsUpdateStatus:'getInfosAuthorsUpdateStatus',
+            getterInfosAuthorsUpdateMessage:'getInfosAuthorsUpdateMessage',
+            getterInfosAuthorsUpdateErrors:'getInfosAuthorsUpdateErrors',
+            getterInfosAuthorsUpdateData:'getInfosAuthorsUpdateData',
+            getterInfosAuthorsShowStatus:'getInfosAuthorsShowStatus',
+            getterInfosAuthorsShowMessage:'getInfosAuthorsShowMessage',
+            getterInfosAuthorsShowErrors:'getInfosAuthorsShowErrors',
+            getterInfosAuthorsShowData:'getInfosAuthorsShowData',
         }),
         ...mapGetters('login',{
             getterLoginStatus:'getLoginStatus',
@@ -787,18 +595,13 @@ export default {
           actionsGetMeRole:'getMeRole'
         }),
 
-        ...mapActions("tagsAdmin",{
-          actionsTagsListDataRequest:'tagsListDataRequest',
-          actionsTagsListHDataRequest:'tagsListHDataRequest',
-          actionsTagsListHHDataRequest:'tagsListHHDataRequest',
-          actionsSearchByDateListDataRequest:'searchByDateListDataRequest', 
-          actionsTagsStoreDataRequest:'tagsStoreDataRequest',
-          actionsTagsUpdateDataRequest:'tagsUpdateDataRequest',
-          actionsTagsDeleteDataRequest:'tagsDeleteDataRequest'
+        ...mapActions("authorsAdmin",{
+          actionsAuthorsUpdateDataRequest:'authorsUpdateDataRequest',
+          actionsAuthorsShowDataRequest:'authorsShowDataRequest',
         }),
 
 
-        authFormModalTagsListClose(){
+        authFormModalAuthorsUpdateClose(){
             this.errorForgotPasswordFirst = null
             this.errorsForgotPasswordFirst = []
             this.errorForgotPasswordTwo = null
@@ -807,11 +610,9 @@ export default {
             this.errorsForgotPasswordThree = []
             this.errorLogin = false
             this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-            $('#authFormModalTagsList').modal('hide');
+            this.authorsUpdateMessage =  null
+            this.authorsUpdateErrors = []
+            $('#authFormModalAuthorsUpdate').modal('hide');
         },
 
         showPassword(){
@@ -836,7 +637,7 @@ export default {
             }
         },
 
-        authModalClick(action_auth="LIST", name=null, slug=null){
+        authFormModalAuthorsUpdateShow(action_auth="SHOW"){
 
             if(localStorage.getItem('remember_me') == "true" && localStorage.getItem('username') && localStorage.getItem('password')){
 
@@ -847,12 +648,6 @@ export default {
                 this.remember_me = localStorage.getItem('remember_me')
             }
 
-            this.name = name
-
-            this.slug = slug
-
-            this.authSectionModal= action_auth
-
             this.errorForgotPasswordFirst = null
             this.errorsForgotPasswordFirst = []
             this.errorForgotPasswordTwo = null
@@ -861,26 +656,41 @@ export default {
             this.errorsForgotPasswordThree = []
             this.errorLogin = false
             this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
 
-            if(this.authSectionModal == "CREATE"){
+            this.loadingUpdate = false
 
-                this.loadingCreate = false
+            if(this.authSectionModal == "SHOW"){
+
+                this.loadingShow = false
 
             }else if(this.authSectionModal == "UPDATE"){
 
                 this.loadingUpdate = false
 
-            }else if(this.authSectionModal == "DELETE"){
-
-                this.loadingDelete = false
-
             }
 
-            $('#authFormModalTagsList').modal('show');
+            $('#authFormModalAuthorsUpdate').modal('show');
+        },
+
+        cancel(){
+            this.nom = null
+
+            this.prenoms = null
+
+            this.authorName = null
+
+            this.email = null
+
+            this.telephone = null
+
+            this.address = null
+
+            this.description = "Nous tenons à rappeler aux visiteurs du site que sans partenariat avec togoactualite.com, la reprise des articles même partielle est strictement interdite.Tout contrevenant s'expose à de graves poursuites."
+
+            this.slug= null
+
+            this.authorsUpdateMessage =  null
+            this.authorsUpdateErrors = []
         },
 
         PreviousForgotPasswordStep(){
@@ -893,10 +703,8 @@ export default {
             this.errorsForgotPasswordThree = []
             this.errorLogin = false
             this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
+            this.authorsUpdateMessage =  null
+            this.authorsUpdateErrors = []
         },
 
         PreviousHForgotPasswordStep(){
@@ -909,10 +717,8 @@ export default {
             this.errorsForgotPasswordThree = []
             this.errorLogin = false
             this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
+            this.authorsUpdateMessage =  null
+            this.authorsUpdateErrors = []
         },
 
         changeAuthSectionStepModalToForgotPassword(){
@@ -925,10 +731,8 @@ export default {
             this.errorsForgotPasswordThree = []
             this.errorLogin = false
             this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
+            this.authorsUpdateMessage =  null
+            this.authorsUpdateErrors = []
         },
 
         changeAuthSectionStepModalToLogin(){
@@ -941,10 +745,8 @@ export default {
             this.errorsForgotPasswordThree = []
             this.errorLogin = false
             this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
+            this.authorsUpdateMessage =  null
+            this.authorsUpdateErrors = []
         },
 
         async submitVerifyForgotPasswordEmail(){
@@ -1191,34 +993,23 @@ export default {
                         title: this.getterLoginMessage
                     })
 
+                    if(this.authSectionModal== 'SHOW'){
+
+                        this.authFormModalAuthorsUpdateClose()
+
+                        this.loadingShow = true
+
+                        this.authorsShow()
+
+                    }else if(this.authSectionModal== 'UPDATE'){
 
 
-                    if(this.authSectionModal== 'LIST'){
+                        this.authFormModalAuthorsUpdateClose()
 
-                        this.authFormModalTagsListClose()
+                        this.loadingUpdate = true
 
-                        this.getResults()
-
-                    }else if(this.authSectionModal == "CREATE_AUTH"){
-
-                        this.authSectionModal = "CREATE"
-
-                        this.tagsCreate()
-
-                    }else if(this.authSectionModal == "UPDATE_AUTH"){
-
-                        this.authSectionModal = "UPDATE"
-
-                        this.tagsUpdate()
-
-                    }else if(this.authSectionModal == "DELETE_AUTH"){
-
-                        this.authSectionModal = "DELETE"
-
-                        this.tagsDelete()
-
+                        this.authorsUpdate()
                     }
-
 
                 }else{
 
@@ -1243,33 +1034,21 @@ export default {
                         title: this.getterLoginMessage
                     })
 
+                    if(this.authSectionModal== 'SHOW'){
 
+                        this.authFormModalAuthorsUpdateClose()
 
+                        this.loadingShow = true
 
-                   if(this.authSectionModal== 'LIST'){
+                        this.authorsShow()
 
-                        this.authFormModalTagsListClose()
+                    }else if(this.authSectionModal== 'UPDATE'){
 
-                        this.getResults()
+                        this.authFormModalAuthorsUpdateClose()
 
-                    }else if(this.authSectionModal == "CREATE_AUTH"){
+                        this.loadingUpdate = true
 
-                        this.authSectionModal = "CREATE"
-
-                        this.tagsCreate()
-
-                    }else if(this.authSectionModal == "UPDATE_AUTH"){
-
-                        this.authSectionModal = "UPDATE"
-
-                        this.tagsUpdate()
-
-                    }else if(this.authSectionModal == "DELETE_AUTH"){
-
-                        this.authSectionModal = "DELETE"
-
-                        this.tagsDelete()
-
+                        this.authorsUpdate()
                     }
 
                 }
@@ -1344,13 +1123,15 @@ export default {
             }
         },
 
-        async show(){
+        async update(){
+
+            this.loadingUpdate = true
+
+            this.authSectionModal= 'UPDATE'
 
             if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
 
                 await this.actionsGetMeRole();
-
-                this.authSectionModal= 'LIST'
 
                 if(this.gettersRoleStatus === 'success'){
 
@@ -1358,7 +1139,101 @@ export default {
 
                     if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
 
-                        this.getResults()
+                        this.authorsUpdate()
+
+                    }else{
+
+                        this.authFormModalAuthorsUpdateShow('UPDATE')
+
+                    }
+
+                }else if(this.gettersRoleStatus === 'failed'){
+
+                    this.authFormModalAuthorsUpdateShow('UPDATE')
+                }
+
+            }else{
+
+                this.authFormModalAuthorsUpdateShow('UPDATE')
+
+            }
+
+        },
+
+        async authorsUpdate(){
+
+            this.loadingUpdate = true
+
+            this.authSectionModal= 'UPDATE'
+
+            this.authorsUpdateMessage =  null
+            this.authorsUpdateErrors = []
+
+            await this.actionsAuthorsUpdateDataRequest({ slug : this.$route.params.slug, nom : this.nom, prenoms : this.prenoms, authorName : this.authorName, email : this.email, address : this.address, telephone : this.telephone, description : this.description});
+
+            if( this.getterInfosAuthorsUpdateStatus ==="success"){
+
+                this.authorsUpdateData = this.getterInfosAuthorsUpdateData
+
+                const Toast = this.$swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: this.getterInfosAuthorsUpdateMessage
+                })
+
+                this.loadingUpdate = false
+
+                this.authorsUpdateMessage =  null
+                this.authorsUpdateErrors = []
+
+            }else if( this.getterInfosAuthorsUpdateStatus ==="empty"){
+
+                this.authorsUpdateMessage = this.getterInfosAuthorsUpdateMessage
+
+                this.authorsUpdateErrors = this.getterInfosAuthorsUpdateErrors
+
+                this.loadingUpdate = false
+
+
+            }else if( this.getterInfosAuthorsUpdateStatus ==="error"){
+
+                this.authorsUpdateMessage = this.getterInfosAuthorsUpdateMessage
+
+                this.authorsUpdateErrors = []
+
+                this.loadingUpdate = false
+
+            }
+        },
+
+        async show(){
+
+            this.loadingShow = true
+
+            this.authSectionModal= 'SHOW'
+
+            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
+
+                await this.actionsGetMeRole();
+
+                if(this.gettersRoleStatus === 'success'){
+
+                    this.meRoleName = this.gettersMeRoleName
+
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+
+                        this.authorsShow()
 
                     }else{
 
@@ -1379,457 +1254,52 @@ export default {
 
         },
 
+        async authorsShow(){
 
-        async getResults(page = 1){
+            this.loadingShow = true
 
-            this.loading = true
+            this.authSectionModal= 'SHOW'
 
-            this.authSectionModal= 'LIST'
+            await this.actionsAuthorsShowDataRequest({slug : this.$route.params.slug});
 
-            await this.actionsTagsListDataRequest({ page : page, search: this.search});
+            if( this.getterInfosAuthorsShowStatus ==="success"){
 
-            if( this.getterInfosTagsListStatus ==="success"){
+                this.authorsShowData = this.getterInfosAuthorsShowData
 
-                this.tagsListData = this.getterInfosTagsListData
+                this.nom = this.getterInfosAuthorsShowData.author.nom
 
-                this.getResultsSearchByDate( )
+                this.prenoms = this.getterInfosAuthorsShowData.author.prenoms
 
-                this.empty = 0
+                this.authorName = this.getterInfosAuthorsShowData.author.authorName
 
-                this.dataReady = 1
+                this.email = this.getterInfosAuthorsShowData.author.email
 
-                this.authFormModalTagsListClose()
+                this.telephone = this.getterInfosAuthorsShowData.author.telephone
 
-            }else if( this.getterInfosTagsListStatus ==="empty"){
+                this.address = this.getterInfosAuthorsShowData.author.address
 
-                this.tagsListMessage = this.getterInfosTagsListMessage
+                this.description = this.getterInfosAuthorsShowData.author.description
 
-                this.tagsListData = this.getterInfosTagsListData
+                this.slug= this.getterInfosAuthorsShowData.author.slug
 
-                this.empty = 1
-
-                this.dataReady = 1
-
-            }else if(this.getterInfosTagsListStatus === 'failed'){
-
-                this.dataReady = 3;
-
-            }else{
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.empty = 3
-
-                this.dataReady = 4
-
-            }
-        },
-
-        async getResultsSearchByDate( ){
-
-            await this.actionsSearchByDateListDataRequest({  });
-
-            if( this.getterInfosSearchByDateListStatus ==="success"){
-
-                this.searchByDateListData = this.getterInfosSearchByDateListData
-
-                this.emptySearchByDate = 0
-
-            }else if( this.getterInfosSearchByDateListStatus ==="empty"){
-
-                this.emptySearchByData = 1
-
-            }
-        },
-
-        async handleSelection(event, page=1){
-            this.searchH = event.target.value
-
-            this.authSectionModal= 'LIST'
-
-            await this.actionsTagsListHDataRequest({ page : page, searchH: this.searchH});
-
-            if( this.getterInfosTagsListStatus ==="success"){
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.getResultsSearchByDate( )
+                this.authorsUpdateMessage =  null
+                this.authorsUpdateErrors = []
 
                 this.empty = 0
 
                 this.dataReady = 1
 
-                this.authFormModalTagsListClose()
+                this.loadingShow = false
 
-            }else if( this.getterInfosTagsListStatus ==="empty"){
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.tagsListData = this.getterInfosTagsListData
+            }else{
 
                 this.empty = 1
 
                 this.dataReady = 1
 
-            }else if(this.getterInfosTagsListStatus === 'failed'){
+                this.authorsShowMessage = this.getterInfosAuthorsShowMessage
 
-                this.dataReady = 3;
-
-            }else{
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.empty = 3
-
-                this.dataReady = 4
-
-            }
-        },
-
-        async handleSelectionUsers(event, page=1){
-            this.user_id = event.target.value
-
-            this.authSectionModal= 'LIST'
-
-            await this.actionsTagsListHHDataRequest({ page : page, user_id: this.user_id});
-
-            if( this.getterInfosTagsListStatus ==="success"){
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.getResultsSearchByDate( )
-
-                this.empty = 0
-
-                this.dataReady = 1
-
-                this.authFormModalTagsListClose()
-
-            }else if( this.getterInfosTagsListStatus ==="empty"){
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.empty = 1
-
-                this.dataReady = 1
-
-            }else if(this.getterInfosTagsListStatus === 'failed'){
-
-                this.dataReady = 3;
-
-            }else{
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.empty = 3
-
-                this.dataReady = 4
-
-            }
-        },
-
-        async create(){
-
-            this.loadingCreate = true
-
-            this.authSectionModal= 'CREATE'
-
-            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-                await this.actionsGetMeRole();
-
-                if(this.gettersRoleStatus === 'success'){
-
-                    this.meRoleName = this.gettersMeRoleName
-
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
-
-                        this.tagsCreate()
-
-                    }else{
-
-                        this.loadingCreate = true
-
-                        //this.authSectionModal= 'CREATE'
-
-                    }
-
-                }else if(this.gettersRoleStatus === 'failed'){
-
-                    this.authSectionModal= 'CREATE_AUTH'
-                }
-
-            }else{
-
-                this.authSectionModal= 'CREATE_AUTH'
-
-            }
-
-        },
-
-        async tagsCreate(){
-
-            this.loadingCreate = true
-
-            this.authSectionModal= 'CREATE'
-
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-
-            await this.actionsTagsStoreDataRequest({ name : this.name});
-
-            if( this.getterInfosTagsStoreStatus ==="success"){
-
-                this.tagsStoreData = this.getterInfosTagsStoreData
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.getterInfosTagsStoreMessage
-                })
-
-                this.loadingCreate = false
-
-                this.name = null
-
-                this.slug= null
-
-                this.tagsStoreMessage =  null
-                this.tagsStoreErrors = []
-
-                this.authFormModalTagsListClose()
-
-                this.getResults()
-
-            }else if( this.getterInfosTagsStoreStatus ==="empty"){
-
-                this.tagsStoreMessage = this.getterInfosTagsStoreMessage
-
-                this.tagsStoreErrors = this.getterInfosTagsStoreErrors
-
-                this.loadingCreate = false
-
-
-            }else if( this.getterInfosTagsStoreStatus ==="error"){
-
-                this.tagsStoreMessage = this.getterInfosTagsStoreMessage
-
-                this.tagsStoreErrors = []
-
-                this.loadingCreate = false
-
-            }
-        },
-
-        async update(){
-
-            this.loadingUpdate = true
-
-            this.authSectionModal= 'UPDATE'
-
-            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-                await this.actionsGetMeRole();
-
-                if(this.gettersRoleStatus === 'success'){
-
-                    this.meRoleName = this.gettersMeRoleName
-
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
-
-                        this.tagsUpdate()
-
-                    }else{
-
-                        this.loadingUpdate = true
-
-                        //this.authSectionModal= 'CREATE'
-
-                    }
-
-                }else if(this.gettersRoleStatus === 'failed'){
-
-                    this.authSectionModal= 'UPDATE_AUTH'
-                }
-
-            }else{
-
-                this.authSectionModal= 'UPDATE_AUTH'
-
-            }
-
-        },
-
-        async tagsUpdate(){
-
-            this.loadingUpdate = true
-
-            this.authSectionModal= 'UPDATE'
-
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-
-            await this.actionsTagsUpdateDataRequest({ name : this.name, slug : this.slug,});
-
-            if( this.getterInfosTagsUpdateStatus ==="success"){
-
-                this.tagsUpdateData = this.getterInfosTagsUpdateData
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.getterInfosTagsUpdateMessage
-                })
-
-                this.loadingUpdate = false
-
-                this.tagsUpdateMessage =  null
-                this.tagsUpdateErrors = []
-
-                this.name = null
-
-                this.slug= null
-
-                this.authFormModalTagsListClose()
-
-                this.getResults()
-
-            }else if( this.getterInfosTagsUpdateStatus ==="empty"){
-
-                this.tagsUpdateMessage = this.getterInfosTagsUpdateMessage
-
-                this.tagsUpdateErrors = this.getterInfosTagsUpdateErrors
-
-                this.loadingUpdate = false
-
-
-            }else if( this.getterInfosTagsUpdateStatus ==="error"){
-
-                this.tagsUpdateMessage = this.getterInfosTagsUpdateMessage
-
-                this.tagsUpdateErrors = []
-
-                this.loadingUpdate = false
-
-            }
-        },
-
-        async destroy(){
-
-            this.loadingDelete = true
-
-            this.authSectionModal= 'DELETE'
-
-            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-                await this.actionsGetMeRole();
-
-                if(this.gettersRoleStatus === 'success'){
-
-                    this.meRoleName = this.gettersMeRoleName
-
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
-
-                        this.tagsDelete()
-
-                    }else{
-
-                        this.loadingDelete = true
-
-                        //this.authSectionModal= 'CREATE'
-
-                    }
-
-                }else if(this.gettersRoleStatus === 'failed'){
-
-                    this.authSectionModal= 'DELETE_AUTH'
-                }
-
-            }else{
-
-                this.authSectionModal= 'DELETE_AUTH'
-
-            }
-
-        },
-
-        async tagsDelete(){
-
-            this.loadingDelete = true
-
-            this.authSectionModal= 'DELETE'
-
-            await this.actionsTagsDeleteDataRequest({slug : this.slug});
-
-            if( this.getterInfosTagsDeleteStatus ==="success"){
-
-                this.tagsDeleteData = this.getterInfosTagsDeleteData
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.getterInfosTagsDeleteMessage
-                })
-
-                this.loadingDelete = false
-
-                this.name = null
-
-                this.slug= null
-
-                this.authFormModalTagsListClose()
-
-                this.getResults()
-
-            }else if( this.getterInfosTagsDeleteStatus ==="empty"){
-
-                this.tagsDeleteMessage = this.getterInfosTagsDeleteMessage
-
-                this.tagsDeleteErrors = this.getterInfosTagsDeleteErrors
-
-                this.loadingDelete = false
-
-
-            }else if( this.getterInfosTagsDeleteStatus ==="error"){
-
-                this.tagsDeleteMessage = this.getterInfosTagsDeleteMessage
-
-                this.loadingDelete = false
+                this.loadingShow = false
 
             }
         },
@@ -1837,7 +1307,7 @@ export default {
     },
     mounted() {
         this.moment = moment
-        this.show();
+        this.show()
     },
 };
 </script>

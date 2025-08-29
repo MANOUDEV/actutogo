@@ -195,7 +195,7 @@ class IncludesController extends BaseController
      */
     public function tagsRequestData()
     {
-       $tags = Tag::orderBy('tags.count_publications', 'desc')->take(20)->get();
+       $tags = Tag::orderBy('tags.count_publications', 'desc')->take(6)->get();
 
        return $this->sendResponse(['tagsPopularsData' => $tags, 'status' => 200], 'les mots clés populaires');
 

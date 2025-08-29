@@ -48,11 +48,32 @@ import forgot_passwordModule from './modules/auth/forgot_password';
 
 import roleModule from './modules/backoffice/role'
 
+
 //Importation des modules gérant les données de la partie administrative
+
+import categoryAdminModule from './modules/backoffice/admin/category'
+
+import authorsAdminModule from './modules/backoffice/admin/authors'
 
 import typePublicationAdminModule from './modules/backoffice/admin/typePublication'
 
+import tagsAdminModule from './modules/backoffice/admin/tags'
+
+import newsLetterAdminModule from './modules/backoffice/admin/newsLetter'
+
 import  publicationAdminModule from './modules/backoffice/admin/publications/publication'
+
+import  alertInfosAnnonceAdminModule from './modules/backoffice/admin/publications/crud/alertInfosAnnonce'
+
+import  articlesAdminModule from './modules/backoffice/admin/publications/crud/articles'
+
+import  publicitesAdminModule from './modules/backoffice/admin/publications/crud/publicites'
+
+//Importation des modules gérant les données de la partie des publicateurs
+
+import tagsPubModule from './modules/backoffice/publicator/tags'
+
+import authorsPubModule from './modules/backoffice/publicator/authors'
   
 const store = createStore({
     modules:{
@@ -96,10 +117,21 @@ const store = createStore({
 
         roleSecurity: roleModule,
 
-        //Déclaration des modules gérant les données de la partie administrative
-        
+       //Déclaration des modules gérant les données de la partie administrative
+       
         typePublicationAdmin: typePublicationAdminModule,
+        categoryAdmin: categoryAdminModule,
+        authorsAdmin: authorsAdminModule,
         publicationAdmin: publicationAdminModule,
+        alertInfosAnnonceAdmin: alertInfosAnnonceAdminModule,
+        articlesAdmin: articlesAdminModule,
+        publicitesAdmin: publicitesAdminModule,
+        tagsAdmin: tagsAdminModule,
+        newsLetterAdmin: newsLetterAdminModule,
+
+        //Déclaration des modules gérant les données de la partie des publicateurs
+        authorsPub: authorsPubModule,
+        tagsPub: tagsPubModule,
     }
   });
 
