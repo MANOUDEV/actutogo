@@ -4,8 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\{
     Publication, PublicationFile, PublicationTag,
-    Author, Category, File, InfosMonthYear, InfosMonthYearFile,
-    InfosMonthYearPublication, Tag, TypePublication
+    Author, Category, File, InfosMonthYear, InfosMonthYearPublication, Tag, TypePublication
 };
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -36,15 +35,19 @@ class PublicationTableSeeder extends Seeder
 
                 if (!$author || !$typePublication) continue;
 
-                // Mise à jour des compteurs
+                // Incrément des compteurs
                 $author->increment('count_publications');
                 $typePublication->increment('count_publications');
 
-                // Gestion de l'image de couverture et fichier associé
+                // Gestion de l'image de couverture
                 $imageCoverUrl = null;
                 $fileId = null;
                 if (isset($value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl'])) {
-                    $url = str_replace('https://togoactualite.com/wp-content/uploads', 'https://news228.com/storage/uploads', $value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl']);
+                    $url = str_replace(
+                        'https://togoactualite.com/wp-content/uploads',
+                        'https://news228.com/storage/uploads',
+                        $value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl']
+                    );
                     $imageCoverUrl = $url;
 
                     $file = File::firstOrCreate(
@@ -60,28 +63,36 @@ class PublicationTableSeeder extends Seeder
                     $fileId = $file->id;
                 }
 
-                // Gestion des catégories
+                // Récupération des catégories
+                $categories = collect();
                 foreach ($value['categories'] as $wpCategoryId) {
                     $category = Category::where('wp_category_id', $wpCategoryId)->first();
-                    $category?->increment('count_publications');
+                    if ($category) {
+                        $category->increment('count_publications');
+                        $categories->push($category);
+                    }
                 }
 
-                // Gestion des tags
+                // Récupération des tags
+                $tags = collect();
                 foreach ($value['tags'] as $wpTagId) {
                     $tag = Tag::where('wp_tag_id', $wpTagId)->first();
-                    $tag?->increment('count_publications');
+                    if ($tag) {
+                        $tag->increment('count_publications');
+                        $tags->push($tag);
+                    }
                 }
 
                 // Date name pour InfosMonthYearPublication
                 $date = Carbon::parse($value['date']);
                 $month = InfosMonthYear::where('month_id', $date->format('m'))->first();
-                $dateName = $month->month . ' ' . $date->format('Y');
+                $dateName = $month ? $month->month . ' ' . $date->format('Y') : $date->format('F Y');
                 InfosMonthYearPublication::firstOrCreate(['date_name' => $dateName]);
 
-                // Création de la publication
-                $publication = Publication::updateOrCreate(
-                    ['wp_article_id' => $value['id']],
-                    [
+                // ---- Création de la publication par catégorie ----
+                if ($categories->isEmpty()) {
+                    // Si aucune catégorie → publication avec champs null
+                    $publication = Publication::create([
                         'title' => $value['title']['rendered'],
                         'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
                         'slug' => Str::slug(strip_tags($value['title']['rendered'])),
@@ -104,28 +115,81 @@ class PublicationTableSeeder extends Seeder
                         'type_publication_id' => $typePublication->id,
                         'type_publication_name' => $typePublication->name,
                         'type_publication_slug' => $typePublication->slug,
+                        'category_id' => null,
+                        'category_name' => null,
+                        'category_slug' => null,
                         'user_id' => 1,
                         'source' => 'Togoactualité',
-                    ]
-                );
+                        'wp_article_id' => $value['id'],
+                    ]);
 
-                // Attacher tags
-                foreach ($value['tags'] as $wpTagId) {
-                    $tag = Tag::where('wp_tag_id', $wpTagId)->first();
-                    if ($tag) {
-                        PublicationTag::firstOrCreate([
-                            'publication_id' => $publication->id,
-                            'tag_id' => $tag->id,
-                        ], ['date_publish' => $value['date']]);
+                    // Attacher tags (s’il y en a)
+                    foreach ($tags as $tag) {
+                        PublicationTag::firstOrCreate(
+                            ['publication_id' => $publication->id, 'tag_id' => $tag->id],
+                            ['date_publish' => $value['date']]
+                        );
                     }
-                }
 
-                // Attacher fichier
-                if ($fileId) {
-                    PublicationFile::firstOrCreate([
-                        'publication_id' => $publication->id,
-                        'file_id' => $fileId,
-                    ], ['date_publish' => $value['date']]);
+                    // Attacher fichier
+                    if ($fileId) {
+                        PublicationFile::firstOrCreate(
+                            ['publication_id' => $publication->id, 'file_id' => $fileId],
+                            ['date_publish' => $value['date']]
+                        );
+                    }
+                } else {
+                    // Plusieurs catégories → une publication par catégorie
+                    foreach ($categories as $index => $category) {
+                        $deja_citer = $index === 0 ? 0 : 1;
+
+                        $publication = Publication::create([
+                            'title' => $value['title']['rendered'],
+                            'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
+                            'slug' => Str::slug(strip_tags($value['title']['rendered'])) . ($index > 0 ? "-{$category->slug}" : ""),
+                            'date_name' => $dateName,
+                            'deja_citer' => $deja_citer,
+                            'image_cover_url' => $imageCoverUrl,
+                            'content' => $value['content']['rendered'],
+                            'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
+                            'truncate_content_max' => $value['excerpt']['rendered'],
+                            'status' => $value['status'] === 'publish' ? 1 : 0,
+                            'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
+                            'views_count' => rand(351, 2564),
+                            'likes_count' => rand(123, 554),
+                            'shares_count' => 0,
+                            'comment_count' => 0,
+                            'date_publish' => $value['date'],
+                            'author_id' => $author->id,
+                            'author_slug' => $author->slug,
+                            'author_name' => $author->authorName,
+                            'type_publication_id' => $typePublication->id,
+                            'type_publication_name' => $typePublication->name,
+                            'type_publication_slug' => $typePublication->slug,
+                            'category_id' => $category->id,
+                            'category_name' => $category->name,
+                            'category_slug' => $category->slug,
+                            'user_id' => 1,
+                            'source' => 'Togoactualité',
+                            'wp_article_id' => $value['id'],
+                        ]);
+
+                        // Attacher tags
+                        foreach ($tags as $tag) {
+                            PublicationTag::firstOrCreate(
+                                ['publication_id' => $publication->id, 'tag_id' => $tag->id],
+                                ['date_publish' => $value['date']]
+                            );
+                        }
+
+                        // Attacher fichier
+                        if ($fileId) {
+                            PublicationFile::firstOrCreate(
+                                ['publication_id' => $publication->id, 'file_id' => $fileId],
+                                ['date_publish' => $value['date']]
+                            );
+                        }
+                    }
                 }
             }
 
