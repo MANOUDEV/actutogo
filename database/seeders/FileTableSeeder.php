@@ -71,7 +71,7 @@ class FileTableSeeder extends Seeder
                             [
                                 'file_url' => str_replace(
                                     'https://togoactualite.com/wp-content/uploads',
-                                    'https://news228.com/storage/uploads',
+                                    'https://togoactualite.com/wp-content/uploads',
                                     $link
                                 ),
                                 'date_name' => $dateName,
