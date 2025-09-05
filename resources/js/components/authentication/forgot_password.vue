@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 const store = useStore(); 
 const loadingVerifyEmail = ref(false); 
 const loadingNewPass = ref(false);
-const loadingResendOTP = ref(false); 
+const loadingResendOtp = ref(false); 
 const loadingVerifyOtp = ref(false);  
 const email = ref(null);
 const otp = ref(null);
@@ -50,7 +50,7 @@ const showPasswordC = () => {
   }
 };
 
-const PreviousStep= () =>{
+PreviousStep= () =>{
     errorFirst.value = null
     errorsFirst.value = []
     errorTwo.value = null
@@ -60,7 +60,7 @@ const PreviousStep= () =>{
     step.value = 1
 };
 
-const PreviousHStep= () =>{
+PreviousHStep= () =>{
     errorFirst.value = null
     errorsFirst.value = []
     errorTwo.value = null
@@ -129,7 +129,7 @@ const submitVerifyEmail = async () => {
 };
 
 const submitResendOtp = async () => {
-    loadingResendOTP.value = true
+    loadingResendOtp.value = true
     errorFirst.value = null
     errorsFirst.value = []
     
@@ -162,7 +162,7 @@ const submitResendOtp = async () => {
         errorFirst.value = null
         errorsFirst.value = []
 
-        loadingResendOTP.value = false
+        loadingResendOtp.value = false
 
         step.value = 2
 
@@ -172,7 +172,7 @@ const submitResendOtp = async () => {
 
         errorsFirst.value = []
 
-        loadingResendOTP.value = false
+        loadingResendOtp.value = false
 
     }else if(getterSendOtpForgotPasswordStatus === 'error'){
 
@@ -180,10 +180,10 @@ const submitResendOtp = async () => {
 
         errorsFirst.value = getterSendOtpForgotPasswordErrors
 
-        loadingResendOTP.value = false
+        loadingResendOtp.value = false
     }
 
-    loadingResendOTP.value = false
+    loadingResendOtp.value = false
 }
 
 const submitVerifyOtp = async () => {

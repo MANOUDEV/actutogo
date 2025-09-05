@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('slug');
             $table->dateTime('date_publish')->now();
-            $table->unsignedBigInteger('user_id')->default(1);
+            $table->unsignedBigInteger('user_id')->default(0);
             $table->bigInteger('count_comments')->default(0);
             $table->timestamps();
         });

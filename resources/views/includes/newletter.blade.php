@@ -7,8 +7,8 @@
                     <!-- Title -->
                     <div class="col-md-2 mb-2">
                         <h2>Nos sponsors</h2>
-                        <p>Ce site est sponsorisé par <b><u><a href="https://togoactualite.com">Togo actualité</a></u></b> et <b><u><a href="https://news228.com">News 228</a></u></b></p>
-                        <a href="/contact" class="btn btn-dark mb-0">Nous contactez </a>
+                        <p>Ce site est sponsorisé par <b><u><a href="https://togoactualite.com">Togo actualité</a></u></b> et <b><u><a href="https://togoactu.com">Togo actu</a></u></b></p>
+                       <br><a href="/contact" class="btn btn-dark mb-0">Nous contactez </a>
                     </div>
 
                     <!-- Slider item START -->
@@ -37,7 +37,7 @@
                                         </div>
                                         <!-- Card footer -->
                                         <div class="card-footer pb-3 d-grid">
-                                            <a href="https://togoactualite.com" class="btn btn-sm btn-dark mb-0">Visiter le site</a>
+                                            <a href="/" class="btn btn-sm btn-dark mb-0">Visiter le site</a>
                                         </div>
                                     </div>
                                 </div>
@@ -53,7 +53,7 @@
                                         <!-- Card footer -->
                                         
                                         <div class="card-footer pb-3 d-grid">
-                                            <a href="https://news228.com" class="btn btn-sm btn-dark mb-0">Visiter le site</a>
+                                            <a href="/" class="btn btn-sm btn-dark mb-0">Visiter le site</a>
                                         </div> 
                                     </div>
                                 </div>

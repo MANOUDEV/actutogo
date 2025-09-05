@@ -68,9 +68,9 @@
 						data-dots="false"
 						data-items="1">
 						<!-- Slider items -->
-						@for ($i=0; $i<= count(tendances()) - 1; $i++ )
+						{{-- @for ($i=0; $i<= count(tendances()) - 1; $i++ )
 							<div> <a href="/{{ tendances()[$i]['slug'] }}" class="text-reset btn-link">{!! tendances()[$i]['title_truncate'] !!}</a></div> 
-						@endfor
+						@endfor --}}
 					</div>
 				</div>
 			</div>
@@ -159,7 +159,7 @@
 				<!-- Nav right START -->
 				<div class="nav flex-nowrap align-items-center me-2">
 
-					<in-second-menu class="nav-item" style="margin-top: 7px"></in-second-menu>
+					<in-second-menu class="nav-item" style="margin-top: -7px"></in-second-menu>
 
 					<div class="nav-item dropdown nav-search dropdown-toggle-icon-none">
 						<a class="nav-link pe-0 dropdown-toggle" role="button" href="#" id="navSearch" data-bs-toggle="dropdown" aria-expanded="false">

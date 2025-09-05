@@ -108,39 +108,39 @@ onMounted(() => {
       </span>
     </div>
   </div> 
-  <div v-else-if="dataReady === 1">
-    <div class="nav-item ms-2 ms-md-3">
-      <a class="avatar avatar-xs" href="#" role="button" data-bs-toggle="dropdown">
-       <div class="btn btn-primary btn-round mb-0 ">
+  <div class="nav-item ms-2 ms-md-3 dropdown" v-else-if="dataReady === 1">
+    <a class="avatar avatar-xs" href="#" role="button" data-bs-toggle="dropdown">
+      <div class="avatar-img rounded-circle bg-primary">
+        <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
           {{ meProfileUserName[0].toUpperCase() }}
-        </div> 
-      </a>
-      <ul class="dropdown-menu">
-        <li class="dropdown-item">
-          <div class="d-flex align-items-center">
-            <div class="avatar avatar-xs">
-              <div class="avatar-img rounded-circle bg-primary">
-                <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
-                  {{ meProfileUserName[0].toUpperCase() }}
-                </span>
-              </div>
-            </div>
-            &nbsp; &nbsp; &nbsp;
-            <div>
-              <a class="h6 mt-2 mt-sm-0" href="#">{{ meProfileUserName }}</a>
-              <p class="small m-0">{{ meProfileEmail }}</p>
+        </span>
+      </div>
+    </a>
+    <ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3">
+      <li class="px-3">
+        <div class="d-flex align-items-center">
+          <div class="avatar avatar-xs">
+            <div class="avatar-img rounded-circle bg-primary">
+              <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
+                {{ meProfileUserName[0].toUpperCase() }}
+              </span>
             </div>
           </div>
-          <hr>
-        </li>
-        <li><a class="dropdown-item" href="/auth/profile"><i class="bi bi-person fa-fw me-2"></i>Editer mon profil</a></li>
-        <li v-if="meProfileRoleName === 'Administrateur'"><a class="dropdown-item" href="/admin/dashboard"><i class="bi bi-house-door fa-fw me-2"></i>Tableau de bord</a></li>
-        <li v-else-if="meProfileRoleName === 'Publicateur d\' articles'"><a class="dropdown-item" href="/pub/dashboard"><i class="bi bi-house-door fa-fw me-2"></i>Tableau de bord</a></li>
-        <li>
-          <span class="dropdown-item" v-if="!logoutCheck" style="cursor: pointer" @click="logout"><i class="bi bi-power fa-fw me-2"></i>Se déconnecter</span>
-          <span class="dropdown-item" v-else><i class="bi bi-power fa-fw me-2"></i>Déconnexion en cours ...</span>
-        </li>
-      </ul>
-    </div>
+          &nbsp; &nbsp; &nbsp;
+          <div>
+            <a class="h6 mt-2 mt-sm-0" href="#">{{ meProfileUserName }}</a>
+            <p class="small m-0">{{ meProfileEmail }}</p>
+          </div>
+        </div>
+        <hr>
+      </li>
+      <li><a class="dropdown-item" href="/auth/profile"><i class="bi bi-person fa-fw me-2"></i>Editer mon profil</a></li>
+      <li v-if="meProfileRoleName === 'Administrateur'"><a class="dropdown-item" href="/admin/dashboard"><i class="bi bi-house-door fa-fw me-2"></i>Tableau de bord</a></li>
+      <li v-else-if="meProfileRoleName === 'Publicateur d\' articles'"><a class="dropdown-item" href="/pub/dashboard"><i class="bi bi-house-door fa-fw me-2"></i>Tableau de bord</a></li>
+      <li>
+        <span class="dropdown-item" v-if="!logoutCheck" style="cursor: pointer" @click="logout"><i class="bi bi-power fa-fw me-2"></i>Se déconnecter</span>
+        <span class="dropdown-item" v-else><i class="bi bi-power fa-fw me-2"></i>Déconnexion en cours ...</span>
+      </li>
+    </ul>
   </div>
 </template>
