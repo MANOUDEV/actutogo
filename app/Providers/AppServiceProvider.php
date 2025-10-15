@@ -23,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
 
         \Carbon\Carbon::setLocale('fr');
 
-        Paginator::useBootstrap(5);
+        Paginator::useBootstrap();
     }
 }
