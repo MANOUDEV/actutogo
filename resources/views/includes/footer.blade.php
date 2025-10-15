@@ -31,10 +31,10 @@
 			<div class="col-sm-6 col-lg-2 mb-4">
 				<h5 class="mb-4 text-white">Notre poignée sociale</h5>
 				<ul class="nav flex-column">
-					<li class="nav-item text-white"><a class="nav-link pt-0" href="#"><i class="fab fa-facebook-square fa-fw me-2 text-facebook"></i>Facebook</a></li>
-					<li class="nav-item text-white"><a class="nav-link" href="#"><i class="fab fa-twitter-square fa-fw me-2 text-twitter"></i>Twitter (X)</a></li>
-					<li class="nav-item text-white"><a class="nav-link" href="#"><i class="fab fa-linkedin fa-fw me-2 text-linkedin"></i>Linkedin</a></li>
-					<li class="nav-item text-white"><a class="nav-link" href="#"><i class="fab fa-whatsapp fa-fw me-2 text-success"></i>Whastapp</a></li>
+					<li class="nav-item text-white"><a class="nav-link text-white pt-0" href="#"><i class="fab fa-facebook-square fa-fw me-2 text-facebook"></i>Facebook</a></li>
+					<li class="nav-item text-white"><a class="nav-link text-white" href="#"><i class="fab fa-twitter-square fa-fw me-2 text-twitter"></i>Twitter (X)</a></li>
+					<li class="nav-item text-white"><a class="nav-link text-white" href="#"><i class="fab fa-linkedin fa-fw me-2 text-linkedin"></i>Linkedin</a></li>
+					<li class="nav-item text-white"><a class="nav-link text-white" href="#"><i class="fab fa-whatsapp fa-fw me-2 text-success"></i>Whastapp</a></li>
 				</ul>
 			</div>
 		</div>
