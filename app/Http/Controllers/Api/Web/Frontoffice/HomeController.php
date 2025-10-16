@@ -25,4 +25,141 @@ class HomeController extends BaseController
 
         }
     }
+
+    public function nationalDataRequest(){
+
+        $societe = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+
+        ->where(function ($query) {
+            $query->where("status", 1);
+        })->where(function ($query) {
+            $query->where("category_id", 34)
+            ->orWhere("category_id", 1)
+            ->orWhere("category_id", 2)
+            ->orWhere("category_id", 26)
+            ->orWhere("category_id", 33);
+        })
+        ->orderBy('date_publish', 'desc')
+        ->take(6)
+        ->get();
+
+        $societeLoad = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where(function ($query) {
+            $query->where("status", 1);
+        })->where(function ($query) {
+            $query->where("category_id", 34)
+            ->orWhere("category_id", 1)
+            ->orWhere("category_id", 2)
+            ->orWhere("category_id", 26)
+            ->orWhere("category_id", 33);
+        })
+        ->where("id", '!=',$societe[0]->id)
+        ->where("id", '!=',$societe[1]->id)
+        ->where("id", '!=',$societe[2]->id)
+        ->where("id", '!=',$societe[3]->id)
+        ->where("id", '!=',$societe[4]->id)
+        ->where("id", '!=',$societe[5]->id)
+        ->orderBy('date_publish', 'desc')
+        ->take(6)
+        ->get();
+
+        $populars = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 9)
+        ->orderBy('views_count', 'desc')
+        ->take(8)
+        ->get();
+
+        $tags = Tag::orderBy('tags.count_publications', 'desc')->take(5)->get();
+
+        return $this->sendResponse([
+            'status' => 200,
+            'societe' => $societe,
+            'populars' => $populars,
+            'societeLoad' => $societeLoad,
+            'tags' => $tags,
+        ], 'Toute l\'actualité');
+
+    }
+
+    public function editorialDataRequest()
+    {
+
+        $internationalFirst = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 12)
+        ->orderBy('date_publish', 'desc')
+        ->take(8)
+        ->get();
+
+        $internationalTwo = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 12)
+        ->where("id", '!=',$internationalFirst[0]->id)
+        ->where("id", '!=',$internationalFirst[1]->id)
+        ->where("id", '!=',$internationalFirst[2]->id)
+        ->where("id", '!=',$internationalFirst[3]->id)
+        ->where("id", '!=',$internationalFirst[4]->id)
+        ->where("id", '!=',$internationalFirst[5]->id)
+        ->where("id", '!=',$internationalFirst[6]->id)
+        ->where("id", '!=',$internationalFirst[7]->id)
+        ->orderBy('date_publish', 'desc')
+        ->take(1)
+        ->get();
+
+
+        $sports = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 20)
+        ->orderBy('date_publish', 'desc')
+        ->take(8)
+        ->get();
+
+        $afrique = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 6)
+        ->orderBy('date_publish', 'desc')
+        ->take(8)
+        ->get();
+
+       
+
+        return $this->sendResponse([
+            'internationalFirst' =>  $internationalFirst,
+            'internationalTwo' =>  $internationalTwo, 
+            'afrique' =>  $afrique, 
+            'sports' =>  $sports,
+            'status' => 200
+        ], 'Liste des articles publiés sur international.');
+
+    }
+
+
+     public function opinionFaitsDiversDataRequest()
+    {
+
+        $opinion = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 25)
+        ->orderBy('date_publish', 'desc')
+        ->take(8)
+        ->get();
+
+        $faitsDivers = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 14)
+        ->orderBy('date_publish', 'desc')
+        ->take(8)
+        ->get();
+
+        return $this->sendResponse([
+            'opinion' =>  $opinion,
+            'faitsDivers' =>  $faitsDivers,
+            'status' => 200
+        ], 'Liste des articles publiés sur les opinions et faits divers.');
+
+    }
+
 }
