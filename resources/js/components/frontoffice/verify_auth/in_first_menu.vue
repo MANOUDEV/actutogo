@@ -10,6 +10,9 @@ const meProfileRoleName = ref(null);
 const loadingConnect = ref(false);
 const remember_me = ref(false);
 
+
+
+
 const show = async () => {
   if (localStorage.getItem('access_token') && localStorage.getItem('nbRsp')) {
     await store.dispatch('meProfile/getMeProfile');
@@ -71,17 +74,17 @@ onMounted(() => {
   <span v-if="dataReady === 0"></span>
   <span v-else-if="dataReady === 1">
     <span v-if="meProfileRoleName === 'Administrateur'">
-      <a class="nav-link text-white" href="/admin/dashboard">Tableau de bord</a>
+      <a class="nav-link text-dark" href="/admin/dashboard">Tableau de bord</a>
     </span>
     <span v-else-if="meProfileRoleName === 'Publicateur d\' articles'">
-      <a class="nav-link text-white" href="/pub/dashboard">Tableau de bord</a>
+      <a class="nav-link text-dark" href="/pub/dashboard">Tableau de bord</a>
     </span>
     <span v-else-if="meProfileRoleName === 'Visiteur'">
-      <a class="nav-link text-white" href="/profile">Voir mon profil</a>
+      <a class="nav-link text-dark" href="/profile">Voir mon profil</a>
     </span>
   </span>
   <span v-else-if="dataReady === 2 || dataReady === 3">
-    <span class="nav-link text-white" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">Se connecter</span>
-    <span class="nav-link text-white" v-else>Connexion en cours ...</span>
+    <span class="nav-link text-dark" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">Se connecter</span>
+    <span class="nav-link text-dark" v-else>Connexion en cours ...</span>
   </span>
 </template>

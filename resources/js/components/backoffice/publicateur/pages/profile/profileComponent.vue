@@ -1,923 +1,10 @@
-<script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import Swal from 'sweetalert2';
-
-import {VueTelInput} from 'vue-tel-input';
-
-const store = useStore();
-const dataReady = ref(0)
-const meRoleName = ref(null)
-const meProfileUpdateData = ref({})
-const meProfileUpdateMessage = ref(null)
-const meProfileUpdateErrors= ref([])
-const mePasswordUpdateData = ref({})
-const mePasswordUpdateMessage = ref(null)
-const mePasswordUpdateErrors= ref([])
-const old_password = ref(null)
-const new_password = ref(null)
-const new_password_confirm = ref(null)
-const showOPsw = ref(false)
-const showNPsw = ref(false)
-const showOPswC = ref(false) 
-const meProfileData = ref({
-    nom: null,
-    prenoms: null,
-    email: null,
-    authorName: null,
-    username: null,
-    telephone: null,
-    address: null,
-    description: null
-})
-const meProfileErrors = ref([])
-const meProfileMessage = ref(null) 
-const meProfileUserName = ref(null)
-const meProfileRoleName = ref(null)
-const authSectionModal =  ref('LIST')
-const username = ref(null)
-const password = ref(null)
-const password_confirm = ref(null)
-const loadingLogin = ref(false)
-const errorLogin = ref(false)
-const errorsLogin = ref([])
-const loadingConnect = ref(false)
-const remember_me = ref(false)
-const authSectionStepModal = ref(1)
-const loadingForgotPasswordFirst = ref(false)
-const loadingResendOTP = ref(false)
-const errorForgotPasswordFirst = ref(false)
-const errorsForgotPasswordFirst = ref([])
-const loadingForgotPasswordTwo = ref(false)
-const errorForgotPasswordTwo = ref(false)
-const errorsForgotPasswordTwo = ref([])
-const loadingForgotPasswordThree = ref(false)
-const errorForgotPasswordThree = ref(false)
-const errorsForgotPasswordThree = ref([])
-const step = ref(1)
-const nom = ref(null)
-const prenoms = ref(null)
-const authorName = ref(null)
-const email = ref(null)
-const telephone = ref(null)
-const address = ref(null)
-const description = ref("Nous tenons à rappeler aux visiteurs du site que sans partenariat avec togoactualite.com, la reprise des articles même partielle est strictement interdite.Tout contrevenant s'expose à de graves poursuites.")
-const slug = ref(null)
-const loadingUpdate = ref(false)
-const loadingUpdatePassword = ref(false)
-const showPsw = ref(false)
-const showPswC = ref(false)
-const loadingShow = ref(true)
-const empty = ref(2)
-
-    const authFormModalMeProfileUpdateClose =() =>{
-        errorForgotPasswordFirst.value = null
-        errorsForgotPasswordFirst.value = []
-        errorForgotPasswordTwo.value = null
-        errorsForgotPasswordTwo.value = []
-        errorForgotPasswordThree.value = null
-        errorsForgotPasswordThree.value = []
-        errorLogin.value = false
-        errorsLogin.value = []
-        meProfileUpdateMessage.value =  null
-        meProfileUpdateErrors.value = []
-        $('#authFormModalMeProfileUpdate').modal('hide');
-    }
-
-    const showPassword = () =>{
-        var x = document.getElementById("psw-input");
-        if (x.type === "password") {
-            x.type = "text";
-            showPsw.value = true
-        } else {
-            x.type = "password";
-            showPsw.value = false
-        }
-    }
-
-    const showPasswordC = () =>{
-        var x = document.getElementById("psw-input_c");
-        if (x.type === "password") {
-            x.type = "text";
-            showPswC.value = true
-        } else {
-            x.type = "password";
-            showPswC.value = false
-        }
-    }
-
-    const showOPassword = () =>{
-        var x = document.getElementById("psw-input_o");
-        if (x.type === "password") {
-            x.type = "text";
-            showOPsw.value = true
-        } else {
-            x.type = "password";
-            showOPsw.value = false
-        }
-    }
-
-    const showNPassword = () =>{
-        var x = document.getElementById("psw-input_n");
-        if (x.type === "password") {
-            x.type = "text";
-            showNPsw.value = true
-        } else {
-            x.type = "password";
-            showNPsw.value = false
-        }
-    }
-
-    const showOPasswordC = () =>{
-        var x = document.getElementById("psw-input_c_o");
-        if (x.type === "password") {
-            x.type = "text";
-            showOPswC.value = true
-        } else {
-            x.type = "password";
-            showOPswC.value = false
-        }
-    }
-
-    const authFormModalMeProfileUpdateShow = (action_auth="SHOW") =>{
-
-        if(localStorage.getItem('remember_me') == "true" && localStorage.getItem('username') && localStorage.getItem('password')){
-
-            username.value = localStorage.getItem('username')
-
-            password.value = localStorage.getItem('password')
-
-            remember_me.value = localStorage.getItem('remember_me')
-        }
-
-        errorForgotPasswordFirst.value = null
-        errorsForgotPasswordFirst.value = []
-        errorForgotPasswordTwo.value = null
-        errorsForgotPasswordTwo.value = []
-        errorForgotPasswordThree.value = null
-        errorsForgotPasswordThree.value = []
-        errorLogin.value = false
-        errorsLogin.value = []
-
-        loadingUpdate.value = false
-
-        if(authSectionModal == "SHOW"){
-
-            loadingShow.value = false
-
-        }else if(authSectionModal == "UPDATE"){
-
-            loadingUpdate.value = false
-
-        }
-
-        $('#authFormModalMeProfileUpdate').modal('show');
-    }
-
-    const cancel = () => {
-        old_password.value = null
-        new_password.value = null
-        new_password_confirm.value = null
-        mePasswordUpdateMessage.value = null
-        mePasswordUpdateErrors.value = []
-    }
-
-    const PreviousForgotPasswordStep = () =>{
-        step.value  = 1
-        errorForgotPasswordFirst.value  = null
-        errorsForgotPasswordFirst.value  = []
-        errorForgotPasswordTwo.value  = null
-        errorsForgotPasswordTwo.value  = []
-        errorForgotPasswordThree.value  = null
-        errorsForgotPasswordThree.value  = []
-        errorLogin.value  = false
-        errorsLogin.value  = []
-        meProfileUpdateMessage.value  =  null
-        meProfileUpdateErrors.value  = []
-    }
-
-    const PreviousHForgotPasswordStep = () =>{
-        step.value =  2
-        errorForgotPasswordFirst.value =  null
-        errorsForgotPasswordFirst.value =  []
-        errorForgotPasswordTwo.value =  null
-        errorsForgotPasswordTwo.value =  []
-        errorForgotPasswordThree.value =  null
-        errorsForgotPasswordThree.value =  []
-        errorLogin.value =  false
-        errorsLogin.value =  []
-        meProfileUpdateMessage.value =   null
-        meProfileUpdateErrors.value =  []
-    }
-
-    const changeAuthSectionStepModalToForgotPassword = () =>{
-        authSectionStepModal.value = 2
-        errorForgotPasswordFirst.value = null
-        errorsForgotPasswordFirst.value = []
-        errorForgotPasswordTwo.value = null
-        errorsForgotPasswordTwo.value = []
-        errorForgotPasswordThree.value = null
-        errorsForgotPasswordThree.value = []
-        errorLogin.value = false
-        errorsLogin.value = []
-        meProfileUpdateMessage.value =  null
-        meProfileUpdateErrors.value = []
-    }
-
-   const changeAuthSectionStepModalToLogin = () => {
-        authSectionStepModal.value = 1
-        errorForgotPasswordFirst.value = null
-        errorsForgotPasswordFirst.value = []
-        errorForgotPasswordTwo.value = null
-        errorsForgotPasswordTwo.value = []
-        errorForgotPasswordThree.value = null
-        errorsForgotPasswordThree.value = []
-        errorLogin.value = false
-        errorsLogin.value = []
-        meProfileUpdateMessage.value =  null
-        meProfileUpdateErrors.value = []
-    }
-
-    const meProfile = async () => { 
-
-        loadingShow.value =  true
-
-        authSectionModal.value =  'SHOW'
-
-        await store.dispatch('meProfile/getMeProfile');
-        const gettersMeProfileData =  store.getters['meProfile/getMeProfileData']; 
-        const gettersMeProfileStatus =  store.getters['meProfile/getMeProfileStatus'];
-        const gettersMeProfileMessage =  store.getters['meProfile/getMeProfileMessage'];
-
-        if( gettersMeProfileStatus ==="success"){
-
-            meProfileData.value =  gettersMeProfileData 
-
-            meProfileUpdateMessage.value =   null
-
-            meProfileUpdateErrors.value =  [] 
-
-            empty.value =  0
-
-            dataReady.value =  1
-
-            loadingShow.value =  false
-
-        }else{
-
-            empty.value =  1
-
-            dataReady.value =  1
-
-            meProfileMessage.value =  gettersMeProfileMessage
-
-            loadingShow.value =  false
-
-        }
-    }
-
-const show = async () =>{
-
-    loadingShow.value =   true
-
-    authSectionModal.value =   'SHOW'
-
-    if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-        await store.dispatch('roleSecurity/getMeRole', {});
-
-        const gettersRoleStatus =  store.getters['roleSecurity/getRoleStatus'];
-        const gettersMeRoleName =  store.getters['roleSecurity/getMeRoleName'];
-
-        if(gettersRoleStatus === 'success'){
-
-            meRoleName.value =   gettersMeRoleName 
-
-            if((meRoleName.value == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbrsp?!')){
-
-                
-                meProfile()
-
-            }else{
-
-                dataReady.value =  2
-
-            }
-
-        }else if(gettersRoleStatus === 'failed'){
-
-            dataReady.value =   3;
-        }
-
-    }else{
-
-        dataReady.value =   4;
-
-    }
-
-}
-const update = async () =>{
-
-    loadingUpdate.value = true
-
-    authSectionModal.value = 'UPDATE'
-
-    if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-        await store.dispatch('roleSecurity/getMeRole', {});
-
-        const gettersRoleStatus =  store.getters['roleSecurity/getRoleStatus'];
-        const gettersMeRoleName =  store.getters['roleSecurity/getMeRoleName'];
-
-        if(gettersRoleStatus === 'success'){
-
-            meRoleName.value = gettersMeRoleName
-
-            if((meRoleName.value == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbrsp?!')){
-
-                meProfileUpdate() 
-
-            }else{
-
-                authFormModalMeProfileUpdateShow('UPDATE')
-
-            }
-
-        }else if(gettersRoleStatus === 'failed'){
-
-            authFormModalMeProfileUpdateShow('UPDATE')
-        }
-
-    }else{
-
-        authFormModalMeProfileUpdateShow('UPDATE')
-
-    }
-
-}
-
-const meProfileUpdate = async () =>{
-
-    loadingUpdate.value  = true
-
-    authSectionModal.value = 'UPDATE'
-
-    meProfileUpdateMessage.value  =  null
-    meProfileUpdateErrors.value  = []
-
-    await store.dispatch('meProfile/updateMeProfile', { nom : meProfileData.value.nom, prenoms : meProfileData.value.prenoms, authorName : meProfileData.value.authorName, username : meProfileData.value.username,email : meProfileData.value.email, address : meProfileData.value.address, telephone : meProfileData.value.telephone, description : meProfileData.value.description});
-    
-    const getterInfosMeProfileUpdateStatus =  store.getters['meProfile/getMeProfileUpdateStatus'];
-    const getterInfosMeProfileUpdateData =  store.getters['meProfile/getMeProfileUpdateData'];
-    const getterInfosMeProfileUpdateErrors =  store.getters['meProfile/getMeProfileUpdateErrors'];
-    const getterInfosMeProfileUpdateMessage =  store.getters['meProfile/getMeProfileUpdateMessage'];
-
-    if( getterInfosMeProfileUpdateStatus ==="success"){
-
-        meProfileUpdateData.value = getterInfosMeProfileUpdateData
-
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: getterInfosMeProfileUpdateMessage,
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-
-        loadingUpdate.value = false
-
-        meProfileUpdateMessage.value =  null
-        meProfileUpdateErrors.value = []
-
-    }else if( getterInfosMeProfileUpdateStatus ==="empty"){
-
-        meProfileUpdateMessage.value = getterInfosMeProfileUpdateMessage
-
-        meProfileUpdateErrors.value = getterInfosMeProfileUpdateErrors
-
-        loadingUpdate.value = false
-
-
-    }else if( getterInfosMeProfileUpdateStatus ==="error"){
-
-        meProfileUpdateMessage.value = getterInfosMeProfileUpdateMessage
-
-        meProfileUpdateErrors.value = []
-
-        loadingUpdate.value = false
-
-    }
-}
-
-const updatePassword = async () =>{
-
-    loadingUpdatePassword.value = true
-
-    authSectionModal.value = 'UPDATEPASSWORD'
-
-    if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-        await store.dispatch('roleSecurity/getMeRole', {});
-
-        const gettersRoleStatus =  store.getters['roleSecurity/getRoleStatus'];
-        const gettersMeRoleName =  store.getters['roleSecurity/getMeRoleName'];
-
-        if(gettersRoleStatus === 'success'){
-
-            meRoleName.value = gettersMeRoleName
-
-            if((meRoleName.value == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbrsp?!')){
-
-                mePasswordUpdate()
-
-            }else{
-
-                authFormModalMeProfileUpdateShow('UPDATEPASSWORD')
-
-            }
-
-        }else if(gettersRoleStatus === 'failed'){
-
-            authFormModalMeProfileUpdateShow('UPDATEPASSWORD')
-        }
-
-    }else{
-
-        authFormModalMeProfileUpdateShow('UPDATEPASSWORD')
-
-    }
-
-}
-
-const mePasswordUpdate = async () =>{
-
-    loadingUpdatePassword.value = true
-
-    authSectionModal.value = 'UPDATEPASSWORD'
-
-    mePasswordUpdateMessage.value =  null
-    mePasswordUpdateErrors.value = []
-
-    await store.dispatch('meProfile/updateMePassword', { password : old_password.value, new_password : new_password.value, new_password_confirm : new_password_confirm.value });
-    const gettersInfosMePasswordUpdateStatus =  store.getters['meProfile/getMePasswordUpdateStatus'];
-    const gettersInfosMePasswordUpdateData =  store.getters['meProfile/getMePasswordUpdateData'];
-    const gettersInfosMePasswordUpdateErrors =  store.getters['meProfile/getMePasswordUpdateErrors'];
-    const gettersInfosMePasswordUpdateMessage =  store.getters['meProfile/getMePasswordUpdateMessage'];
-    
-    if( gettersInfosMePasswordUpdateStatus ==="success"){
-
-        mePasswordUpdateData.value = gettersInfosMePasswordUpdateData
-
-       Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: gettersInfosMePasswordUpdateMessage,
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-      });
-
-        loadingUpdate.value = false
-
-        mePasswordUpdateMessage.value =  null
-        mePasswordUpdateErrors.value = []
-
-        logout()
-
-    }else if( gettersInfosMePasswordUpdateStatus ==="empty"){
-
-        mePasswordUpdateMessage.value = gettersInfosMePasswordUpdateMessage
-
-        mePasswordUpdateErrors.value = gettersInfosMePasswordUpdateErrors
-
-        loadingUpdatePassword.value = false
-
-
-    }else if( gettersInfosMePasswordUpdateStatus ==="error"){
-
-        mePasswordUpdateMessage.value = gettersInfosMePasswordUpdateMessage
-
-        mePasswordUpdateErrors.value = []
-
-        loadingUpdatePassword.value = false
-
-    }
-}    
-const logout = async () => {
-  await store.dispatch('logout/getLogoutApi');
-  const getterLogoutStatus =  store.getters['logout/getLogoutStatus'];
-  const getterLogoutMessage =  store.getters['logout/getLogoutMessage'];
-  if (getterLogoutStatus === 'success') {
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: getterLogoutMessage,
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true
-    });
-    const  clearToken = {
-      access_token: null,
-      expires_in: null
-    }
-
-    store.getters["login/getAuthData"].access_token = clearToken.access_token
-    store.getters["login/getAuthData"].expires_in = clearToken.expires_in
-
-    window.location = '/auth/login' 
-  }
-};
-
-const submitVerifyForgotPasswordEmail = async () => {
-    loadingForgotPasswordFirst.value = true
-    errorForgotPasswordFirst.value = null
-    errorsForgotPasswordFirst.value = [] 
-    await store.dispatch('forgot_password/sendOtpForgotPassword', {email: email.value});
-    const gettersSendOtpForgotPasswordStatus =  store.getters['forgot_password/getSendOtpForgotPasswordStatus'];
-    const gettersSendOtpForgotPasswordErrors =  store.getters['forgot_password/getSendOtpForgotPasswordErrors'];
-    const gettersSendOtpForgotPasswordMessage =  store.getters['forgot_password/getSendOtpForgotPasswordMessage'];
-
-    if(gettersSendOtpForgotPasswordStatus === 'success'){
-
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: gettersSendOtpForgotPasswordMessage,
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-
-        errorForgotPasswordFirst.value = null
-        errorsForgotPasswordFirst.value = []
-
-        loadingForgotPasswordFirst.value = false
-
-        step = 2
-
-    }else if(gettersSendOtpForgotPasswordStatus === 'failed'){
-
-        errorsForgotPasswordFirst.value = gettersSendOtpForgotPasswordMessage
-
-        errorsForgotPasswordFirst.value = []
-
-        loadingForgotPasswordFirst.value = false
-
-    }else if(gettersSendOtpForgotPasswordStatus === 'error'){
-
-        errorForgotPasswordFirst.value = gettersSendOtpForgotPasswordMessage
-
-        errorsForgotPasswordFirst.value = gettersSendOtpForgotPasswordErrors
-
-        loadingForgotPasswordFirst.value = false
-    }
-
-    loadingForgotPasswordFirst = false
-}
-const submitResendOtp = async () =>{
-    loadingResendOTP.value = true
-    errorForgotPasswordFirst.value = null
-    errorsForgotPasswordFirst.value = [] 
-    await store.dispatch('forgot_password/sendOtpForgotPassword', {email: email.value});
-    const gettersSendOtpForgotPasswordStatus =  store.getters['forgot_password/getSendOtpForgotPasswordStatus'];
-    const gettersSendOtpForgotPasswordErrors =  store.getters['forgot_password/getSendOtpForgotPasswordErrors'];
-    const gettersSendOtpForgotPasswordMessage =  store.getters['forgot_password/getSendOtpForgotPasswordMessage'];
-
-    if(gettersSendOtpForgotPasswordStatus === 'success'){
-
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: gettersSendOtpForgotPasswordMessage,
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-
-        errorForgotPasswordFirst.value = null
-        errorsForgotPasswordFirst.value = []
-
-        loadingResendOTP.value = false
-
-        step.value = 2
-
-    }else if(gettersSendOtpForgotPasswordStatus === 'failed'){
-
-        errorForgotPasswordFirst.value = gettersSendOtpForgotPasswordMessage
-
-        errorsForgotPasswordFirst.value = []
-
-        loadingResendOTP.value = false
-
-    }else if(gettersSendOtpForgotPasswordStatus === 'error'){
-
-        errorForgotPasswordFirst.value = gettersSendOtpForgotPasswordMessage
-
-        errorsForgotPasswordFirst.value = gettersSendOtpForgotPasswordErrors
-
-        loadingResendOTP.value = false
-    }
-
-    loadingResendOTP.value = false
-}
-
-const submitVerifyForgotPasswordOtp = async () =>{
-    loadingForgotPasswordTwo.value = true
-    errorForgotPasswordTwo.value = null
-    errorsForgotPasswordTwo.value = []
-    await store.dispatch('forgot_password/checkOtpForgotPassword', {email: email.value, otp: otp.value});
-    const gettersCheckOtpForgotPasswordStatus =  store.getters['forgot_password/getCheckOtpForgotPasswordStatus'];
-    const gettersCheckOtpForgotPasswordErrors =  store.getters['forgot_password/getCheckOtpForgotPasswordErrors'];
-    const gettersCheckOtpForgotPasswordMessage =  store.getters['forgot_password/getCheckOtpForgotPasswordMessage'];
-
-    if(gettersCheckOtpForgotPasswordStatus === 'success'){
-
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: gettersCheckOtpForgotPasswordMessage,
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-
-        errorForgotPasswordTwo.value = null
-        errorsForgotPasswordTwo.value = []
-
-        loadingForgotPasswordTwo.value = false
-
-        step.value = 3
-
-    }else if(gettersCheckOtpForgotPasswordStatus === 'failed'){
-
-        errorForgotPasswordTwo.value = gettersCheckOtpForgotPasswordMessage
-
-        errorsForgotPasswordTwo.value = []
-
-        loadingForgotPasswordTwo.value = false
-
-    }else if(gettersCheckOtpForgotPasswordStatus === 'error'){
-
-        errorForgotPasswordTwo.value = gettersCheckOtpForgotPasswordMessage
-
-        errorsForgotPasswordTwo.value = gettersCheckOtpForgotPasswordErrors
-
-        loadingForgotPasswordTwo.value = false
-    }
-    loadingForgotPasswordTwo.value = false
-}
-
-const submitForgotPasswordNewPass = async()=>{
-    loadingForgotPasswordThree.value = true
-    errorForgotPasswordThree.value = null
-    errorsForgotPasswordThree.value = [] 
-
-    await store.dispatch('forgot_password/newPassOtpForgotPassword', {email:email.value, otp :otp.value, password :password.value ,password_confirm :password_confirm.value});
-    const gettersNewPassOtpForgotPasswordStatus =  store.getters['forgot_password/getNewPassOtpForgotPasswordStatus'];
-    const gettersNewPassOtpForgotPasswordErrors =  store.getters['forgot_password/getNewPassOtpForgotPasswordErrors'];
-    const gettersNewPassOtpForgotPasswordMessage =  store.getters['forgot_password/getNewPassOtpForgotPasswordMessage'];
-
-    if(gettersNewPassOtpForgotPasswordStatus === 'success'){
-
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: gettersNewPassOtpForgotPasswordMessage,
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-
-        errorForgotPasswordThree.value = null
-        errorsForgotPasswordThree.value = []
-
-        authSectionStepModal.value = 1
-
-    }else if(gettersNewPassOtpForgotPasswordStatus === 'failed'){
-
-        errorForgotPasswordThree.value = gettersNewPassOtpForgotPasswordMessage
-
-        errorsForgotPasswordThree.value = []
-
-        loadingForgotPasswordThree.value = false
-
-    }else if(gettersNewPassOtpForgotPasswordStatus === 'error'){
-
-        errorForgotPasswordThree.value = gettersNewPassOtpForgotPasswordMessage
-
-        errorsForgotPasswordThree.value = gettersNewPassOtpForgotPasswordErrors
-
-        loadingForgotPasswordThree.value = false
-    }
-    loadingForgotPasswordThree.value = false
-
-}
-
-const submitLogin = async () => {
-  loadingLogin.value = true;
-  errorLogin.value = false;
-  errorsLogin.value = [];
-  
-  // Action de connexion
-  await store.dispatch('login/login',{
-    username: username.value,
-    password: password.value,
-    remember_me: remember_me.value,
-  });
-
-  const getterLoginStatus = store.getters['login/getLoginStatus'];
-  const getterLoginMessage = store.getters['login/getLoginMessage'];
-  const getterLoginErrors = store.getters['login/getLoginErrors'];
-
-  if (getterLoginStatus === 'success pub') {
-        errorsLogin.value = []
-
-        errorLogin.value = false
-
-        if(remember_me.value){
-
-            localStorage.setItem('username', username.value )
-
-            localStorage.setItem('password', password.value)
-
-            localStorage.setItem('remember_me', true)
-
-            loadingLogin.value = false
-
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer);
-                    toast.addEventListener('mouseleave', Swal.resumeTimer);
-                },
-            });
-
-            Toast.fire({
-                icon: 'success',
-                title: getterLoginMessage,
-            });
-
-            if(authSectionModal.value== 'SHOW'){
-
-                authFormModalMeProfileUpdateClose()
-
-                loadingShow.value = true
-
-                meProfile()
-
-            }else if(authSectionModal.value== 'UPDATE'){
-
-
-                authFormModalMeProfileUpdateClose()
-
-                loadingUpdate.value = true
-
-                meProfileUpdate()
-
-            }else if(authSectionModal.value== 'UPDATEPASSWORD'){
-
-                authFormModalMeProfileUpdateClose()
-
-                loadingUpdatePassword.value = true
-
-                mePasswordUpdate()
-            }
-
-        }else{
-
-            localStorage.setItem('remember_me', false)
-
-            loadingLogin.value = false
-
-           const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer);
-                    toast.addEventListener('mouseleave', Swal.resumeTimer);
-                },
-            });
-
-            Toast.fire({
-                icon: 'success',
-                title: getterLoginMessage,
-            });
-
-            if(authSectionModal== 'SHOW'){
-
-                authFormModalMeProfileUpdateClose()
-
-                loadingShow.value = true
-
-                meProfile()
-
-            }else if(authSectionModal.value== 'UPDATE'){
-
-                authFormModalMeProfileUpdateClose()
-
-                loadingUpdate.value = true
-
-                meProfileUpdate()
-
-            }else if(authSectionModal.value== 'UPDATEPASSWORD'){
-
-                authFormModalMeProfileUpdateClose()
-
-                loadingUpdatePassword.value = true
-
-                mePasswordUpdate()
-            }
-
-        }
-
-    }else if(getterLoginStatus === 'success admin'){
-
-        if(remember_me.value){
-
-            localStorage.setItem('username', this.username )
-
-            localStorage.setItem('password', this.password)
-
-            localStorage.setItem('remember_me', true)
-
-            loadingLogin.value = false
-
-            window.location = '/admin/dashboard'
-
-
-        }else{
-
-            localStorage.setItem('remember_me', false)
-
-            loadingLogin.value = false
-
-            window.location = '/admin/dashboard'
-        }
-
-
-    }else if(getterLoginStatus === 'success visitor'){
-
-        if(remember_me.value){
-
-            localStorage.setItem('username', username.value )
-
-            localStorage.setItem('password', password.value)
-
-            localStorage.setItem('remember_me', true)
-
-            loadingLogin.value = false
-
-            window.location = '/'
-
-
-        }else{
-
-            localStorage.setItem('remember_me', false)
-
-            loadingLogin.value = false
-
-            window.location = '/'
-        }
-
-    
-    
-    } else if (getterLoginStatus === 'failed') {
-        errorLogin.value = getterLoginMessage;
-        errorsLogin.value = []; 
-        loadingLogin.value = false;
-    }else if (getterLoginStatus === 'error') {
-        errorLogin.value = getterLoginMessage;
-        errorsLogin.value = getterLoginErrors;
-        loadingLogin.value = false; 
-    } 
-}
-
-onMounted(() => {
-    show();
-});
-</script>
 <template>
     <section class="py-4">
         <div class="container">
             <div  v-if="dataReady == 0" >
                 <br/><br/><br/><br/><br/><br/><br/>
                 <div class="d-flex justify-content-center">
-                    <img :src="`/assets/images/logo.png`"  style="width: 150px;" alt="empty">
+                    <img src="https://actualitetogo.com/assets/images/logo.png"  style="width: 150px;" alt="empty">
                 </div>
                 <div class="d-flex justify-content-center mt-3">
                     <div class="spinner-border text-success" style="color: #006633" role="status">
@@ -979,7 +66,7 @@ onMounted(() => {
                                       <div class="mb-3" v-if="meProfileUpdateErrors.authorName">
                                         <label class="form-label">Nom d'auteur</label>
                                         <div class="input-group">
-                                          <span class="input-group-text">togoactualite.com/authors/</span>
+                                          <span class="input-group-text">togoactualite.com/auteurs/</span>
                                           <input type="text" class="form-control is-invalid" v-model="meProfileData.authorName" name="authorName" placeholder="Entrez votre nom d'auteur">
                                         </div>
                                         <div v-for="errorname in meProfileUpdateErrors.authorName" :key="errorname" class="text-danger">
@@ -989,7 +76,7 @@ onMounted(() => {
                                       <div class="mb-3" v-else>
                                         <label class="form-label">Nom d'auteur</label>
                                         <div class="input-group">
-                                          <span class="input-group-text">togoactualite.com/authors/</span>
+                                          <span class="input-group-text">togoactualite.com/auteurs/</span>
                                           <input type="text" class="form-control" name="authorName" v-model="meProfileData.authorName" placeholder="Entrez votre nom d'auteur">
                                         </div>
                                         <div class="form-text">Par defaut le nom d'auteur sera son prénom.</div>
@@ -1071,14 +158,14 @@ onMounted(() => {
                                     <div class="col-lg-12">
                                       <div class="mb-3" v-if="meProfileUpdateErrors.description">
                                         <label class="form-label">Description</label>
-                                        <textarea v-model="meProfileData.description" class="form-control is-invalid" placeholder='Redigez le contenu de votre description!' rows="3" ></textarea>
+                                        <QuillEditor theme="snow" v-model:content="description" placeholder='Redigez le contenu de votre description!' style=" min-height: 100px;" contentType="html" />
                                         <div v-for="errordescription in meProfileUpdateErrors.description" :key="errordescription" class="text-danger">
                                             {{ errordescription }}
                                         </div>
                                       </div>
                                       <div class="mb-3" v-else>
                                         <label class="form-label">Description</label>
-                                        <textarea v-model="meProfileData.description" class="form-control" placeholder='Redigez le contenu de votre description!' rows="3" ></textarea>
+                                        <QuillEditor theme="snow" v-model:content="description" placeholder='Redigez le contenu de votre description!' style=" min-height: 100px;" contentType="html" />
                                         <div class="form-text">Une brève description pour le profil de l'auteur.</div>
                                       </div>
                                     </div>
@@ -1099,7 +186,7 @@ onMounted(() => {
                                     <div class="col-md-3"></div>
                                     <div class="col-md-6">
                                       <div style="position: relative; height: 250px;">
-                                          <img :src="`/assets/images/empty.png`" style="width: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" alt="empty">
+                                          <img src="https://actualitetogo.com/assets/images/empty.png" style="width: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" alt="empty">
                                       </div>
                                       <h5 style="text-align: center; margin-top: -50px"> {{ meProfileMessage  }} </h5>
                                     </div>
@@ -1202,7 +289,7 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-            <div v-else-if="dataReady== 2"> <accessUnAuthorizedPub></accessUnAuthorizedPub> </div>
+            <div v-else-if="dataReady== 2"> <accessUnAuthorizedAdmin></accessUnAuthorizedAdmin> </div>
             <div v-else-if="dataReady== 3 || dataReady == 4">
                 <section class="overflow-hidden">
                     <div class="container">
@@ -1239,7 +326,7 @@ onMounted(() => {
                                 <!-- Content -->
                                 <h1 class="display-1 text-primary">Session expiré! </h1>
                                 <h5>Votre delai de connexion est expiré, connectez vous pour acceder à cette page.</h5>
-                                <span style="cursor: pointer"  @click="authFormModalMeProfileUpdateShow('SHOW')" class="btn btn-danger-soft mt-3"><i class="fas fa-long-arrow-alt-left me-3"></i>Se connecter</span>
+                                <span style="cursor: pointer"  @click="authFormModalMeProfilePubUpdateShow('SHOW')" class="btn btn-danger-soft mt-3"><i class="fas fa-long-arrow-alt-left me-3"></i>Se connecter</span>
 
                             </div>
                         </div>
@@ -1249,7 +336,7 @@ onMounted(() => {
         </div>
     </section>
      <!-- Modal Form -->
-     <div class="modal fade" id="authFormModalMeProfileUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+     <div class="modal fade" id="authFormModalMeProfilePubUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
 
 
@@ -1259,7 +346,7 @@ onMounted(() => {
                     <h5 class="modal-title" v-if="authSectionStepModal == 1">Se connecter</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 2">Modifier le mot de passe</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 3">S'inscrire</h5>
-                    <button type="button" class="btn-close" @click="authFormModalMeProfileUpdateClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" @click="authFormModalMeProfilePubUpdateClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div v-if="authSectionStepModal == 1" style="margin-bottom: -15px">
@@ -1480,3 +567,1048 @@ onMounted(() => {
         </div>
     </div>
 </template>
+
+<script>
+import { mapGetters, mapActions, mapMutations } from "vuex";
+import moment from 'moment'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import {VueTelInput} from 'vue-tel-input';
+import 'vue-tel-input/vue-tel-input.css';
+import store from '../../../../../store/index'
+export default {
+
+    components: {
+        QuillEditor,
+        VueTelInput
+    },
+    data () {
+        return {
+            dataReady: 0,
+            meRoleName: null,
+            meProfileUpdateData: {},
+            meProfileUpdateMessage: null,
+            meProfileUpdateErrors: [],
+            mePasswordUpdateData: {},
+            mePasswordUpdateMessage: null,
+            mePasswordUpdateErrors: [],
+            old_password: null,
+            new_password: null,
+            new_password_confirm: null,
+            showOPsw: false,
+            showNPsw: false,
+            showOPswC: false, 
+            meProfileData: {
+                nom: null,
+                prenoms: null,
+                email: null,
+                authorName: null,
+                username: null,
+                telephone: null,
+                address: null,
+                description: null
+            },
+            meProfileMessage: null,
+            meProfileErrors: [],
+            style: 'bootstrap5',
+            limit: 1,
+            keepLength: false,
+            showDisabled: false,
+            size: 'default',
+            align: 'left',
+            search: '',
+            meProfileUserName: null,
+            meProfileRoleName: null,
+            authSectionModal: 'LIST',
+            username: null,
+            password: null,
+            password_confirm: null,
+            loadingLogin: false,
+            errorLogin: false,
+            errorsLogin: [],
+            loadingConnect: false,
+            remember_me: false,
+            authSectionStepModal: 1,
+            loadingForgotPasswordFirst: false,
+            loadingResendOTP: false,
+            errorForgotPasswordFirst: false,
+            errorsForgotPasswordFirst: [],
+            loadingForgotPasswordTwo: false,
+            errorForgotPasswordTwo: false,
+            errorsForgotPasswordTwo: [],
+            loadingForgotPasswordThree: false,
+            errorForgotPasswordThree: false,
+            errorsForgotPasswordThree: [],
+            step: 1,
+            nom: null,
+            prenoms: null,
+            authorName: null,
+            email:null,
+            telephone:null,
+            address:null,
+            description: "Nous tenons à rappeler aux visiteurs du site que sans partenariat avec togoactualite.com, la reprise des articles même partielle est strictement interdite.Tout contrevenant s'expose à de graves poursuites.",
+            slug: null,
+            loadingUpdate: false,
+            loadingUpdatePassword: false,
+            showPsw: false,
+            showPswC: false,
+             
+        }
+    },
+    computed: {
+        ...mapGetters("roleSecurity",{
+            gettersMeRoleName:"getMeRoleName",
+            gettersRoleStatus:'getRoleStatus',
+        }),
+
+        ...mapGetters('meProfile',{
+            getterInfosMeProfileUpdateStatus:'getMeProfileUpdateStatus',
+            getterInfosMeProfileUpdateMessage:'getMeProfileUpdateMessage',
+            getterInfosMeProfileUpdateErrors:'getMeProfileUpdateErrors',
+            getterInfosMeProfileUpdateData:'getMeProfileUpdateData',
+            getterInfosMePasswordUpdateStatus:'getMePasswordUpdateStatus',
+            getterInfosMePasswordUpdateMessage:'getMePasswordUpdateMessage',
+            getterInfosMePasswordUpdateErrors:'getMePasswordUpdateErrors',
+            getterInfosMePasswordUpdateData:'getMePasswordUpdateData',
+            getterInfosMeProfileStatus:'getMeProfileStatus',
+            gettersMeProfileUserName:"getMeProfileUserName",
+            gettersMeProfileRoleName:"getMeProfileRoleName",
+            getterInfosMeProfileMessage:'getMeProfileMessage',
+            getterInfosMeProfileErrors:'getMeProfileErrors',
+            getterInfosMeProfileData:'getMeProfileData',
+        }),
+        ...mapGetters('login',{
+            getterLoginStatus:'getLoginStatus',
+            getterLoginMessage:'getLoginMessage',
+            getterLoginErrors:'getLoginErrors',
+        }),
+
+        ...mapGetters('logout',{
+            getterLogoutStatus:'getLogoutStatus',
+            getterLogoutMessage:'getLogoutMessage',
+
+        }),
+
+        ...mapGetters("forgot_password",{
+            gettersSendOtpForgotPasswordStatus:'getSendOtpForgotPasswordStatus',
+            gettersSendOtpForgotPasswordErrors:'getSendOtpForgotPasswordErrors',
+            gettersSendOtpForgotPasswordMessage:'getSendOtpForgotPasswordMessage',
+            gettersCheckOtpForgotPasswordStatus:'getCheckOtpForgotPasswordStatus',
+            gettersCheckOtpForgotPasswordErrors:'getCheckOtpForgotPasswordErrors',
+            gettersCheckOtpForgotPasswordMessage:'getCheckOtpForgotPasswordMessage',
+            gettersNewPassOtpForgotPasswordStatus:'getNewPassOtpForgotPasswordStatus',
+            gettersNewPassOtpForgotPasswordErrors:'getNewPassOtpForgotPasswordErrors',
+            gettersNewPassOtpForgotPasswordMessage:'getNewPassOtpForgotPasswordMessage',
+        }),
+
+    },
+    methods:{
+
+        ...mapActions('login',{
+            actionLogin:'login',
+            saveTokenData: 'saveTokenData'
+        }),
+
+        ...mapActions("logout",{
+            actionsGetLogout:'getLogoutApi'
+        }),
+ 
+        ...mapMutations('logout',{
+            setlogout: 'setLogout'
+        }),
+
+        ...mapActions("meProfile",{
+            actionsGetMeProfileDataRequest:'getMeProfile',
+            actionsMeProfileUpdateDataRequest:'updateMeProfile',
+            actionsMePasswordUpdateDataRequest:'updateMePassword'
+        }),
+
+        ...mapActions("forgot_password",{
+            actionsSendOtpForgotPassword:'sendOtpForgotPassword',
+            actionsCheckOtpForgotPassword:'checkOtpForgotPassword',
+            actionsNewPassOtpForgotPassword:'newPassOtpForgotPassword'
+        }),
+
+        ...mapActions("register",{
+            actionsSendOtpRegister:'sendOtpRegister',
+            actionsCheckOtpRegister:'checkOtpRegister',
+            actionsNewInfoOtpRegister:'newInfoOtpRegister',
+            actionsNewPassOtpRegister:'newPassOtpRegister'
+        }),
+
+        ...mapActions("roleSecurity",{
+          actionsGetMeRole:'getMeRole'
+        }), 
+
+
+        authFormModalMeProfilePubUpdateClose(){
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            this.errorLogin = false
+            this.errorsLogin = []
+            this.meProfileUpdateMessage =  null
+            this.meProfileUpdateErrors = []
+            $('#authFormModalMeProfilePubUpdate').modal('hide');
+        },
+
+        showPassword(){
+            var x = document.getElementById("psw-input");
+            if (x.type === "password") {
+                x.type = "text";
+                this.showPsw = true
+            } else {
+                x.type = "password";
+                this.showPsw = false
+            }
+        },
+
+        showPasswordC(){
+            var x = document.getElementById("psw-input_c");
+            if (x.type === "password") {
+                x.type = "text";
+                this.showPswC = true
+            } else {
+                x.type = "password";
+                this.showPswC = false
+            }
+        }, 
+
+        showOPassword(){
+            var x = document.getElementById("psw-input_o");
+            if (x.type === "password") {
+                x.type = "text";
+                this.showOPsw = true
+            } else {
+                x.type = "password";
+                this.showOPsw = false
+            }
+        },
+
+        showNPassword(){
+            var x = document.getElementById("psw-input_n");
+            if (x.type === "password") {
+                x.type = "text";
+                this.showNPsw = true
+            } else {
+                x.type = "password";
+                this.showNPsw = false
+            }
+        },
+
+        showOPasswordC(){
+            var x = document.getElementById("psw-input_c_o");
+            if (x.type === "password") {
+                x.type = "text";
+                this.showOPswC = true
+            } else {
+                x.type = "password";
+                this.showOPswC = false
+            }
+        }, 
+
+        authFormModalMeProfilePubUpdateShow(action_auth="SHOW"){
+
+            if(localStorage.getItem('remember_me') == "true" && localStorage.getItem('username') && localStorage.getItem('password')){
+
+                this.username = localStorage.getItem('username')
+
+                this.password = localStorage.getItem('password')
+
+                this.remember_me = localStorage.getItem('remember_me')
+            }
+
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            this.errorLogin = false
+            this.errorsLogin = []
+
+            this.loadingUpdate = false
+
+            if(this.authSectionModal == "SHOW"){
+
+                this.loadingShow = false
+
+            }else if(this.authSectionModal == "UPDATE"){
+
+                this.loadingUpdate = false
+
+            }
+
+            $('#authFormModalMeProfilePubUpdate').modal('show');
+        },
+
+        cancel(){
+            this.old_password = null
+
+            this.new_password = null
+
+            this.new_password_confirm = null
+ 
+            this.mePasswordUpdateMessage =  null
+            this.mePasswordUpdateErrors = []
+        },
+
+        PreviousForgotPasswordStep(){
+            this.step = 1
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            this.errorLogin = false
+            this.errorsLogin = []
+            this.meProfileUpdateMessage =  null
+            this.meProfileUpdateErrors = []
+        },
+
+        PreviousHForgotPasswordStep(){
+            this.step = 2
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            this.errorLogin = false
+            this.errorsLogin = []
+            this.meProfileUpdateMessage =  null
+            this.meProfileUpdateErrors = []
+        },
+
+        changeAuthSectionStepModalToForgotPassword(){
+            this.authSectionStepModal = 2
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            this.errorLogin = false
+            this.errorsLogin = []
+            this.meProfileUpdateMessage =  null
+            this.meProfileUpdateErrors = []
+        },
+
+        changeAuthSectionStepModalToLogin(){
+            this.authSectionStepModal = 1
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            this.errorLogin = false
+            this.errorsLogin = []
+            this.meProfileUpdateMessage =  null
+            this.meProfileUpdateErrors = []
+        },
+
+        async submitVerifyForgotPasswordEmail(){
+            this.loadingForgotPasswordFirst = true
+            this.errorForgotPasswordFirst = null
+            this.errorsForgotPasswordFirst = []
+            await this.actionsSendOtpForgotPassword({email:this.email});
+
+            if(this.gettersSendOtpForgotPasswordStatus === 'success'){
+
+                const Toast = this.$swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: this.gettersSendOtpForgotPasswordMessage
+                })
+
+                this.errorForgotPasswordFirst = null
+                this.errorsForgotPasswordFirst = []
+
+                this.loadingForgotPasswordFirst = false
+
+                this.step = 2
+
+            }else if(this.gettersSendOtpForgotPasswordStatus === 'failed'){
+
+                this.errorsForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
+
+                this.errorsForgotPasswordFirst = []
+
+                this.loadingForgotPasswordFirst = false
+
+            }else if(this.gettersSendOtpForgotPasswordStatus === 'error'){
+
+                this.errorForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
+
+                this.errorsForgotPasswordFirst = this.gettersSendOtpForgotPasswordErrors
+
+                this.loadingForgotPasswordFirst = false
+            }
+
+            this.loadingForgotPasswordFirst = false
+        },
+
+        async submitResendOtp(){
+                this.loadingResendOTP = true
+                this.errorForgotPasswordFirst = null
+                this.errorsForgotPasswordFirst = []
+                await this.actionsSendOtpForgotPassword({email:this.email});
+
+                if(this.gettersSendOtpForgotPasswordStatus === 'success'){
+
+                    const Toast = this.$swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                        }
+                    })
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: this.gettersSendOtpForgotPasswordMessage
+                    })
+
+                    this.errorForgotPasswordFirst = null
+                    this.errorsForgotPasswordFirst = []
+
+                    this.loadingResendOTP = false
+
+                    this.step = 2
+
+                }else if(this.gettersSendOtpForgotPasswordStatus === 'failed'){
+
+                    this.errorForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
+
+                    this.errorsForgotPasswordFirst = []
+
+                    this.loadingResendOTP = false
+
+                }else if(this.gettersSendOtpForgotPasswordStatus === 'error'){
+
+                    this.errorForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
+
+                    this.errorsForgotPasswordFirst = this.gettersSendOtpForgotPasswordErrors
+
+                    this.loadingResendOTP = false
+                }
+
+                this.loadingResendOTP = false
+            },
+
+        async submitVerifyForgotPasswordOtp(){
+            this.loadingForgotPasswordTwo = true
+            this.errorForgotPasswordTwo = null
+            this.errorsForgotPasswordTwo = []
+            await this.actionsCheckOtpForgotPassword({email:this.email, otp :this.otp });
+
+            if(this.gettersCheckOtpForgotPasswordStatus === 'success'){
+
+                const Toast = this.$swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: this.gettersCheckOtpForgotPasswordMessage
+                })
+
+                this.errorForgotPasswordTwo = null
+                this.errorsForgotPasswordTwo = []
+
+                this.loadingForgotPasswordTwo = false
+
+                this.step = 3
+
+            }else if(this.gettersCheckOtpForgotPasswordStatus === 'failed'){
+
+                this.errorForgotPasswordTwo = this.gettersCheckOtpForgotPasswordMessage
+
+                this.errorsForgotPasswordTwo = []
+
+                this.loadingForgotPasswordTwo = false
+
+            }else if(this.gettersCheckOtpForgotPasswordStatus === 'error'){
+
+                this.errorForgotPasswordTwo = this.gettersCheckOtpForgotPasswordMessage
+
+                this.errorsForgotPasswordTwo = this.gettersCheckOtpForgotPasswordErrors
+
+                this.loadingForgotPasswordTwo = false
+            }
+            this.loadingForgotPasswordTwo = false
+        },
+
+        async submitForgotPasswordNewPass(){
+            this.loadingForgotPasswordThree = true
+            this.errorForgotPasswordThree = null
+            this.errorsForgotPasswordThree = []
+            await this.actionsNewPassOtpForgotPassword({email:this.email, otp :this.otp, password :this.password ,password_confirm :this.password_confirm});
+
+            if(this.gettersNewPassOtpForgotPasswordStatus === 'success'){
+
+                const Toast = this.$swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: this.gettersNewPassOtpForgotPasswordMessage
+                })
+
+                this.errorForgotPasswordThree = null
+                this.errorsForgotPasswordThree = []
+
+                this.authSectionStepModal = 1
+
+            }else if(this.gettersNewPassOtpForgotPasswordStatus === 'failed'){
+
+                this.errorForgotPasswordThree = this.gettersNewPassOtpForgotPasswordMessage
+
+                this.errorsForgotPasswordThree = []
+
+                this.loadingForgotPasswordThree = false
+
+            }else if(this.gettersNewPassOtpForgotPasswordStatus === 'error'){
+
+                this.errorForgotPasswordThree = this.gettersNewPassOtpForgotPasswordMessage
+
+                this.errorsForgotPasswordThree = this.gettersNewPassOtpForgotPasswordErrors
+
+                this.loadingForgotPasswordThree = false
+            }
+            this.loadingForgotPasswordThree = false
+
+        },
+
+        async submitLogin(){
+            this.loadingLogin = true
+            this.errorLogin = false
+            this.errorsLogin = []
+            await this.actionLogin({username:this.username, password:this.password, remember_me: this.remember_me});
+
+            if(this.getterLoginStatus === 'success admin'){
+
+                if(this.remember_me){
+
+                    localStorage.setItem('username', this.username )
+
+                    localStorage.setItem('password', this.password)
+
+                    localStorage.setItem('remember_me', true)
+
+                    this.loadingLogin = false
+
+                    window.location = '/admin/dashboard'
+
+
+                }else{
+
+                    localStorage.setItem('remember_me', false)
+
+                    this.loadingLogin = false
+
+                    window.location = '/admin/dashboard'
+                }
+
+            }else if(this.getterLoginStatus === 'success pub'){
+
+               
+                 this.errorsLogin = []
+
+                this.errorLogin = false
+
+                if(this.remember_me){
+
+                    localStorage.setItem('username', this.username )
+
+                    localStorage.setItem('password', this.password)
+
+                    localStorage.setItem('remember_me', true)
+
+                    this.loadingLogin = false
+
+                    const Toast = this.$swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                        }
+                    })
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: this.getterLoginMessage
+                    })
+
+                    if(this.authSectionModal== 'SHOW'){
+
+                        this.authFormModalMeProfilePubUpdateClose()
+
+                        this.loadingShow = true
+
+                        this.meProfile()
+
+                    }else if(this.authSectionModal== 'UPDATE'){
+
+
+                        this.authFormModalMeProfilePubUpdateClose()
+
+                        this.loadingUpdate = true
+
+                        this.meProfileUpdate()
+
+                    }else if(this.authSectionModal== 'UPDATEPASSWORD'){
+
+                        this.authFormModalMeProfilePubUpdateClose()
+
+                        this.loadingUpdatePassword = true
+
+                        this.mePasswordUpdate()
+                    }
+
+                }else{
+
+                    localStorage.setItem('remember_me', false)
+
+                    this.loadingLogin = false
+
+                    const Toast = this.$swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                        }
+                    })
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: this.getterLoginMessage
+                    })
+
+                    if(this.authSectionModal== 'SHOW'){
+
+                        this.authFormModalMeProfilePubUpdateClose()
+
+                        this.loadingShow = true
+
+                        this.meProfile()
+
+                    }else if(this.authSectionModal== 'UPDATE'){
+
+                        this.authFormModalMeProfilePubUpdateClose()
+
+                        this.loadingUpdate = true
+
+                        this.meProfileUpdate()
+
+                    }else if(this.authSectionModal== 'UPDATEPASSWORD'){
+
+                        this.authFormModalMeProfilePubUpdateClose()
+
+                        this.loadingUpdatePassword = true
+
+                        this.mePasswordUpdate()
+                    }
+
+                }
+
+
+            }else if(this.getterLoginStatus === 'success visitor'){
+
+                if(this.remember_me){
+
+                    localStorage.setItem('username', this.username )
+
+                    localStorage.setItem('password', this.password)
+
+                    localStorage.setItem('remember_me', true)
+
+                    this.loadingLogin = false
+
+                    window.location = '/'
+
+
+                }else{
+
+                    localStorage.setItem('remember_me', false)
+
+                    this.loadingLogin = false
+
+                    window.location = '/'
+                }
+
+
+
+            }else if(this.getterLoginStatus === 'failed'){
+
+                this.errorLogin = this.getterLoginMessage
+
+                this.errorsLogin = []
+
+                this.loadingLogin = false
+
+            }else if(this.getterLoginStatus === 'error'){
+
+                this.errorLogin = this.getterLoginMessage
+
+                this.errorsLogin = this.getterLoginErrors
+
+                this.loadingLogin = false
+            }
+        },
+
+        async update(){
+
+            this.loadingUpdate = true
+
+            this.authSectionModal= 'UPDATE'
+
+            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
+
+                await this.actionsGetMeRole();
+
+                if(this.gettersRoleStatus === 'success'){
+
+                    this.meRoleName = this.gettersMeRoleName
+
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+
+                        this.meProfileUpdate()
+
+                    }else{
+
+                        this.authFormModalMeProfilePubUpdateShow('UPDATE')
+
+                    }
+
+                }else if(this.gettersRoleStatus === 'failed'){
+
+                    this.authFormModalMeProfilePubUpdateShow('UPDATE')
+                }
+
+            }else{
+
+                this.authFormModalMeProfilePubUpdateShow('UPDATE')
+
+            }
+
+        },
+
+        async meProfileUpdate(){
+
+            this.loadingUpdate = true
+
+            this.authSectionModal= 'UPDATE'
+
+            this.meProfileUpdateMessage =  null
+            this.meProfileUpdateErrors = []
+
+            await this.actionsMeProfileUpdateDataRequest({ nom : this.meProfileData.nom, prenoms : this.meProfileData.prenoms, authorName : this.meProfileData.authorName, username : this.meProfileData.username,email : this.meProfileData.email, address : this.meProfileData.address, telephone : this.meProfileData.telephone, description : this.meProfileData.description});
+
+            if( this.getterInfosMeProfileUpdateStatus ==="success"){
+
+                this.meProfileUpdateData = this.getterInfosMeProfileUpdateData
+
+                const Toast = this.$swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: this.getterInfosMeProfileUpdateMessage
+                })
+
+                this.loadingUpdate = false
+
+                this.meProfileUpdateMessage =  null
+                this.meProfileUpdateErrors = []
+
+            }else if( this.getterInfosMeProfileUpdateStatus ==="empty"){
+
+                this.meProfileUpdateMessage = this.getterInfosMeProfileUpdateMessage
+
+                this.meProfileUpdateErrors = this.getterInfosMeProfileUpdateErrors
+
+                this.loadingUpdate = false
+
+
+            }else if( this.getterInfosMeProfileUpdateStatus ==="error"){
+
+                this.meProfileUpdateMessage = this.getterInfosMeProfileUpdateMessage
+
+                this.meProfileUpdateErrors = []
+
+                this.loadingUpdate = false
+
+            }
+        },
+
+        async updatePassword(){
+
+            this.loadingUpdatePassword = true
+
+            this.authSectionModal= 'UPDATEPASSWORD'
+
+            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
+
+                await this.actionsGetMeRole();
+
+                if(this.gettersRoleStatus === 'success'){
+
+                    this.meRoleName = this.gettersMeRoleName
+
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+
+                        this.mePasswordUpdate()
+
+                    }else{
+
+                        this.authFormModalMeProfilePubUpdateShow('UPDATEPASSWORD')
+
+                    }
+
+                }else if(this.gettersRoleStatus === 'failed'){
+
+                    this.authFormModalMeProfilePubUpdateShow('UPDATEPASSWORD')
+                }
+
+            }else{
+
+                this.authFormModalMeProfilePubUpdateShow('UPDATEPASSWORD')
+
+            }
+
+        },
+
+        async mePasswordUpdate(){
+
+            this.loadingUpdatePassword = true
+
+            this.authSectionModal= 'UPDATEPASSWORD'
+
+            this.mePasswordUpdateMessage =  null
+            this.mePasswordUpdateErrors = []
+
+            await this.actionsMePasswordUpdateDataRequest({ password : this.old_password, new_password : this.new_password, new_password_confirm : this.new_password_confirm });
+
+            if( this.getterInfosMePasswordUpdateStatus ==="success"){
+
+                this.mePasswordUpdateData = this.getterInfosMePasswordUpdateData
+
+                const Toast = this.$swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: this.getterInfosMePasswordUpdateMessage
+                })
+
+                this.loadingUpdate = false
+
+                this.mePasswordUpdateMessage =  null
+                this.mePasswordUpdateErrors = []
+
+                this.logout()
+
+            }else if( this.getterInfosMePasswordUpdateStatus ==="empty"){
+
+                this.mePasswordUpdateMessage = this.getterInfosMePasswordUpdateMessage
+
+                this.mePasswordUpdateErrors = this.getterInfosMePasswordUpdateErrors
+
+                this.loadingUpdatePassword = false
+
+
+            }else if( this.getterInfosMePasswordUpdateStatus ==="error"){
+
+                this.mePasswordUpdateMessage = this.getterInfosMePasswordUpdateMessage
+
+                this.mePasswordUpdateErrors = []
+
+                this.loadingUpdatePassword = false
+
+            }
+        },
+
+        async show(){
+
+            this.loadingShow = true
+
+            this.authSectionModal= 'SHOW'
+
+            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
+
+                await this.actionsGetMeRole();
+
+                if(this.gettersRoleStatus === 'success'){
+
+                    this.meRoleName = this.gettersMeRoleName
+
+                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
+
+                        this.meProfile()
+
+                    }else{
+
+                        this.dataReady= 2
+
+                    }
+
+                }else if(this.gettersRoleStatus === 'failed'){
+
+                    this.dataReady = 3;
+                }
+
+            }else{
+
+                this.dataReady = 4;
+
+            }
+
+        },
+
+        async logout(){
+
+            this.logoutCheck = true
+
+            await this.actionsGetLogout();
+
+            if(this.getterLogoutStatus === 'success'){
+
+                const Toast = this.$swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: this.getterLogoutMessage
+                })
+
+                const  clearToken = {
+                    access_token: null,
+                    expires_in: null
+                }
+
+                store.getters["login/getAuthData"].access_token = clearToken.access_token
+                store.getters["login/getAuthData"].expires_in = clearToken.expires_in
+
+                window.location = '/auth/login'
+
+                this.logoutCheck = false
+
+            }
+
+        },
+
+        async meProfile(){
+
+            this.loadingShow = true
+
+            this.authSectionModal= 'SHOW'
+
+            await this.actionsGetMeProfileDataRequest({});
+
+            if( this.getterInfosMeProfileStatus ==="success"){
+
+                this.meProfileData = this.getterInfosMeProfileData 
+
+                this.meProfileUpdateMessage =  null
+
+                this.meProfileUpdateErrors = [] 
+
+                this.empty = 0
+
+                this.dataReady = 1
+
+                this.loadingShow = false
+
+            }else{
+
+                this.empty = 1
+
+                this.dataReady = 1
+
+                this.meProfileMessage = this.getterInfosMeProfileMessage
+
+                this.loadingShow = false
+
+            }
+        },
+
+    },
+    mounted() {
+        this.moment = moment
+        this.show()
+    },
+};
+</script>

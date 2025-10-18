@@ -1,9 +1,9 @@
 <!-- =======================Footer START -->
-<footer class="bg-dark">
+<footer class="pb-0">
 	<div class="container">
 		<hr>
 		<!-- Widgets START -->
-		<div class="row pt-5 text-white">
+		<div class="row pt-5">
 			<!-- Footer Widget -->
 			<div class="col-md-6 col-lg-4 mb-4">
 				<img class="light-mode-item" src="/assets/images/logo.png" style="height: 65px; width: 150px; object-fit: cover;" alt="logo">	 
@@ -17,24 +17,24 @@
 
 			<!-- Footer Widget -->
 			<div class="col-md-6 col-lg-3 mb-4">
-				<h5 class="mb-4 text-white">Navigation</h5>
+				<h5 class="mb-4">Navigation</h5>
 				<category-populars></category-populars>
 			</div>
 
 			<!-- Footer Widget -->
 			<div class="col-sm-6 col-lg-3 mb-4">
-				<h5 class="mb-4 text-white">Parcourir par mots:</h5>
+				<h5 class="mb-4">Parcourir par mots:</h5>
 				<tags-populars></tags-populars>
 			</div>
 
 			<!-- Footer Widget -->
 			<div class="col-sm-6 col-lg-2 mb-4">
-				<h5 class="mb-4 text-white">Notre poignée sociale</h5>
+				<h5 class="mb-4">Notre poignée sociale</h5>
 				<ul class="nav flex-column">
-					<li class="nav-item text-white"><a class="nav-link text-white pt-0" href="#"><i class="fab fa-facebook-square fa-fw me-2 text-facebook"></i>Facebook</a></li>
-					<li class="nav-item text-white"><a class="nav-link text-white" href="#"><i class="fab fa-twitter-square fa-fw me-2 text-twitter"></i>Twitter (X)</a></li>
-					<li class="nav-item text-white"><a class="nav-link text-white" href="#"><i class="fab fa-linkedin fa-fw me-2 text-linkedin"></i>Linkedin</a></li>
-					<li class="nav-item text-white"><a class="nav-link text-white" href="#"><i class="fab fa-whatsapp fa-fw me-2 text-success"></i>Whastapp</a></li>
+					<li class="nav-item"><a class="nav-link pt-0" href="#"><i class="fab fa-facebook-square fa-fw me-2 text-facebook"></i>Facebook</a></li>
+					<li class="nav-item"><a class="nav-link" href="#"><i class="fab fa-twitter-square fa-fw me-2 text-twitter"></i>Twitter (X)</a></li>
+					<li class="nav-item"><a class="nav-link" href="#"><i class="fab fa-linkedin fa-fw me-2 text-linkedin"></i>Linkedin</a></li>
+					<li class="nav-item"><a class="nav-link" href="#"><i class="fab fa-whatsapp fa-fw me-2 text-success"></i>Whastapp</a></li>
 				</ul>
 			</div>
 		</div>
