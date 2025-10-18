@@ -68,9 +68,9 @@
 						data-dots="false"
 						data-items="1">
 						<!-- Slider items -->
-						{{-- @for ($i=0; $i<= count(tendances()) - 1; $i++ )
+						@for ($i=0; $i<= count(tendances()) - 1; $i++ )
 							<div> <a href="/{{ tendances()[$i]['slug'] }}" class="text-reset btn-link">{!! tendances()[$i]['title_truncate'] !!}</a></div> 
-						@endfor --}}
+						@endfor
 					</div>
 				</div>
 			</div>
@@ -80,11 +80,7 @@
 				<ul class="list-inline mb-0 text-center text-sm-end">
 					<li class="list-inline-item">
 						<span>{{ \Carbon\Carbon::now()->isoFormat('LL') }}</span>
-					</li>
-					<li class="list-inline-item">
-						<i class="bi bi-cloud-hail text-info"></i>
-						<span>13 °C NY, USA</span>
-					</li>
+					</li> 
 				</ul>
 			</div>
 		</div>
