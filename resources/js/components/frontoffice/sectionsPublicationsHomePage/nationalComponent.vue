@@ -161,7 +161,7 @@ onMounted(() => {
                         </div>
                         <div>&nbsp; &nbsp; &nbsp;</div>
                         <div>
-                            <h2 class="text-success m-0 alaune_title">NATIONAL</h2>
+                            <h2 class="text-success m-0 alaune_title">ACTUALITES DU TOGO</h2>
                             <p>Suivez nos actualités sur le Togo.</p>
                         </div>
                     </div>

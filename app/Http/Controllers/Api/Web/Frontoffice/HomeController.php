@@ -21,7 +21,9 @@ class HomeController extends BaseController
 
             $sports =  Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.category_id", 30)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(18)->get();
 
-            return view('welcome', ['alaUne' => $alaUne, 'sports' => $sports]);
+            $economie =  Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.category_id", 11)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(18)->get();
+
+            return view('welcome', ['alaUne' => $alaUne, 'sports' => $sports, 'economie' => $economie]);
 
         }
     }
@@ -154,9 +156,25 @@ class HomeController extends BaseController
         ->take(8)
         ->get();
 
+        $politique = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 26)
+        ->orderBy('date_publish', 'desc')
+        ->take(8)
+        ->get();
+
+        $societe = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 29)
+        ->orderBy('date_publish', 'desc')
+        ->take(8)
+        ->get();
+
         return $this->sendResponse([
             'opinion' =>  $opinion,
             'faitsDivers' =>  $faitsDivers,
+            'politique' =>  $politique,
+            'societe' =>  $societe,
             'status' => 200
         ], 'Liste des articles publiés sur les opinions et faits divers.');
 
