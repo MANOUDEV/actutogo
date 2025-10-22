@@ -48,7 +48,7 @@ import nationalComponent from './components/frontoffice/sectionsPublicationsHome
 
 import opinionFaitsDiversComponent from './components/frontoffice/sectionsPublicationsHomePage/opinionFaitsDiversComponent.vue'
 
-import PolitiqueSocieteComponent from './components/frontoffice/sectionsPublicationsHomePage/PolitiqueSocieteComponent.vue'
+import politiqueSocieteComponent from './components/frontoffice/sectionsPublicationsHomePage/PolitiqueSocieteComponent.vue'
 
 import internationalComponent from './components/frontoffice/sectionsPublicationsHomePage/internationalComponent.vue'
 
@@ -96,7 +96,7 @@ app.component('international', internationalComponent)
 
 app.component('opinionFaitsDivers', opinionFaitsDiversComponent)
 
-app.component('PolitiqueSociete', PolitiqueSocieteComponent)
+app.component('politiqueSociete', politiqueSocieteComponent)
 
 app.component('VisitorsActions', VisitorsMatricule) 
 
