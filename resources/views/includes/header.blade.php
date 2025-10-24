@@ -94,12 +94,14 @@
 		<div class="container">
 			<div class="row g-4 mt-2">
 				<div class="d-sm-flex justify-content-sm-between align-items-sm-center my-2">
-					<div class="col-lg-3 col-sm-12 col-xs-12">
-
-						<a class="navbar-brand d-block" href="/">
-							<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
-						</a>
-					</div>
+					<div class="col-md-3">
+				<a class="navbar-brand d-block" href="/">
+				<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
+			</a>
+			</div>
+			<div class="col-md-9">
+					@include('adsense.google-ads.ads-sections-second-header')
+			</div>
 					
 				</div>
 			</div>
