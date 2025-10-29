@@ -74,12 +74,20 @@ class HomeController extends BaseController
         ->take(8)
         ->get();
 
+        $inter = Publication::where("status", 1)
+        ->where("publications.type_publication_id", 1)
+        ->where("category_id", 19)
+        ->orderBy('views_count', 'desc')
+        ->take(8)
+        ->get();
+
         $tags = Tag::orderBy('tags.count_publications', 'desc')->take(5)->get();
 
         return $this->sendResponse([
             'status' => 200,
             'societe' => $societe,
             'populars' => $populars,
+            'inter' => $inter,
             'societeLoad' => $societeLoad,
             'tags' => $tags,
         ], 'Toute l\'actualité');

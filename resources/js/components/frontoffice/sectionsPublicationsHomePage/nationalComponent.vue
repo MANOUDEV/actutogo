@@ -371,7 +371,7 @@ onMounted(() => {
                     <!-- Title -->
                     <Splide :options="optionsOneSports" aria-label="My Favorite Images">
 
-                        <SplideSlide v-for="result in societeData.populars" :key="result.id">
+                        <SplideSlide v-for="result in societeData.inter" :key="result.id">
 
                             <div  style="margin: 5px">
                                 <div class="card card-overlay-bottom card-img-scale">
