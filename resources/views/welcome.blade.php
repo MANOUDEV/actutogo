@@ -30,17 +30,10 @@
 
             
             @include('sectionHomePage.Editorial.editorial')
-
-             @include('adsense.google-ads.ads-sections-home-page')
-
+ 
             @include('sectionHomePage.opinionFaitsDivivers.opinionFaitsDivivers')
 
            
-
-             @include('adsense.google-ads.ads-sections-home-page')
-
-               @include('adsense.google-ads.ads-sections-home-page')
-            
             @include('sectionHomePage.toutelActualite.toutelActualite')
 
         </section>
