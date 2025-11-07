@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" translate="no">
     <head>
         <title>@yield('title') | Togo actu</title>
 
@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="author" content="Webestica.com">
         <meta name="description" content="Bootstrap based News, Magazine and Blog Theme">
-
+        <meta name="google" content="notranslate">
         <!-- Favicon -->
         <link rel="shortcut icon" href="/assets/images/logo.png">
 
