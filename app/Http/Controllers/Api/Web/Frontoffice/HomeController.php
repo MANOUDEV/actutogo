@@ -71,14 +71,14 @@ class HomeController extends BaseController
         ->where("publications.type_publication_id", 1)
         ->where("category_id", 10)
         ->orderBy('date_publish', 'desc')
-        ->take(8)
+        ->take(5)
         ->get();
 
         $inter = Publication::where("status", 1)
         ->where("publications.type_publication_id", 1)
         ->where("category_id", 20)
         ->orderBy('date_publish', 'desc')
-        ->take(8)
+        ->take(5)
         ->get();
 
         $tags = Tag::orderBy('tags.count_publications', 'desc')->take(5)->get();
