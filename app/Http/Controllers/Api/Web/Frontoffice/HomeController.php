@@ -70,14 +70,14 @@ class HomeController extends BaseController
         $populars = Publication::where("status", 1)
         ->where("publications.type_publication_id", 1)
         ->where("category_id", 10)
-        ->orderBy('views_count', 'desc')
+        ->orderBy('date_publish', 'desc')
         ->take(8)
         ->get();
 
         $inter = Publication::where("status", 1)
         ->where("publications.type_publication_id", 1)
         ->where("category_id", 20)
-        ->orderBy('views_count', 'desc')
+        ->orderBy('date_publish', 'desc')
         ->take(8)
         ->get();
 
