@@ -46,13 +46,43 @@ class IncludesController extends BaseController
             ->where(function ($query) {
                 $query->where("status", 1);
             })->where(function ($query) {
-                $query->where("category_id", 11);
+                $query->where("category_id", 12);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+             $diaspora = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 10);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+             $rubriques = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 28);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+             $societe = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 30);
             })->orderBy('date_publish', 'desc')
             ->take(4)
             ->get();
 
             return $this->sendResponse([
                 'economieData' =>  $economieData,
+                'societe' =>  $societe,
+                'diaspora' =>  $diaspora,
+                'rubriques' =>  $rubriques,
                 'status' => 200
             ], 'Listes de publications de économie publiés');
 
@@ -75,7 +105,7 @@ class IncludesController extends BaseController
 
     public function internationalRequestData(){
 
-        $internationalDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 19)->orWhere("category_id", 23)->count();
+        $internationalDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 20)->orWhere("category_id", 23)->count();
 
         if($internationalDataCount === 0){
 
@@ -87,7 +117,7 @@ class IncludesController extends BaseController
             ->where(function ($query) {
                 $query->where("status", 1);
             })->where(function ($query) {
-                $query->where("category_id", 19)->orWhere("category_id", 23);
+                $query->where("category_id", 20)->orWhere("category_id", 23);
             })->orderBy('date_publish', 'desc')
             ->orderBy('date_publish', 'desc')
             ->take(4)
@@ -115,7 +145,7 @@ class IncludesController extends BaseController
      */
     public function politiqueRequestData(){
 
-        $politiqueDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 27)->count();
+        $politiqueDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 28)->count();
 
         if($politiqueDataCount === 0){
 
@@ -127,7 +157,7 @@ class IncludesController extends BaseController
             ->where(function ($query) {
                 $query->where("status", 1);
             })->where(function ($query) {
-                $query->where("category_id", 27);
+                $query->where("category_id", 28);
             })->orderBy('date_publish', 'desc')
             ->orderBy('date_publish', 'desc')
             ->take(4)

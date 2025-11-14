@@ -81,7 +81,7 @@ onMounted(() => {
 
       <div
         v-else-if="empty === 0"
-        v-for="result in economieData.economieData"
+        v-for="result in economieData.societe"
         :key="result.id"
         class="col-sm-6 col-lg-3"
       >

@@ -18,6 +18,12 @@ import InternationalHeader from './components/frontoffice/header/international.v
 
 import PolitiqueHeader from './components/frontoffice/header/politique.vue'
 
+import SocieteHeader from './components/frontoffice/header/societe.vue'
+
+import RubriquesHeader from './components/frontoffice/header/rubriques.vue'
+
+import DiasporaHeader from './components/frontoffice/header/diaspora.vue'
+
 //Importation, déclaration et chargement des composants inclus dans le footer
 
 import NewsletterFooter from './components/frontoffice/footer/newsletter.vue'
@@ -67,6 +73,12 @@ import VisitorsMatricule from './components/frontoffice/visitor_actions/visitor_
 const app = createApp({})
  
 app.component('EconomieHeader', EconomieHeader)
+
+app.component('SocieteHeader', SocieteHeader)
+
+app.component('DiasporaHeader', DiasporaHeader)
+
+app.component('RubriquesHeader', RubriquesHeader)
  
 app.component('InternationalHeader', InternationalHeader)
 

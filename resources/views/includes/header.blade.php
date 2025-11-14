@@ -149,6 +149,27 @@
                             <politique-header></politique-header>
 						</ul>
 					</li>
+
+					<li class="nav-item dropdown dropdown-fullwidth">
+						<a style="font-size: 12px" class="nav-link dropdown-toggle" href="#" id="pagesMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SOCIETE</a>
+						<ul class="dropdown-menu" aria-labelledby="pagesMenu">
+                            <societe-header></societe-header>
+						</ul>
+					</li>
+
+					<li class="nav-item dropdown dropdown-fullwidth">
+						<a style="font-size: 12px" class="nav-link dropdown-toggle" href="#" id="pagesMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">DIASPORA</a>
+						<ul class="dropdown-menu" aria-labelledby="pagesMenu">
+                            <diaspora-header></diaspora-header>
+						</ul>
+					</li>
+
+					<li class="nav-item dropdown dropdown-fullwidth">
+						<a style="font-size: 12px" class="nav-link dropdown-toggle" href="#" id="pagesMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">RUBRIQUES</a>
+						<ul class="dropdown-menu" aria-labelledby="pagesMenu">
+                            <rubriques-header></rubriques-header>
+						</ul>
+					</li>
 						 
 					</ul>
 				</div>
