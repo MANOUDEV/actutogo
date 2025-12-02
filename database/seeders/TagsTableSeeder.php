@@ -8,85 +8,83 @@ use App\Models\Tag;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 
 class TagsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        // Préparation du sitemap XML
-        $sitemapHeader = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-XML;
-        $sitemapContent = $sitemapHeader . "\n";
+        $perPage = 100;
+        $batchSize = 5;
 
-        $response = Http::get("https://www.togoactualite.com/wp-json/wp/v2/tags?per_page=100");
+        $response = Http::get("http://www.togoactualite.com/wp-json/wp/v2/tags?per_page=$perPage");
 
-        $totalPages = $response->header('x-wp-totalpages')[0];
+        if (!$response->successful()) {
+            $this->command->error("Impossible de récupérer les tags depuis WordPress.");
+            return;
+        }
 
-        for ($i = 1; $i <= $totalPages; $i++) {
+        $totalPages = intval($response->header('x-wp-totalpages', 1));
+        $this->command->info("Total pages de tags à traiter : $totalPages");
 
-            $tags = Http::get("https://www.togoactualite.com/wp-json/wp/v2/tags?per_page=100&page=$i")->json();
+        $pages = range(1, $totalPages);
+        $totalFetched = 0;
+        $totalInserted = 0;
 
-            foreach ($tags as $value) {
+        foreach (array_chunk($pages, $batchSize) as $batch) {
+            foreach ($batch as $page) {
+                $tagsResponse = Http::get("http://www.togoactualite.com/wp-json/wp/v2/tags?per_page=$perPage&page=$page");
 
-                $date = Carbon::parse(now());
-                $mois_id = $date->format('m');
-                $year = $date->format('Y');
+                if (!$tagsResponse->successful()) {
+                    $this->command->warn("Échec de récupération de la page $page de tags.");
+                    continue;
+                }
 
-                $mois = InfosMonthYear::where('month_id', $mois_id)->first();
-                $date_name = $mois->month . ' ' . $year;
+                $tags = $tagsResponse->json();
+                $fetchedThisPage = count($tags);
+                $insertedThisPage = 0;
 
-                $verify_date_name = InfosMonthYearTag::where('date_name', $date_name)->first();
+                foreach ($tags as $tagData) {
+                    $date = Carbon::now();
+                    $mois_id = $date->format('m');
+                    $year = $date->format('Y');
 
-                if (!$verify_date_name) {
-                    InfosMonthYearTag::create(['date_name' => $date_name, 'deja_citer' => 0, 'user_id' => 1]);
-                } else {
-                    if ($verify_date_name->deja_citer === 0) {
-                        InfosMonthYearTag::create(['date_name' => $date_name, 'deja_citer' => 1, 'user_id' => 1]);
+                    $mois = InfosMonthYear::where('month_id', $mois_id)->first();
+                    $date_name = $mois->month . ' ' . $year;
+
+                    $verify_date_name = InfosMonthYearTag::where('date_name', $date_name)->first();
+
+                    if (!$verify_date_name) {
+                        InfosMonthYearTag::create(['date_name' => $date_name, 'deja_citer' => 0, 'user_id' => 1]);
+                    } else {
+                        if ($verify_date_name->deja_citer === 0) {
+                            InfosMonthYearTag::create(['date_name' => $date_name, 'deja_citer' => 1, 'user_id' => 1]);
+                        }
+                    }
+                    // Créer ou mettre à jour le Tag
+                    $tag = Tag::updateOrCreate(
+                        ['wp_tag_id' => intval($tagData['id'])],
+                        [
+                            'name' => $tagData['name'],
+                            'slug' => $tagData['slug'],
+                            'date_name' => $date_name,
+                            'count_publications' => 0,
+                            'date_publish' => now(),
+                            'user_id' => 1
+                        ]
+                    );
+
+                    if ($tag->wasRecentlyCreated) {
+                        $insertedThisPage++;
                     }
                 }
 
-                // Création ou mise à jour du tag
-                $post = Tag::updateOrCreate(
-                    ['wp_tag_id' => intval($value['id'])],
-                    [
-                        'name' => $value['name'],
-                        'date_name' => $date_name,
-                        'slug' => $value['slug'],
-                        'count_publications' => 0,
-                        'date_publish' => now(),
-                        'user_id' => 1
-                    ]
-                );
+                $totalFetched += $fetchedThisPage;
+                $totalInserted += $insertedThisPage;
 
-                // Ajout dans le sitemap
-                $slug = $value['slug'];
-                $url = "https://togoactu.com/tags/{$slug}";
-                $lastmod = now()->toDateString();
-
-                $sitemapContent .= <<<XML
-  <url>
-    <loc>{$url}</loc>
-    <lastmod>{$lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-XML;
+                $this->command->info("Page $page de tags traitée : $fetchedThisPage récupérés, $insertedThisPage insérés. Total insérés : $totalInserted");
             }
         }
 
-        // Fermeture du XML
-        $sitemapContent .= "</urlset>";
-
-        // Écriture dans sitemap-tags.xml
-        Storage::disk('public')->put('sitemap-tags.xml', $sitemapContent);
+        $this->command->info("✅ Import des tags terminé : $totalFetched récupérés au total, $totalInserted insérés en base.");
     }
 }

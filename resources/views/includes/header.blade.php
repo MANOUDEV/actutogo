@@ -38,7 +38,6 @@
                     <b><u><a href="https://togoactu.com">TogoActu</a></u></b>, votre nouvelle source d’info moderne pour tout savoir sur le Togo et l’actualité mondiale.
                     Restez informé en temps réel avec des contenus <b>fiables</b>, <b>clairs</b> et <b>accessibles</b> à tout moment.
                 </p>
-				<p>Téléphone: <a href="tel:+330614305786" class="text-reset"><u>+33 06 14 30 57 86</u></a> , <a href="tel:+22899565788" class="text-reset"><u>+228 99 56 57 88</u></a></p>
 				<p>Email: <a href="mailto:contact@togoactualite.com" class="text-reset"><u>contact@togoactualite.com</u></a></p>
 				<p>Heures de services:
 					Lundi à Vendredi de  9:30am à 6:30 pm
@@ -50,7 +49,7 @@
 <!-- Offcanvas END -->
 <!-- Navbar top -->
 <div class="navbar-top d-none d-lg-block">
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row d-flex align-items-center my-2">
 			<!-- Top bar left -->
 			<div class="col-sm-8 d-sm-flex align-items-center">
@@ -88,31 +87,27 @@
 		<div class="border-bottom border-2 border-primary opacity-1"></div>
 	</div>
 </div>
-<div class="container">
+<div class="container-fluid">
 	<div class="d-sm-flex justify-content-sm-between align-items-sm-center my-2">
 		<!-- Logo START -->
-		<div class="container">
+		<div class="container-fluid">
 			<div class="row g-4 mt-2">
 				<div class="d-sm-flex justify-content-sm-between align-items-sm-center my-2">
-					<div class="col-md-3">
-				<a class="navbar-brand d-block" href="/">
-				<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
-			</a>
-			</div>
-			<div class="col-md-9">
-					@include('adsense.google-ads.ads-sections-second-header')
-			</div>
 					
+					<a class="navbar-brand d-block" href="/">
+						<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
+					</a>
 				</div>
+			 
 			</div>
 		</div>
 	</div>
 </div>
 <!-- Navbar START -->
 <div class="navbar-sticky header-static">
-	<nav class="navbar navbar-light navbar-expand-lg">
-		<div class="container">
-			<div class="w-100 bg-light d-flex">
+	<nav class="navbar navbar-dark navbar-expand-lg">
+		<div class="container-fluid">
+			<div class="w-100 bg-primary d-flex">
 
 				<!-- Responsive navbar toggler -->
 				<button class="navbar-toggler me-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">

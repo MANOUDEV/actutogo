@@ -5,79 +5,83 @@ namespace Database\Seeders;
 use App\Models\Publication;
 use App\Models\Comment;
 use App\Models\Commentator;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class CommentsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $response = Http::get("https://www.togoactualite.com/wp-json/wp/v2/comments?per_page=100");
+        $baseUrl = "http://www.togoactualite.com/wp-json/wp/v2/comments";
+        $perPage = 100;
 
-        $comments_count_by_type = [
-            'x-wp-totalpages' => $response->getHeader('x-wp-totalpages')[0],
-            'x-wp-total' => $response->getHeader('x-wp-total')[0],
-        ];
+        // Première page pour déterminer le total
+        $response = Http::get("$baseUrl?per_page=$perPage&page=1");
 
-        for($i = 1; $i <= $comments_count_by_type['x-wp-totalpages']; $i++){
-         
+        if (!$response->successful()) {
+            $this->command->error('❌ Impossible de récupérer les commentaires depuis WordPress.');
+            return;
+        }
 
-            $comments = Http::get('https://www.togoactualite.com/wp-json/wp/v2/comments?per_page=100&page='.$i)->json();
+        $totalPages = intval($response->header('x-wp-totalpages', 1));
+        $this->command->info("🔎 Total pages de commentaires à traiter : $totalPages");
 
-            foreach ($comments as  $value) {
+        $totalImported = 0;   // total insérés réellement en DB
+        $totalFetched  = 0;   // total récupérés depuis l’API
 
-                $check_commentator = Commentator::where('nom_complet', $value['author_name'])->first();
+        for ($page = 1; $page <= $totalPages; $page++) {
+            $response = Http::get("$baseUrl?per_page=$perPage&page=$page");
 
-                $check_articles = Publication::where('wp_article_id', $value['post'])->get();
-
-                if($check_articles){
-
-                    foreach ($check_articles as  $check_article) {
-
-                        if ($check_commentator) {
-
-                            $comment_create = Comment::create([
-                                'content' => $value['content']['rendered'],
-                                'publication_id' => $check_article->id,
-                                'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
-                                'commentator_id' => $check_commentator->id
-                            ]);
-
-                            $check_commentator->count_comments += 1;
-
-                        } else {
-
-                            $commentator_create = Commentator::create([
-                                'nom_complet' => $value['author_name'],
-                                'slug' => Str::slug($value['author_name']),
-                                'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
-                            ]);
-
-                            $comment_create = Comment::create([
-                                'content' => $value['content']['rendered'],
-                                'publication_id' => $check_article->id,
-                                'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
-                                'commentator_id' => $commentator_create->id
-                            ]);
-
-                            $commentator_create->count_comments += 1;
-
-                        }
-
-                        $check_article->comment_count += 1;
-
-                        $check_article->update();
-                    }
-                }
-
-
+            if (!$response->successful()) {
+                $this->command->warn("⚠️ Échec récupération page $page (status: " . $response->status() . ")");
+                continue;
             }
 
+            $comments = $response->json();
+            $fetchedThisPage = count($comments);
+            $insertedThisPage = 0;
+
+            foreach ($comments as $value) {
+                // Vérifier si le commentateur existe déjà
+                $commentator = Commentator::firstOrCreate(
+                    ['wp_author_id' => $value['author']], // ID WP comme clé unique
+                    [
+                        'nom_complet' => $value['author_name'] ?? 'Inconnu',
+                        'slug' => Str::slug($value['author_name'] ?? 'user') . '-' . $value['author'],
+                        'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
+                        'count_comments' => 0,
+                    ]
+                );
+
+                // Récupérer l'article lié
+                $article = Publication::where('wp_article_id', $value['post'])->first();
+
+                if ($article) {
+                    $comment = Comment::firstOrCreate(
+                        ['wp_comment_id' => $value['id']], // clé unique WP
+                        [
+                            'publication_id' => $article->id,
+                            'commentator_id' => $commentator->id,
+                            'content' => $value['content']['rendered'] ?? '',
+                            'date_publish' => date('Y-m-d H:i:s', strtotime($value['date']))
+                        ]
+                    );
+
+                    if ($comment->wasRecentlyCreated) {
+                        $commentator->increment('count_comments');
+                        $article->increment('comment_count');
+                        $insertedThisPage++;
+                    }
+                }
+            }
+
+            $totalFetched  += $fetchedThisPage;
+            $totalImported += $insertedThisPage;
+
+            $this->command->info("📄 Page $page traitée : $fetchedThisPage récupérés, $insertedThisPage insérés (Total insérés : $totalImported)");
         }
+
+        $this->command->info("✅ Import terminé : $totalFetched récupérés au total, $totalImported insérés en base.");
     }
 }

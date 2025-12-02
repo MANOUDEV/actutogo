@@ -2,365 +2,201 @@
 
 namespace Database\Seeders;
 
-use App\Models\Publication;
-use App\Models\PublicationFile;
-use App\Models\PublicationTag;
-use App\Models\Author;
-use App\Models\Category;
-use App\Models\File;
-use App\Models\InfosMonthYear;
-use App\Models\InfosMonthYearFile;
-use App\Models\InfosMonthYearPublication;
-use App\Models\Tag;
-use App\Models\TypePublication;
+use App\Models\{
+    Publication, PublicationFile, PublicationTag,
+    Author, Category, File, InfosMonthYear, InfosMonthYearPublication, Tag, TypePublication
+};
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PublicationTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
+        $perPage = 100;
+        $response = Http::get("http://www.togoactualite.com/wp-json/wp/v2/posts?per_page=$perPage");
 
-        $publications_count = 0;
+        if (!$response->successful()) {
+            $this->command->error("Impossible de récupérer les publications depuis WordPress.");
+            return;
+        }
 
-        $response = Http::get("https://www.togoactualite.com/wp-json/wp/v2/posts?per_page=100");
+        $totalPages = intval($response->header('x-wp-totalpages', 1));
+        $this->command->info("Total pages de publications à traiter : $totalPages");
 
-        $posts_count_by_type = [
-            'x-wp-totalpages' => $response->getHeader('x-wp-totalpages')[0],
-            'x-wp-total' => $response->getHeader('x-wp-total')[0],
-        ];
+        for ($i = 1; $i <= $totalPages; $i++) {
+            $posts = Http::get("http://www.togoactualite.com/wp-json/wp/v2/posts?page=$i&per_page=$perPage")->json();
+            $createdCount = 0;
 
-           // Préparation du sitemap XML
-        $sitemapHeader = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-XML;
-
-         // Initialisation du contenu XML
-         $sitemapContent = $sitemapHeader . "\n";
-
-        for($i = 1; $i <= $posts_count_by_type['x-wp-totalpages']; $i++){
-
-            $posts = Http::get("https://www.togoactualite.com/wp-json/wp/v2/posts?page=$i&per_page=100")->json();
-
-            foreach ($posts as  $value) {
-
+            foreach ($posts as $value) {
                 $author = Author::where('wp_author_id', $value['author'])->first();
+                $typePublication = TypePublication::where('slug', 'articles')->first();
 
-                $type_publication = TypePublication::where('slug',"article")->first();
+                if (!$author || !$typePublication) continue;
 
+                // Incrément des compteurs
+                $author->increment('count_publications');
+                $typePublication->increment('count_publications');
 
-                if($author){
+                // Gestion de l'image de couverture
+                $imageCoverUrl = null;
+                $fileId = null;
+                if (isset($value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl'])) {
+                    $url = str_replace(
+                        'https://togoactualite.com/wp-content/uploads',
+                        'https://togoactualite.com/wp-content/uploads',
+                        $value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl']
+                    );
+                    $imageCoverUrl = $url;
 
-                    if($author->count_publications === 0){
+                    $file = File::firstOrCreate(
+                        ['file_url' => $url],
+                        [
+                            'date_name' => Carbon::parse($value['date'])->format('F Y'),
+                            'date_publish' => $value['date'],
+                            'type_file_id' => 1,
+                            'user_id' => 1,
+                        ]
+                    );
+                    $file->increment('count_publications');
+                    $fileId = $file->id;
+                }
 
-                        $author->count_publications = 1;
+                // Récupération des catégories
+                $categories = collect();
+                foreach ($value['categories'] as $wpCategoryId) {
+                    $category = Category::where('wp_category_id', $wpCategoryId)->first();
+                    if ($category) {
+                        $category->increment('count_publications');
+                        $categories->push($category);
+                    }
+                }
 
-                        $author->update();
+                // Récupération des tags
+                $tags = collect();
+                foreach ($value['tags'] as $wpTagId) {
+                    $tag = Tag::where('wp_tag_id', $wpTagId)->first();
+                    if ($tag) {
+                        $tag->increment('count_publications');
+                        $tags->push($tag);
+                    }
+                }
 
-                    }else{
+                // Date name pour InfosMonthYearPublication
+                $date = Carbon::parse($value['date']);
+                $month = InfosMonthYear::where('month_id', $date->format('m'))->first();
+                $dateName = $month ? $month->month . ' ' . $date->format('Y') : $date->format('F Y');
+                InfosMonthYearPublication::firstOrCreate(['date_name' => $dateName]);
 
-                        $author->count_publications++;
+                // ---- Création de la publication par catégorie ----
+                if ($categories->isEmpty()) {
+                    $publication = Publication::create([
+                        'title' => $value['title']['rendered'],
+                        'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
+                        'slug' => Str::slug(strip_tags($value['title']['rendered'])),
+                        'date_name' => $dateName,
+                        'deja_citer' => 0,
+                        'image_cover_url' => $imageCoverUrl,
+                        'content' => $value['content']['rendered'],
+                        'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
+                        'truncate_content_max' => $value['excerpt']['rendered'],
+                        'status' => $value['status'] === 'publish' ? 1 : 0,
+                        'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
+                        'views_count' => rand(351, 2564),
+                        'likes_count' => rand(123, 554),
+                        'shares_count' => 0,
+                        'comment_count' => 0,
+                        'date_publish' => $value['date'],
+                        'author_id' => $author->id,
+                        'author_slug' => $author->slug,
+                        'author_name' => $author->authorName,
+                        'type_publication_id' => $typePublication->id,
+                        'type_publication_name' => $typePublication->name,
+                        'type_publication_slug' => $typePublication->slug,
+                        'category_id' => null,
+                        'category_name' => null,
+                        'category_slug' => null,
+                        'user_id' => 1,
+                        'source' => 'Togoactualité',
+                        'wp_article_id' => $value['id'],
+                    ]);
 
-                        $author->update();
-
+                    // Attacher tags
+                    foreach ($tags as $tag) {
+                        PublicationTag::firstOrCreate(
+                            ['publication_id' => $publication->id, 'tag_id' => $tag->id],
+                            ['date_publish' => $value['date']]
+                        );
                     }
 
-                    if($type_publication->count_publications === 0){
-
-                        $type_publication->count_publications = 1;
-
-                        $type_publication->update();
-
-                    }else{
-
-                        $type_publication->count_publications++;
-
-                        $type_publication->update();
-
+                    // Attacher fichier
+                    if ($fileId) {
+                        PublicationFile::firstOrCreate(
+                            ['publication_id' => $publication->id, 'file_id' => $fileId],
+                            ['date_publish' => $value['date']]
+                        );
                     }
 
-                    $image_cover_url = null;
+                    $createdCount++;
+                } else {
+                    foreach ($categories as $index => $category) {
+                        $deja_citer = $index === 0 ? 0 : 1;
 
-                    $verify_link_file = null;
-
-                    if(isset($value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl'])){
-
-                        $image_cover_url = str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']);
-
-                        $link_file = str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']);
-
-                        $verify_link_file = File::where('file_url',  $link_file)->first();
-
-                        if($verify_link_file){
-
-                            if($verify_link_file->count_publications === 0){
-
-                                $verify_link_file->count_publications = 1;
-
-                                $verify_link_file->update();
-
-                            }else{
-
-                                $verify_link_file->count_publications++;
-
-                                $verify_link_file->update();
-
-                            }
-
-                        }else{
-                            
-                            $link = $link_file; 
-
-                            $date = Carbon::parse($value['date']);
-
-                            $mois_id = $date->format('m');
-
-                            $year = $date->format('Y');
-
-                            $mois = InfosMonthYear::where('month_id', $mois_id)->first();
-
-                            $date_name = $mois->month.' '.$year;
-
-                            $verify_date_name = InfosMonthYearFile::where('date_name', $date_name)->first();
-
-                            if(!$verify_date_name){
-
-                                InfosMonthYearFile::create(['date_name' => $date_name]);
-
-                            }
-
-                            $fichier_original = File::create([
-                                'file_url' => $link,
-                                'date_name' => $date_name,
-                                'date_publish' => $value['date'],
-                                'type_file_id' => 1,
-                                'user_id' => 1
-                            ]);
-                        }
-
-
-                    }
-
-                    foreach ($value['categories'] as $wp_category) {
-
-                        $info =  Category::where('wp_category_id', $wp_category)->first();
-
-                        if($info->count_publications === 0){
-
-                            $info->count_publications = 1;
-
-                            $info->update();
-
-                        }else{
-
-                            $info->count_publications++;
-
-                            $info->update();
-
-                        }
-                    }
-
-                    foreach ($value['tags'] as $wp_tag) {
-
-                        $info =  Tag::where('wp_tag_id', $wp_tag)->first();
-
-                        if($info->count_publications === 0){
-
-                            $info->count_publications = 1;
-
-                            $info->update();
-
-                        }else{
-
-                            $info->count_publications++;
-
-                            $info->update();
-
-                        }
-                    }
-
-                    $date = Carbon::parse(date('Y-m-d H:i:s', strtotime($value['date'])));
-
-                    $mois_id = $date->format('m');
-
-                    $year = $date->format('Y');
-
-                    $mois = InfosMonthYear::where('month_id', $mois_id)->first();
-
-                    $date_name = $mois->month.' '.$year;
-
-                    $verify_date_name = InfosMonthYearPublication::where('date_name', $date_name)->first();
-
-                    if(!$verify_date_name){
-
-                        InfosMonthYearPublication::create(['date_name' => $date_name]);
-
-                    }
-
-                    $views_count =  rand(351,2564);
-
-                    $likes_count =  rand(123,554);
-
-                    if(count($value['categories']) == 0){
-
-                        $post = Publication::create([
-                            'title' => $value["title"]['rendered'],
-                            'title_truncate' => \Illuminate\Support\Str::words(strip_tags($value["title"]['rendered']), 10, ' ...'),
-                            'slug' => \Illuminate\Support\Str::slug(strip_tags($value["title"]['rendered'])),
-                            'date_name' => $date_name,
-                            'deja_citer' => 0,
-                            'image_cover_url' => $image_cover_url,
-                            'content' =>  $value["content"]["rendered"],
-                            'truncate_content' => \Illuminate\Support\Str::words(strip_tags($value["excerpt"]["rendered"]), 20, ' ...'),
-                            'truncate_content_max' => $value["excerpt"]["rendered"],
-                            'status' => $value["status"] == 'publish' ? 1 : 0,
-                            'comment_status' => $value["comment_status"] == 'open' ? 1 : 0,
-                            'views_count' => $views_count,
-                            'likes_count' => $likes_count,
+                        $publication = Publication::create([
+                            'title' => $value['title']['rendered'],
+                            'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
+                            'slug' => Str::slug(strip_tags($value['title']['rendered'])) . ($index > 0 ? "-{$category->slug}" : ""),
+                            'date_name' => $dateName,
+                            'deja_citer' => $deja_citer,
+                            'image_cover_url' => $imageCoverUrl,
+                            'content' => $value['content']['rendered'],
+                            'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
+                            'truncate_content_max' => $value['excerpt']['rendered'],
+                            'status' => $value['status'] === 'publish' ? 1 : 0,
+                            'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
+                            'views_count' => rand(351, 2564),
+                            'likes_count' => rand(123, 554),
                             'shares_count' => 0,
                             'comment_count' => 0,
-                            'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
-                            'wp_article_id' => $value["id"],
+                            'date_publish' => $value['date'],
                             'author_id' => $author->id,
                             'author_slug' => $author->slug,
                             'author_name' => $author->authorName,
-                            'type_publication_id' => $type_publication->id,
-                            'type_publication_name' => $type_publication->name,
-                            'type_publication_slug' => $type_publication->slug,
+                            'type_publication_id' => $typePublication->id,
+                            'type_publication_name' => $typePublication->name,
+                            'type_publication_slug' => $typePublication->slug,
+                            'category_id' => $category->id,
+                            'category_name' => $category->name,
+                            'category_slug' => $category->slug,
                             'user_id' => 1,
-                            'source' => 'Togoactualité'
+                            'source' => 'Togoactualité',
+                            'wp_article_id' => $value['id'],
                         ]);
 
-                    }else{
-
-                        foreach ($value['categories'] as $wp_category) {
-
-                            $category =  Category::where('wp_category_id', $wp_category)->first();
-
-                            $publication_verify = Publication::where('title', $value["title"]['rendered'])->count();
-
-                            if($publication_verify == 0){
-
-                                $deja_citer = 0;
-
-                            }else{
-
-                                $deja_citer = 1;
-
-                            }
-
-                            if($category){
-
-                                $post = Publication::create([
-                                    'title' => $value["title"]['rendered'],
-                                    'title_truncate' => \Illuminate\Support\Str::words(strip_tags($value["title"]['rendered']), 10, ' ...'),
-                                    'slug' => \Illuminate\Support\Str::slug(strip_tags($value["title"]['rendered'])),
-                                    'date_name' => $date_name,
-                                    'deja_citer' => $deja_citer,
-                                    'image_cover_url' => $image_cover_url,
-                                    'content' => $value["content"]["rendered"],
-                                    'truncate_content' => \Illuminate\Support\Str::words(strip_tags($value["excerpt"]["rendered"]), 20, ' ...'),
-                                    'truncate_content_max' => $value["excerpt"]["rendered"],
-                                    'status' => $value["status"] == 'publish' ? 1 : 0,
-                                    'comment_status' => $value["comment_status"] == 'open' ? 1 : 0,
-                                    'views_count' => $views_count,
-                                    'likes_count' => $likes_count,
-                                    'shares_count' => 0,
-                                    'comment_count' => 0,
-                                    'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
-                                    'wp_article_id' => $value["id"],
-                                    'category_id' => $category->id,
-                                    'category_name' => $category->name,
-                                    'category_slug' => $category->slug,
-                                    'author_id' => $author->id,
-                                    'author_slug' => $author->slug,
-                                    'author_name' => $author->authorName,
-                                    'type_publication_id' => $type_publication->id,
-                                    'type_publication_name' => $type_publication->name,
-                                    'type_publication_slug' => $type_publication->slug,
-                                    'user_id' => 1,
-                                    'source' => 'Togoactualité'
-                                ]);
-    
-                            }
+                        foreach ($tags as $tag) {
+                            PublicationTag::firstOrCreate(
+                                ['publication_id' => $publication->id, 'tag_id' => $tag->id],
+                                ['date_publish' => $value['date']]
+                            );
                         }
 
-                    }
-
-                    
-
-
-                    if(count($value['tags'])){
-
-                        foreach ($value['tags'] as $wp_tag) {
-
-                            $info =  Tag::where('wp_tag_id', $wp_tag)->first();
-
-                            PublicationTag::create([
-                                'publication_id' => $post->id,
-                                'tag_id' => $info->id,
-                                'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
-                            ]);
-
+                        if ($fileId) {
+                            PublicationFile::firstOrCreate(
+                                ['publication_id' => $publication->id, 'file_id' => $fileId],
+                                ['date_publish' => $value['date']]
+                            );
                         }
 
+                        $createdCount++;
                     }
-
-                    if(isset($value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl'])){
-
-                        $info =  File::where('file_url',  str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $value['yoast_head_json']["schema"]['@graph'][0]['thumbnailUrl']))->first();
-
-                        if($info){
-
-                            PublicationFile::create([
-                                'publication_id' => $post->id,
-                                'file_id' => $info->id,
-                                'date_publish' => date('Y-m-d H:i:s', strtotime($value['date'])),
-                            ]);
-
-                        }
-                    }
-
-
                 }
-
-                $publications_count++;
-
-                // Génération de l'entrée XML
-            $slug = $post->slug;
-            $image = $post->image_cover_url;
-            $url = "https://togoactu.com/{$slug}";
-            $lastmod = now()->toDateString();
-
-            $sitemapContent .= <<<XML
-<url>
-<loc>{$url}</loc>
-<image:image>
-    <image:loc>{$image}</image:loc>
-</image:image>
-<lastmod>{$lastmod}</lastmod>
-<changefreq>weekly</changefreq>
-<priority>0.8</priority>
-</url>
-
-XML;
             }
-            
+
+            $this->command->info("Page $i de publications traitée : $createdCount publications créées.");
         }
 
-          // Fermeture du XML
-          $sitemapContent .= "</urlset>";
-
-          // Écriture dans le fichier sitemap.xml (dans le disque 'public')
-          Storage::disk('public')->put('sitemap-publications.xml', $sitemapContent);
-
+        $this->command->info('Import des publications terminé avec succès !');
     }
 }

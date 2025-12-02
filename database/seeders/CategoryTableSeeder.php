@@ -5,68 +5,76 @@ namespace Database\Seeders;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class CategoryTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        // En-tête XML du sitemap
-        $sitemapHeader = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-XML;
+        $baseUrl = "http://www.togoactualite.com/wp-json/wp/v2/categories";
+        $perPage = 100;
+        $batchSize = 5;
 
-        // Initialisation du contenu XML
-        $sitemapContent = $sitemapHeader . "\n";
+        try {
+            $response = Http::get("$baseUrl?per_page=$perPage&page=1");
+        } catch (\Exception $e) {
+            $this->command->error("Erreur de connexion à l'API : " . $e->getMessage());
+            return;
+        }
 
-        $response = Http::get("https://www.togoactualite.com/wp-json/wp/v2/categories?per_page=100");
-        $totalPages = $response->header('x-wp-totalpages');
+        if (!$response->successful()) {
+            $this->command->error('❌ Impossible de récupérer les catégories depuis WordPress.');
+            return;
+        }
 
-        for ($i = 1; $i <= $totalPages; $i++) {
+        $totalPages = intval($response->header('x-wp-totalpages', 1));
+        $this->command->info("🔎 Total pages à traiter : $totalPages");
 
-            $categories = Http::get("https://www.togoactualite.com/wp-json/wp/v2/categories?per_page=100&page=$i")->json();
+        $totalFetched = 0;
+        $totalInserted = 0;
 
-            foreach ($categories as $categoryData) {
+        $pages = range(1, $totalPages);
 
-                // Création ou mise à jour de la catégorie
-                $category = Category::updateOrCreate(
-                    ['wp_category_id' => intval($categoryData['id'])],
-                    [
-                        'name' => $categoryData['name'],
-                        'slug' => $categoryData['slug'],
-                        'count_publications' => 0,
-                        'date_publish' => now(),
-                        'user_id' => 1
-                    ]
-                );
+        foreach (array_chunk($pages, $batchSize) as $batch) {
+            foreach ($batch as $page) {
+                try {
+                    $response = Http::get("$baseUrl?per_page=$perPage&page=$page");
 
-                // Génération de l'entrée XML
-                $slug = $categoryData['slug'];
-                $url = "https://togoactu.com/{$slug}";
-                $lastmod = now()->toDateString();
+                    if (!$response->successful()) {
+                        $this->command->warn("⚠️ Échec récupération page $page (status: " . $response->status() . ")");
+                        continue;
+                    }
 
-                $sitemapContent .= <<<XML
-  <url>
-    <loc>{$url}</loc>
-    <lastmod>{$lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+                    $categories = $response->json();
+                    $fetchedThisPage = count($categories);
+                    $insertedThisPage = 0;
 
-XML;
+                    foreach ($categories as $categoryData) {
+                        $category = Category::updateOrCreate(
+                            ['wp_category_id' => intval($categoryData['id'])],
+                            [
+                                'name' => $categoryData['name'],
+                                'slug' => $categoryData['slug'],
+                                'count_publications' => 0,
+                                'date_publish' => now(),
+                                'user_id' => 1
+                            ]
+                        );
+
+                        if ($category->wasRecentlyCreated) {
+                            $insertedThisPage++;
+                        }
+                    }
+
+                    $totalFetched += $fetchedThisPage;
+                    $totalInserted += $insertedThisPage;
+
+                    $this->command->info("📄 Page $page traitée : $fetchedThisPage récupérées, $insertedThisPage insérées. Total insérées : $totalInserted");
+                } catch (\Exception $e) {
+                    $this->command->warn("⚠️ Erreur page $page : " . $e->getMessage());
+                }
             }
         }
 
-        // Fermeture du XML
-        $sitemapContent .= "</urlset>";
-
-        // Écriture dans le fichier sitemap.xml (dans le disque 'public')
-        Storage::disk('public')->put('sitemap-category.xml', $sitemapContent);
+        $this->command->info("✅ Import des catégories terminé : $totalFetched récupérées au total, $totalInserted insérées en base.");
     }
 }

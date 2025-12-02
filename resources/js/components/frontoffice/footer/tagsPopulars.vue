@@ -44,7 +44,7 @@ onMounted(() => {
     </div>
     <div class="row" v-else>
         <ul class="list-inline">
-					<li class="list-inline-item"  v-for="info in tagsPopularsData" :key="info.id"><span @click="tag(info.slug)" style="cursor: pointer" class="btn btn-sm btn-primary-soft">#{{ info.name }}</span></li>
+					<li class="list-inline-item"  v-for="info in tagsPopularsData" :key="info.id"><span @click="tag(info.slug)" style="cursor: pointer" class="btn btn-sm btn-success">#{{ info.name }}</span></li>
 				</ul>
     </div>
     <!-- Hot topics END -->

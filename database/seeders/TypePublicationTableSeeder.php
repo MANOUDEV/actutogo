@@ -7,18 +7,37 @@ use Illuminate\Database\Seeder;
 
 class TypePublicationTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        TypePublication::create(['name' => "ARTICLE", 'slug' => "article",'date_publish' =>  now(),  'user_id' => 1]);
-        TypePublication::create(['name' => "INFO ALERT", 'slug' => "info-alert",'date_publish' =>  now(),  'user_id' => 1]);
-        TypePublication::create(['name' => "ANNONCE", 'slug' => "annonce",'date_publish' =>  now(),  'user_id' => 1]);
-        TypePublication::create(['name' => "VIDEOS", 'slug' => "videos",'date_publish' =>  now(),  'user_id' => 1]);
-        TypePublication::create(['name' => "PUBLICITES", 'slug' => "publicites",'date_publish' =>  now(),  'user_id' => 1]);
-        TypePublication::create(['name' => "EVENEMENT", 'slug' => "evenement",'date_publish' =>  now(),  'user_id' => 1]);
+        $types = [
+            ['name' => "Articles", 'slug' => "articles"],
+            ['name' => "Alerte Infos", 'slug' => "alerte-infos"],
+            ['name' => "Annonces", 'slug' => "annonces"],
+            ['name' => "Vidéos", 'slug' => "videos"],
+            ['name' => "Publicités", 'slug' => "publicites"],
+            ['name' => "Evénnements", 'slug' => "evenements"],
+        ];
+
+        $totalFetched = count($types);
+        $totalInserted = 0;
+
+        foreach ($types as $typeData) {
+            $type = TypePublication::updateOrCreate(
+                ['slug' => $typeData['slug']], // clé unique
+                [
+                    'name' => $typeData['name'],
+                    'date_publish' => now(),
+                    'user_id' => 1,
+                ]
+            );
+
+            if ($type->wasRecentlyCreated) {
+                $totalInserted++;
+            }
+
+            $this->command->info("Type de publication '{$type->name}' traité : " . ($type->wasRecentlyCreated ? 'nouveau' : 'existant'));
+        }
+
+        $this->command->info("✅ Import des types de publication terminé : $totalFetched récupérés, $totalInserted insérés en base.");
     }
 }

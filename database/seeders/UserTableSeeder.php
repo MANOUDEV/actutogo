@@ -5,19 +5,13 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class UserTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        $users =[
+        $users = [
             [
                 'nom' => 'DENANYOH',
                 'nom_complet' => 'Alexandre DENANYOH',
@@ -25,13 +19,11 @@ class UserTableSeeder extends Seeder
                 'telephone' => '+33 6 27 38 75 14',
                 'author_id' => 1,
                 'username' => 'MawuwonamTG',
-                'slug' => Str::slug('MawuwonamTG'),
                 'role_id' => 1,
                 'status' => 1,
                 'email' => 'nonojack@yahoo.fr',
-                'password' =>  Hash::make('040567Ionos'),
+                'password' => '040567Ionos', // le mot de passe sera hashé ci-dessous
             ],
-
             [
                 'nom' => 'MIKANDO',
                 'prenoms' => 'Eric',
@@ -39,45 +31,40 @@ class UserTableSeeder extends Seeder
                 'telephone' => '+228 91 91 91 91',
                 'author_id' => 2,
                 'username' => 'delomepub',
-                'slug' => Str::slug('delomepub'),
                 'role_id' => 2,
                 'status' => 1,
                 'email' => 'ericmakondo@gmail.com',
-                'password' =>  Hash::make('delomepub92'),
+                'password' => 'delomepub92', // le mot de passe sera hashé ci-dessous
             ],
         ];
 
-        foreach ($users as $user) {
+        $totalFetched = count($users);
+        $totalInserted = 0;
 
-           User::create($user);
+        foreach ($users as $data) {
+            $user = User::updateOrCreate(
+                ['email' => $data['email']], // clé unique
+                [
+                    'nom' => $data['nom'],
+                    'prenoms' => $data['prenoms'],
+                    'nom_complet' => $data['nom_complet'],
+                    'telephone' => $data['telephone'],
+                    'author_id' => $data['author_id'],
+                    'username' => $data['username'],
+                    'slug' => Str::slug($data['username']),
+                    'role_id' => $data['role_id'],
+                    'status' => $data['status'],
+                    'password' => Hash::make($data['password']),
+                ]
+            );
 
+            if ($user->wasRecentlyCreated) {
+                $totalInserted++;
+            }
+
+            $this->command->info("Utilisateur '{$user->username}' traité : " . ($user->wasRecentlyCreated ? 'nouveau' : 'existant'));
         }
 
-        $sitemapHeader = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-XML;
-        
-                $sitemapContent = $sitemapHeader . "\n";
-        
-                $authors = ['', 'about', 'contact', 'forum', 'infos-partatiques', 'events', 'pub', 'videos', 'all-category', 'search-article'];
-                $lastmod = now()->toDateString();
-        
-                foreach ($authors as $author) {
-                    $url = "https://togoactu.com/{$author}";
-                    $sitemapContent .= <<<XML
-          <url>
-            <loc>{$url}</loc>
-            <lastmod>{$lastmod}</lastmod>
-            <changefreq>weekly</changefreq>
-            <priority>0.6</priority>
-          </url>
-        
-        XML;
-                }
-        
-                $sitemapContent .= "</urlset>";
-        
-                Storage::disk('public')->put('sitemap.xml', $sitemapContent);
+        $this->command->info("✅ Import des utilisateurs terminé : $totalFetched récupérés, $totalInserted insérés en base.");
     }
 }

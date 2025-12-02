@@ -45,13 +45,13 @@ onMounted(() => {
 
         <div class="row" v-else>
             <div class="col-6">
-                <ul class="nav flex-column text-primary-hover">
-                    <li class="nav-item"><span class="nav-link pt-0" style="cursor: pointer" @click="category(info.slug)" v-for="info in categoryPopularsData.FirstSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li>
+                <ul class="nav flex-column text-white">
+                    <li class="nav-item"><span class="nav-link pt-0 text-white" style="cursor: pointer" @click="category(info.slug)" v-for="info in categoryPopularsData.FirstSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li>
                 </ul>
             </div>
                 <div class="col-6">
-                <ul class="nav flex-column text-primary-hover">
-                    <li class="nav-item"><span class="nav-link pt-0" style="cursor: pointer" @click="category(info.slug)" v-for="info in categoryPopularsData.TwoSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li> 
+                <ul class="nav flex-column text-white">
+                    <li class="nav-item text-white"><span class="nav-link pt-0 text-white" style="cursor: pointer" @click="category(info.slug)" v-for="info in categoryPopularsData.TwoSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li> 
                 </ul>
             </div>
         </div>

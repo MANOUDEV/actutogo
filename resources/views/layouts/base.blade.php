@@ -22,8 +22,6 @@
 
         <!-- Theme CSS -->
         <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
-         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5594963864359932"
-                crossorigin="anonymous"></script>
         @vite(['resources/js/app.js', 'resources/css/app.css'])
     </head>
     <body >

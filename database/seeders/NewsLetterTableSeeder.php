@@ -8,33 +8,33 @@ use Illuminate\Support\Str;
 
 class NewsLetterTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-      
-        $news_letters =[ 
-            [
-                'email' => 'manouadjanor@gmail.com',
-                'slug' => Str::slug('manouadjanor@gmail.com'),
-                'status' => 1, 
-                'date_publish' => now(),
-            ],
-            [
-                'email' => 'nonojack@yahoo.fr',
-                'slug' => Str::slug('nonojack@yahoo.fr'),
-                'status' => 1, 
-                'date_publish' => now(),
-            ]
+        $newsLetters = [
+            'manouadjanor@gmail.com',
+            'nonojack@yahoo.fr'
         ];
 
-        foreach ($news_letters as $news_letter) {
+        $totalFetched = count($newsLetters);
+        $totalInserted = 0;
 
-           NewsLetter::create($news_letter);
-           
+        foreach ($newsLetters as $email) {
+            $newsletter = NewsLetter::updateOrCreate(
+                ['email' => $email], // clé unique
+                [
+                    'slug' => Str::slug($email),
+                    'status' => 1,
+                    'date_publish' => now(),
+                ]
+            );
+
+            if ($newsletter->wasRecentlyCreated) {
+                $totalInserted++;
+            }
+
+            $this->command->info("NewsLetter '{$newsletter->email}' traitée : " . ($newsletter->wasRecentlyCreated ? 'nouveau' : 'existant'));
         }
+
+        $this->command->info("✅ Import des newsletters terminé : $totalFetched récupérées, $totalInserted insérées en base.");
     }
 }

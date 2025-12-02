@@ -8,17 +8,42 @@ use Illuminate\Support\Str;
 
 class RoleTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        Role::create(['name' => "Administrateur", 'slug' => Str::slug("Administrateur"), 'nbRsp' => '&nbtsd!?']);
+        $roles = [
+            [
+                'name' => "Administrateur",
+                'nbRsp' => '&nbtsd!?'
+            ],
+            [
+                'name' => "Publicateur d' articles",
+                'nbRsp' => '&nbrsp?!'
+            ],
+            [
+                'name' => "Visiteur",
+                'nbRsp' => '&nbdfpo@!'
+            ]
+        ];
 
-        Role::create(['name' => "Publicateur d' articles", 'slug' => Str::slug("Publicateur d' articles"), 'nbRsp' => '&nbrsp?!']);
+        $totalFetched = count($roles);
+        $totalInserted = 0;
 
-        Role::create(['name' => "Visiteur", 'slug' => Str::slug("Visiteur"), 'nbRsp' => '&nbdfpo@!']);
+        foreach ($roles as $roleData) {
+            $role = Role::updateOrCreate(
+                ['slug' => Str::slug($roleData['name'])], // clé unique
+                [
+                    'name' => $roleData['name'],
+                    'nbRsp' => $roleData['nbRsp']
+                ]
+            );
+
+            if ($role->wasRecentlyCreated) {
+                $totalInserted++;
+            }
+
+            $this->command->info("Rôle '{$role->name}' traité : " . ($role->wasRecentlyCreated ? 'nouveau' : 'existant'));
+        }
+
+        $this->command->info("✅ Import des rôles terminé : $totalFetched récupérés, $totalInserted insérés en base.");
     }
 }
