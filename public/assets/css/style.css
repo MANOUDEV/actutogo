@@ -9422,7 +9422,7 @@ textarea.form-control-lg {
 
 .bg-primary {
   --bs-bg-opacity: 1;
-  background-color: #0a042e, var(--bs-bg-opacity)) !important;
+  background-color: #0a042e !important;
 }
 
 .bg-secondary {
@@ -17559,60 +17559,13 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
 /*# sourceMappingURL=style.css.map */
 
 .alaune_first_section_img_responsive{
-  height: 520px;
+  height: 630px;
   width: 100%;
   max-width: 100%;
   object-fit: cover;
   display: block;
   filter: brightness(70%);
 }
-
-.alaune_second_section_img_responsive{
-  height: 260px;
-  width: 100%;
-  max-width: 100%;
-  object-fit: cover;
-  display: block;
-  filter: brightness(70%);
-}
-
-
-.a_ne_pas_manquer_section_img_responsive{
-    height: 650px;
-    width: 100%;
-    max-width: 100%;
-    object-fit: cover;
-    display: block;
-    filter: brightness(50%);
-}
-
-
-.opinion_faits_divers_first_section_img_responsive{
-    height: 430px;
-    width: 100%;
-    max-width: 100%;
-    object-fit: cover;
-    display: block;
-    filter: brightness(70%);
-}
-
-
-.toutelactualite_logo{
-  height: 40px
-}
-
-.toute_lactualite_title{
-  font-size: 20px;
-}
-
-.toute_lactualite{
-  height: 280px;
-  width: 100%;
-  max-width: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 .alaune_title{
   font-size: 20px;
 }
@@ -17620,6 +17573,7 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
 .alaune_logo{
   height: 40px
 }
+
 
 .internationalH_first_section_img_responsive{
   height: 255px;
@@ -17674,6 +17628,9 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
   display: block;
   filter: brightness(70%);
 }
+
+
+
 @media only screen and (max-width: 575px) {
 
   .alaune_first_section_img_responsive{
@@ -17685,46 +17642,6 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
     filter: brightness(70%);
   }
 
-    
-  .alaune_second_section_img_responsive{
-    height: 320px;
-    width: 100%;
-    max-width: 100%;
-    object-fit: cover;
-    display: block;
-    filter: brightness(70%);
-  }
-
-    
-  .opinion_faits_divers_first_section_img_responsive{
-    height: 320px;
-    width: 100%;
-    max-width: 100%;
-    object-fit: cover;
-    display: block;
-    filter: brightness(70%);
-  }
-
-  
-  .toute_lactualite{
-    height: 280px;
-    width: 100%;
-    max-width: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  
-  .a_ne_pas_manquer_section_img_responsive{
-    height: 320px;
-    width: 100%;
-    max-width: 100%;
-    object-fit: cover;
-    display: block;
-    filter: brightness(50%);
-  }
-
-  
   .international_first_section_img_responsive{
     height: 320px;
     width: 100%;
