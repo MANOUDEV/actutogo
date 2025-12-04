@@ -97,6 +97,11 @@
 					<a class="navbar-brand d-block" href="/">
 						<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
 					</a>
+					<div>
+						<a href="#" class="card-img-flash d-block">
+							@include('adsense.google-ads.ads-sections-second-header')
+						</a>
+					</div>
 				</div>
 			 
 			</div>
