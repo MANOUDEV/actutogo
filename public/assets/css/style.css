@@ -9422,7 +9422,7 @@ textarea.form-control-lg {
 
 .bg-primary {
   --bs-bg-opacity: 1;
-  background-color: #0a042e !important;
+  background-color: #0a042e, var(--bs-bg-opacity)) !important;
 }
 
 .bg-secondary {
@@ -17557,3 +17557,209 @@ a.text-primary-hover:hover, button.text-primary-hover:hover {
 }
 /*User CSS*/
 /*# sourceMappingURL=style.css.map */
+
+.alaune_first_section_img_responsive{
+  height: 520px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+.alaune_second_section_img_responsive{
+  height: 260px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+
+.a_ne_pas_manquer_section_img_responsive{
+    height: 650px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+}
+
+
+.opinion_faits_divers_first_section_img_responsive{
+    height: 430px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+}
+
+
+.toutelactualite_logo{
+  height: 40px
+}
+
+.toute_lactualite_title{
+  font-size: 20px;
+}
+
+.toute_lactualite{
+  height: 280px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.alaune_title{
+  font-size: 20px;
+}
+
+.alaune_logo{
+  height: 40px
+}
+
+.internationalH_first_section_img_responsive{
+  height: 255px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+.international_first_section_img_responsive{
+  height: 330px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+
+.opinion_faits_divers_first_section_img_responsive{
+    height: 430px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+}
+
+
+.toutelactualite_logo{
+  height: 40px
+}
+
+.toute_lactualite_title{
+  font-size: 20px;
+}
+
+.toute_lactualite{
+  height: 280px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+.international_first_section_img_responsive{
+  height: 330px;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(70%);
+}
+@media only screen and (max-width: 575px) {
+
+  .alaune_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+    
+  .alaune_second_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+    
+  .opinion_faits_divers_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  
+  .toute_lactualite{
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  
+  .a_ne_pas_manquer_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(50%);
+  }
+
+  
+  .international_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+    
+  .opinion_faits_divers_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+
+  
+  .international_first_section_img_responsive{
+    height: 320px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(70%);
+  }
+  
+  .toute_lactualite{
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+}
