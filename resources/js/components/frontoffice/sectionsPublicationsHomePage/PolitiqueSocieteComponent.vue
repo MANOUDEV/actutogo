@@ -66,8 +66,8 @@ onMounted(() => {
                         </div>
                         <div>&nbsp; &nbsp; &nbsp;</div>
                         <div>
-                            <h2 class="text-success m-0 alaune_title">POLITIQUE</h2>
-                            <p>Suivez nos actualités sur la politique.</p>
+                            <h2 class="text-success m-0 alaune_title">CHRONIQUES</h2>
+                            <p>Suivez nos actualités sur les chroniques.</p>
                         </div>
                     </div>
                     <!-- Title -->
@@ -119,8 +119,8 @@ onMounted(() => {
                         </div>
                         <div>&nbsp; &nbsp; &nbsp;</div>
                         <div>
-                            <h2 class="text-success m-0 alaune_title">SOCIETE</h2>
-                            <p>Suivez nos actualités sur la société.</p>
+                            <h2 class="text-success m-0 alaune_title">Conseils des ministres</h2>
+                            <p>Suivez nos actualités sur les conseils des ministres.</p>
                         </div>
                     </div>
                     <!-- Title -->

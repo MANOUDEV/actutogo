@@ -169,8 +169,8 @@ onMounted(() => {
                         </div>
                         <div>&nbsp; &nbsp; &nbsp;</div>
                         <div>
-                            <h2 class="text-success m-0 alaune_title">EDITORIAL</h2>
-                            <p>Suivez nos actualités sur l'éditorial.</p>
+                            <h2 class="text-success m-0 alaune_title">INTERNATIONAL</h2>
+                            <p>Suivez nos actualités sur l'international.</p>
                         </div>
                     </div>
                     <!-- Card item START -->
@@ -260,8 +260,8 @@ onMounted(() => {
                                 </div>
                                 <div>&nbsp; &nbsp; &nbsp;</div>
                                 <div>
-                                    <h4 class="text-success m-0 alaune_title">COMMUNIQUE</h4>
-                                    <p>Suivez nos communiqués.</p>
+                                    <h4 class="text-success m-0 alaune_title">AFRIQUE</h4>
+                                    <p>Suivez nos actualités sur l'Afrique.</p>
                                 </div>
                             </div>
                         </div>
@@ -340,8 +340,8 @@ onMounted(() => {
                                 </div>
                                 <div>&nbsp; &nbsp; &nbsp;</div>
                                 <div>
-                                    <h2 class="text-success m-0 alaune_title">INTERVIEWS</h2>
-                                    <p>Suivez les interviews.</p>
+                                    <h2 class="text-success m-0 alaune_title">MEDIAS</h2>
+                                    <p>Suivez nos actualités sur les medias.</p>
                                 </div>
                             </div>
                         </div>

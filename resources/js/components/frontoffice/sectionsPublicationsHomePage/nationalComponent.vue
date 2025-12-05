@@ -161,8 +161,8 @@ onMounted(() => {
                         </div>
                         <div>&nbsp; &nbsp; &nbsp;</div>
                         <div>
-                            <h2 class="text-success m-0 alaune_title">ACTUALITES DU TOGO</h2>
-                            <p>Suivez nos actualités sur le Togo.</p>
+                            <h2 class="text-success m-0 alaune_title">Togo politique</h2>
+                            <p>Suivez nos actualités sur la politique togolaise.</p>
                         </div>
                     </div>
                     <!-- Title -->
@@ -290,7 +290,7 @@ onMounted(() => {
                             <div class="d-flex mb-2 mt-2">
                                
                                 <div>
-                                    <h4 class="text-success m-0 alaune_title">DIASPORA</h4> 
+                                    <h4 class="text-success m-0 alaune_title">EDUCATION</h4> 
                                 </div>
                             </div>
                         </div>
@@ -361,8 +361,8 @@ onMounted(() => {
                     </div>
                     <div>&nbsp; &nbsp; &nbsp;</div>
                     <div>
-                        <h2 class="text-success m-0 alaune_title">INTERNATIONAL</h2>
-                        <p>Suivez nos actualités a l'international.</p>
+                        <h2 class="text-success m-0 alaune_title">SOCIETE</h2>
+                        <p>Suivez nos actualités sur la société togolaise.</p>
                     </div>
                 </div>
             </div>

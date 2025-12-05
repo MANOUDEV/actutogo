@@ -164,6 +164,114 @@ onMounted(() => {
             </div>
             <br>
         </div>
+
+         <div class="row g-4 mb-4" >
+
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-2">
+                <div class="col-md-12 ">
+                    <div class="d-flex mb-2">
+                        <div>
+                            <img :src="`/assets/images/Icones_formes/Icones-TAAsset-87.png`" class="alaune_logo" alt="">
+                        </div>
+                        <div>&nbsp; &nbsp; &nbsp;</div>
+                        <div>
+                            <h2 class="text-success m-0 alaune_title">CULTURE</h2>
+                            <p>Suivez nos actualités sur la culture.</p>
+                        </div>
+                    </div>
+                    <!-- Title -->
+                </div>
+
+                <Splide :options="optionsOneOpinionFaitsDivers" aria-label="My Favorite Images">
+
+                    <SplideSlide v-for=" result in opinionFaitsDiversData.culture" :key="result.id">
+                        <div>
+                            <div class="card card-overlay-bottom card-img-scale">
+                                <!-- Card Image -->
+                                <img class="card-img opinion_faits_divers_first_section_img_responsive" :src='getImage(result.image_cover_url)' alt="" >
+                                <!-- Card Image overlay -->
+                                <div class="card-img-overlay d-flex flex-column p-3 p-sm-4">
+                                    <div class="w-100 mt-auto">
+
+                                        <!-- Card title -->
+                                        <h4 class="text-white"><span @click="article(result.slug)" style="cursor: pointer" class="btn-link text-reset stretched-link" v-html="result.title_truncate"></span></h4>
+                                        <div class="text-white-force">
+                                            <div v-html="result.truncate_content">  </div>
+                                        </div>
+                                        <!-- Card info -->
+                                        <ul class="nav nav-divider align-items-center text-white-force text-uppercase d-sm-inline-block" style="font-size: 12px">
+                                            <li class="nav-item">
+                                                <div class="nav-link">
+                                                    <div class="d-flex align-items-center position-relative">
+
+                                                        <span class="ms-3"> <span @click="author(result.author_slug)" style="cursor: pointer" class="stretched-link text-reset btn-link">{{ result.author_name }}</span></span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="nav-item">{{ moment(result.date_publish).format("DD/MM/YYYY") }}</li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </SplideSlide>
+                </Splide>
+
+            </div>
+
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-2">
+                <div class="col-md-12 ">
+                    <div class="d-flex mb-2">
+                        <div>
+                            <img :src="`/assets/images/Icones_formes/Icones-TAAsset-88.png`" class="alaune_logo" alt="">
+                        </div>
+                        <div>&nbsp; &nbsp; &nbsp;</div>
+                        <div>
+                            <h2 class="text-success m-0 alaune_title">NECROLOGIE</h2>
+                            <p>Suivez nos actualités sur la nécrologie.</p>
+                        </div>
+                    </div>
+                    <!-- Title -->
+                </div>
+
+                <Splide :options="optionsOneOpinionFaitsDivers" aria-label="My Favorite Images">
+
+                    <SplideSlide v-for=" result in opinionFaitsDiversData.necrologie" :key="result.id">
+                        <div>
+                            <div class="card card-overlay-bottom card-img-scale">
+                                <!-- Card Image -->
+                                <img class="card-img opinion_faits_divers_first_section_img_responsive" :src='getImage(result.image_cover_url)' alt="">
+                                <!-- Card Image overlay -->
+                                <div class="card-img-overlay d-flex flex-column p-3 p-sm-4">
+                                    <div class="w-100 mt-auto">
+
+                                        <!-- Card title -->
+                                        <h4 class="text-white"><span @click="article(result.slug)" style="cursor: pointer" class="btn-link text-reset stretched-link" v-html="result.title_truncate"></span></h4>
+                                        <div class="text-white-force">
+                                            <div v-html="result.truncate_content">  </div>
+                                        </div>
+                                        <!-- Card info -->
+                                        <ul class="nav nav-divider align-items-center text-white-force text-uppercase d-sm-inline-block" style="font-size: 12px">
+                                            <li class="nav-item">
+                                                <div class="nav-link">
+                                                    <div class="d-flex align-items-center position-relative">
+
+                                                        <span class="ms-3"> <span @click="author(result.author_slug)" style="cursor: pointer" class="stretched-link text-reset btn-link">{{ result.author_name }}</span></span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="nav-item">{{ moment(result.date_publish).format("DD/MM/YYYY") }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </SplideSlide>
+                </Splide>
+            </div>
+            <br>
+        </div>
     </div>
 
 </template>
