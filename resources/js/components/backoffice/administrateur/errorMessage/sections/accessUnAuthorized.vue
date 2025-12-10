@@ -1,3 +1,23 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import moment from 'moment'; 
+const nbRsp = ref(null); 
+
+const getResults = async () => {
+    if(localStorage.getItem('nbRsp') === '&nbrsp?!'){
+
+       nbRsp.value = "&nbrsp?!"
+
+    }else if(localStorage.getItem('nbRsp') === '&nbtsd!?'){
+
+       nbRsp.value = "&nbtsd!?"
+    }
+};
+
+onMounted(() => {
+  getResults();
+});
+</script>
 <template>
     <section class="overflow-hidden">
         <div class="container">
@@ -42,27 +62,3 @@
         </div>
     </section>
 </template>
-<script>
-export default{
-    data() {
-        return {
-            nbRsp: null
-        }
-    },
-    methods:{
-        getResults(){
-            if(localStorage.getItem('nbRsp') === '&nbrsp?!'){
-
-                this.nbRsp = "&nbrsp?!"
-
-            }else if(localStorage.getItem('nbRsp') === '&nbtsd!?'){
-
-                this.nbRsp = "&nbtsd!?"
-            }
-        }
-    },
-    mounted() {
-        this.getResults()
-    },
-}
-</script>

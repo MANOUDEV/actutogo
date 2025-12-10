@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Api\Web\Authentication;
-use App\Http\Controllers\Api\BaseController; 
+use App\Http\Controllers\Api\BaseController;
+use App\Mail\VerifyOtp;
 use App\Models\User;
 use App\Models\OtpRegister;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Routing\Controllers\Middleware;  
+use Illuminate\Routing\Controllers\Middleware; 
 
 class RegisterController extends BaseController
 {
@@ -25,6 +26,7 @@ class RegisterController extends BaseController
 
     public function register(){
 
+        
         return view('authentication.register');
 
     }

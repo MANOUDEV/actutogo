@@ -9,8 +9,6 @@
     <main style="margin-top: -30px">
         <section class="position-relative">
             <div class="container" data-sticky-container>
-                
-                
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="mb-4">

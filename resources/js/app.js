@@ -8,30 +8,48 @@ import VueSweetalert2 from 'vue-sweetalert2';
 
 import 'sweetalert2/dist/sweetalert2.min.css';
 
-import store from './store/index';
+import { QuillEditor } from '@vueup/vue-quill'
 
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+ 
+import store from './store/index'; 
+ 
 //Importation, déclaration et chargement des composants inclus dans le header
- 
-import EconomieHeader from './components/frontoffice/header/economie.vue'
- 
-import InternationalHeader from './components/frontoffice/header/international.vue'
 
-import PolitiqueHeader from './components/frontoffice/header/politique.vue'
-
-import SocieteHeader from './components/frontoffice/header/societe.vue'
+import TogoactualiteHeader from './components/frontoffice/header/togoactualite.vue'
 
 import RubriquesHeader from './components/frontoffice/header/rubriques.vue'
 
+import EconomieHeader from './components/frontoffice/header/economie.vue'
+
 import DiasporaHeader from './components/frontoffice/header/diaspora.vue'
+
+import InternationalHeader from './components/frontoffice/header/international.vue'
+
+import SportsHeader from './components/frontoffice/header/sports.vue'
 
 //Importation, déclaration et chargement des composants inclus dans le footer
 
 import NewsletterFooter from './components/frontoffice/footer/newsletter.vue'
- 
+
+import ArticlesPopularsFooter from './components/frontoffice/footer/articlesPopulars.vue'
+
 import CategoryPopularsFooter from './components/frontoffice/footer/categoryPopulars.vue'
 
-import TagsPopularsFooter from './components/frontoffice/footer/tagsPopulars.vue'
+import TagsPopularsFooter from './components/frontoffice/footer/tagsPopulars.vue' 
 
+//Importation du Composant de contact à afficher sur la page d'accueil
+
+import contactF from './components/frontoffice/includes/contact.vue' 
+
+import states from './components/frontoffice/article/states.vue';
+
+import comments from './components/frontoffice/article/comments.vue';
+
+//Importation des composants pour le matricule
+
+import VisitorsMatricule from './components/frontoffice/visitor_actions/visitor_matricule.vue'
+  
 //Verifier les connexions pour configurer les menus
 
 import in_second_menuF from './components/frontoffice/verify_auth/in_second_menu.vue'
@@ -47,79 +65,7 @@ import loginH from './components/authentication/login.vue'
 import registerH from './components/authentication/register.vue'
 
 import forgot_passwordH from './components/authentication/forgot_password.vue'
-
-//Importation, déclaration et chargement des composants des sections de publications inclus dans la page d'accueil
-
-import nationalComponent from './components/frontoffice/sectionsPublicationsHomePage/nationalComponent.vue'
-
-import opinionFaitsDiversComponent from './components/frontoffice/sectionsPublicationsHomePage/opinionFaitsDiversComponent.vue'
-
-import politiqueSocieteComponent from './components/frontoffice/sectionsPublicationsHomePage/PolitiqueSocieteComponent.vue'
-
-import internationalComponent from './components/frontoffice/sectionsPublicationsHomePage/internationalComponent.vue'
-
-//Importation du Composant de contact à afficher sur la page d'accueil
-
-import contactF from './components/frontoffice/includes/contact.vue' 
-
-import states from './components/frontoffice/article/states.vue';
-
-import comments from './components/frontoffice/article/comments.vue';
-
-//Importation des composants pour le matricule
-
-import VisitorsMatricule from './components/frontoffice/visitor_actions/visitor_matricule.vue'
   
-const app = createApp({})
- 
-app.component('EconomieHeader', EconomieHeader)
-
-app.component('SocieteHeader', SocieteHeader)
-
-app.component('DiasporaHeader', DiasporaHeader)
-
-app.component('RubriquesHeader', RubriquesHeader)
- 
-app.component('InternationalHeader', InternationalHeader)
-
-app.component('PolitiqueHeader', PolitiqueHeader)
-
-app.component('NewsletterFooter', NewsletterFooter)
-
-app.component('CategoryPopulars', CategoryPopularsFooter)
-
-app.component('TagsPopulars', TagsPopularsFooter)
-
-app.component('inSecondMenu', in_second_menuF)
- 
-app.component('offCanvas', off_canvasF)
-
-app.component('inFirstMenu', in_first_menuF)
-
-app.component('login', loginH)
-
-app.component('register', registerH)
-
-app.component('forgot-password', forgot_passwordH) 
-
-app.component('national', nationalComponent)
-
-app.component('international', internationalComponent)
-
-app.component('opinionFaitsDivers', opinionFaitsDiversComponent)
-
-app.component('politiqueSociete', politiqueSocieteComponent)
-
-app.component('VisitorsActions', VisitorsMatricule) 
-
-app.component('states', states) 
-
-app.component('comments', comments) 
-
-app.component('contact', contactF) 
-
-app.use(VueSweetalert2).use(store).mount('#app')
-
 //Gestion de tous les composants administrateurs
 
 import * as adminRouter from './router/adminRouter';
@@ -151,6 +97,50 @@ import authRequiredMessagePubComponent from './components/backoffice/publicateur
 import sessionExpiredMessagePubComponent from './components/backoffice/publicateur/errorMessage/sections/sessionExpiredMessage.vue'
 
 import accessUnAuthorizedPubComponent from './components/backoffice/publicateur/errorMessage/sections/accessUnAuthorized.vue'
+ 
+const app = createApp({})
+
+app.component('TogoactualiteHeader', TogoactualiteHeader)
+
+app.component('RubriquesHeader', RubriquesHeader)
+
+app.component('EconomieHeader', EconomieHeader)
+
+app.component('DiasporaHeader', DiasporaHeader)
+
+app.component('InternationalHeader', InternationalHeader)
+
+app.component('SportsHeader', SportsHeader)
+
+app.component('Newsletter', NewsletterFooter)
+
+app.component('ArticlesPopulars', ArticlesPopularsFooter)
+
+app.component('CategoryPopulars', CategoryPopularsFooter)
+
+app.component('TagsPopulars', TagsPopularsFooter)
+
+app.component('inSecondMenu', in_second_menuF)
+ 
+app.component('offCanvas', off_canvasF)
+
+app.component('inFirstMenu', in_first_menuF)
+
+app.component('login', loginH)
+
+app.component('register', registerH)
+
+app.component('forgot-password', forgot_passwordH)
+
+app.component('contact', contactF)
+
+app.component('states', states)
+
+app.component('comments', comments)
+
+app.component('VisitorsMatricule', VisitorsMatricule)
+ 
+app.use(VueSweetalert2).use(store).mount('#app')
 
 const administrateur = createApp(administrateurA)
  
@@ -164,7 +154,9 @@ administrateur.component('accessUnAuthorizedAdmin', accessUnAuthorizedAdminCompo
 
 administrateur.component('sessionExpiredMessageAdmin', sessionExpiredMessageAdminComponent)
 
-administrateur.use(adminRouter.routeConfig).use(VueSweetalert2).use(store).mount('#admin');
+administrateur.component('QuillEditor', QuillEditor)
+
+administrateur.use(adminRouter.routeConfig).use(store).mount('#admin');
 
 const publicateur = createApp(publicateurA)  
 
@@ -178,4 +170,6 @@ publicateur.component('accessUnAuthorizedPub', accessUnAuthorizedPubComponent)
 
 publicateur.component('sessionExpiredMessagePub', sessionExpiredMessagePubComponent)
 
-publicateur.use(VueSweetalert2).use(pubRouter.routeConfig).use(store).mount('#pub');
+publicateur.component('QuillEditor', QuillEditor)
+
+publicateur.use(pubRouter.routeConfig).use(store).mount('#pub');

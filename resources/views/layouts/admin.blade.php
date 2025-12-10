@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
 	<title>Page d'administration | Togo actualités</title> 
 	<!-- Favicon -->
-	<link rel="shortcut icon" href="/assets/images/Icone.png">
+	<link rel="shortcut icon" href="/assets/images/logo.png">
 
 	<!-- Google Font -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -27,11 +27,9 @@
 
 <body>
 
-    @yield('content')
-
-
-    <!-- Core JS -->
-    <script src="{{ asset('js/app.js') }}"></script>
+   <div id="admin">
+		@yield('content')
+	</div>
 
     <!-- Back to top -->
     <div class="back-top"><i class="bi bi-arrow-up-short"></i></div>

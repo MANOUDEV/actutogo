@@ -753,7 +753,7 @@ onMounted(() => {
                                                     <tr v-for="result in typePublicationListData.typePublications.data" :key="result.id">
 
                                                         <!-- Table data -->
-                                                        <th> <router-link :to="{name: 'admin.publications.create.types_publications.slug', params:{slug: result.slug} }"> {{ result.name }} </router-link> </th>
+                                                        <th> <router-link :to="{name: 'admin.publications.create.types_publications', params:{slug: result.slug} }"> {{ result.name }} </router-link> </th>
                                                         <!-- Table data -->
                                                         <td>
                                                             <span v-if="result.count_publications === 0" class="badge bg-danger bg-opacity-10 text-danger mb-2">Aucune publication</span>
@@ -767,7 +767,7 @@ onMounted(() => {
                                                         <!-- Table data -->
                                                         <td>
                                                             <div class="d-flex gap-2">
-                                                                <router-link :to="{name: 'admin.publications.create.types_publications.slug', params:{slug: result.slug} }"> 
+                                                                <router-link :to="{name: 'admin.publications.create.types_publications', params:{slug: result.slug} }"> 
                                                                     
                                                                     <span style="cursor: pointer; font-size: 30px"  class="btn btn-success btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Message" aria-label="Message">
                                                                         <i class="bi bi-plus"></i>
@@ -842,7 +842,7 @@ onMounted(() => {
 
                                                     <!-- Card footer -->
                                                     <div class="card-footer border-top text-center p-3">
-                                                        <router-link :to="{name: 'admin.publications.create.types_publications.slug', params:{slug: result.slug} }" class="btn btn-primary-soft w-100 mb-0">Ajouter une publication</router-link>
+                                                        <router-link :to="{name: 'admin.publications.create.types_publications', params:{slug: result.slug} }" class="btn btn-primary-soft w-100 mb-0">Ajouter une publication</router-link>
                                                     </div>
                                                 </div>
                                                 <!-- Category item END -->

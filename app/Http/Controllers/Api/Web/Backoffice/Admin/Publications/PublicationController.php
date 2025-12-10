@@ -7,13 +7,42 @@ use App\Models\TypePublication;
 use App\Models\Publication;
 use App\Models\Category;
 use App\Models\Tag;
-use App\Models\Author; 
+use App\Models\Author;
+use App\Models\File;
 use App\Models\PushSubscription;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush; 
 use Illuminate\Http\Request; 
+
 class PublicationController extends BaseController
 {
+   
+
+    public function str_replace_all($search, $replace, $subject) {
+
+        return str_replace($search, $replace, $subject);
+
+    }
+
+    public function getExcerpt($limit = 50, $post_content)
+    {
+        $content = strip_tags($post_content); // Supprime les balises HTML
+
+        $words = explode(' ', $content); // Sépare les mots
+
+        if (count($words) > $limit) {
+
+            $excerpt = implode(' ', array_slice($words, 0, $limit)) . '...';
+
+        } else {
+
+            $excerpt = $content;
+
+        }
+
+        return $excerpt;
+    }
+
     public function stripTags($post_content){
 
         $content = strip_tags($post_content); 
@@ -21,6 +50,130 @@ class PublicationController extends BaseController
         return $content;
 
     }
+
+    public function getFiles(Request $request){
+
+        $filesCount = File::orderBy('count', 'desc')->count();
+
+        if($filesCount === 0){
+
+            return $this->sendResponse(['status' => 401, 'filesCount'=> $filesCount], 'Aucun fichier n\'est enregistré.');
+
+        }else{
+
+            $files = File::query();
+
+            if($request->input('search')){
+
+                $files = File::where('files.file_name', 'like', '%'. $request->input('search') . '%')
+                ->where(function ($query) {
+                    $query->where("type_file_id", 1)->orWhere("type_file_id", 2);
+                }) 
+                ->orderBy('files.count_publications', 'desc')
+                ->paginate(9);
+
+                $filesCount = File::where('files.file_name', 'like', '%'. $request->input('search') . '%')
+                ->where(function ($query) {
+                    $query->where("type_file_id", 1)->orWhere("type_file_id", 2);
+                }) 
+                ->orderBy('files.count_publications', 'desc')
+                ->count();
+
+                if($filesCount === 0){
+
+                    return $this->sendResponse(['status' => 401, 'filesCount'=> $filesCount], 'Aucun fichier ne correspond à votre recherche.');
+    
+                }else{
+
+                    return $this->sendResponse(['files' => $files, 'filesCount'=> $filesCount,'status' => 200], 'Liste des fichiers à la newsletter .');
+
+                }
+
+            }else{
+
+                $files = File::where(function ($query) {
+                    $query->where("type_file_id", 1)->orWhere("type_file_id", 2);
+                })->orderBy('files.count_publications', 'desc')
+                ->paginate(9);
+
+                $filesCount = File::where(function ($query) {
+                    $query->where("type_file_id", 1)->orWhere("type_file_id", 2);
+                })->count();
+
+                if($filesCount === 0){
+
+                    return $this->sendResponse(['status' => 401, 'filesCount'=> $filesCount], 'Aucun fichier n\'est enregistré.');
+    
+                }else{
+
+                    return $this->sendResponse(['files' => $files, 'filesCount'=> $filesCount,'status' => 200], 'Liste des fichiers à la newsletter .');
+
+                }
+
+            }
+
+        }
+    }
+
+    public function searchByTypeFiles($slug, $status){
+
+        $filesCount = File::orderBy('count', 'desc')->count();
+
+        if($filesCount === 0){
+
+            return $this->sendResponse(['status' => 401, 'filesCount'=> $filesCount], 'Aucun fichier n\'est enregistré.');
+
+        }else{
+
+            $files = File::query();
+
+            if($status == 3){
+
+                $files = File::where(function ($query) {
+                    $query->where("type_file_id", 1)->orWhere("type_file_id", 2);
+                })->orderBy('files.count_publications', 'desc')
+                ->paginate(9);
+
+                $filesCount = File::where(function ($query) {
+                    $query->where("type_file_id", 1)->orWhere("type_file_id", 2);
+                })->count();
+
+                if($filesCount === 0){
+
+                    return $this->sendResponse(['status' => 401, 'filesCount'=> $status], 'Aucun fichier n\'est enregistré.');
+    
+                }else{
+
+                    return $this->sendResponse(['files' => $files, 'filesCount'=> $status,'status' => 200], 'Liste des fichiers à la newsletter .');
+
+                }
+
+            }else{
+                
+                $files = File::where('files.type_file_id', $status)
+                ->orderBy('files.count_publications', 'desc')
+                ->paginate(9);
+
+                $filesCount = File::where('files.type_file_id', $status)
+                ->orderBy('files.count_publications', 'desc')
+                ->count();
+
+                if($filesCount === 0){
+
+                    return $this->sendResponse(['status' => 401, 'filesCount'=> $status], 'Aucun fichier ne correspond à votre recherche.');
+    
+                }else{
+
+                    return $this->sendResponse(['files' => $files, 'filesCount'=> $status,'status' => 200], 'Liste des fichiers à la newsletter .');
+
+                }
+
+            }
+
+        }
+
+    } 
+
     
     public function publicationCreateBySlugType(Request $request){
 

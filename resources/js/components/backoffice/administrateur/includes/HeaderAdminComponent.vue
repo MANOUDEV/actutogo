@@ -1,12 +1,111 @@
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+import Swal from 'sweetalert2';
+
+const store = useStore();
+const dataReady = ref(0);
+const meProfileUserName = ref(null);
+const meProfileRoleName = ref(null);
+const meProfileEmail = ref(null); 
+const logoutCheck = ref(false);
+const loadingConnect = ref(false);
+const remember_me = ref(false);
+ 
+const show = async () => {
+  if (localStorage.getItem('access_token') && localStorage.getItem('nbRsp')) {
+    await store.dispatch('meProfile/getMeProfile');
+    const gettersMeProfileUserName =  store.getters['meProfile/getMeProfileUserName'];
+    const gettersMeProfileRoleName =  store.getters['meProfile/getMeProfileRoleName'];
+    const gettersMeProfileStatus =  store.getters['meProfile/getMeProfileStatus'];
+    if (gettersMeProfileStatus === 'success') {
+      meProfileRoleName.value = gettersMeProfileRoleName;
+      meProfileUserName.value = gettersMeProfileUserName;
+      dataReady.value = 1;
+    } else if (gettersMeProfileStatus === 'failed') {
+      dataReady.value = 3;
+    }
+  } else {
+    dataReady.value = 2;
+  }
+};
+
+const loginClick = async () => {
+  if (localStorage.getItem('remember_me') === 'true' && localStorage.getItem('username') && localStorage.getItem('password')) {
+    loadingConnect.value = true;
+    remember_me.value = localStorage.getItem('remember_me');
+
+    await store.dispatch('login/login', {
+      username: localStorage.getItem('username'),
+      password: localStorage.getItem('password'),
+      remember_me: localStorage.getItem('remember_me')
+    });
+
+    const getterLoginStatus =  store.getters['login/getLoginStatus'];
+    const getterLoginMessage =  store.getters['login/getLoginMessage'];
+
+    if (getterLoginStatus.includes('success')) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: getterLoginMessage,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+      });
+      const redirectPath = getterLoginStatus.includes('admin') ? '/admin/dashboard' : getterLoginStatus.includes('pub') ? '/pub/dashboard' : '/';
+      window.location = redirectPath;
+    } else {
+      window.location = '/auth/login';
+    }
+  } else {
+    window.location = '/auth/login';
+  }
+};
+const logout = async () => {
+  logoutCheck.value = true;
+  await store.dispatch('logout/getLogoutApi');
+  const getterLogoutStatus =  store.getters['logout/getLogoutStatus'];
+  const getterLogoutMessage =  store.getters['logout/getLogoutMessage'];
+  if (getterLogoutStatus === 'success') {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: getterLogoutMessage,
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+    const  clearToken = {
+      access_token: null,
+      expires_in: null
+    }
+
+    store.getters["login/getAuthData"].access_token = clearToken.access_token
+    store.getters["login/getAuthData"].expires_in = clearToken.expires_in
+
+    window.location = '/auth/login'
+
+    this.logoutCheck = false
+    window.location = '/auth/login';
+  }
+};
+
+onMounted(() => {
+  show();
+});
+</script>
 <template>
     <!-- =======================Header START -->
     <header class="navbar-light navbar-sticky header-static border-bottom navbar-dashboard">
         <!-- Logo Nav START -->
         <nav class="navbar navbar-expand-xl">
-            <div class="container">
+            <div class="container-fluid">
                 <!-- Logo START -->
                 <a class="navbar-brand me-3" href="/">
-                    <img class="navbar-brand-item light-mode-item"  src="https://togoactu.com/assets/images/logo.png" alt="logo">
+                    <img class="navbar-brand-item light-mode-item"  :src="`/assets/images/logo.png`" alt="logo">
                 </a>
                 <!-- Logo END -->
 
@@ -29,7 +128,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" style="font-size: 0.9375rem" href="#" id="pagesMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-pencil me-1"></i>Mes publications</a>
                             <ul class="dropdown-menu" aria-labelledby="pagesMenu">
-                                <li> <router-link class="dropdown-item" :to="{name: 'admin.category'}">Mes catégories</router-link></li>
+                                <li> <router-link class="dropdown-item" :to="{name: 'admin.categories'}">Mes catégories</router-link></li>
                                 <li> <router-link class="dropdown-item" :to="{name: 'admin.tags'}">Mes Tags</router-link></li>
                                 <li> <router-link class="dropdown-item"   to="#">Toutes mes publications</router-link></li>
                                 <li> <a class="dropdown-item" href="#">Brouillons</a></li>
@@ -40,7 +139,7 @@
 
                         <li class="nav-item"><router-link class="nav-link" style="font-size: 0.9375rem" to="#"><i class="bi bi-image me-1"></i>Mes fichiers</router-link></li>
 
-                        <li class="nav-item"><router-link class="nav-link" style="font-size: 0.9375rem" :to="{name: 'admin.authors'}"><i class="bi bi-people-fill me-1"></i>Mes auteurs</router-link></li>
+                        <li class="nav-item"><router-link class="nav-link" style="font-size: 0.9375rem" to="#"><i class="bi bi-people-fill me-1"></i>Mes auteurs</router-link></li>
 
 
 
@@ -78,7 +177,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/08.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/08.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -93,7 +192,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/02.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/02.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -108,7 +207,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/05.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/05.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -123,7 +222,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/03.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/03.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -167,7 +266,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/08.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/08.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -182,7 +281,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/02.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/02.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -197,7 +296,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/05.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/05.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -212,7 +311,7 @@
                                             <a href="#" class="list-group-item-action border-0 border-bottom d-flex p-3">
                                                 <div class="me-3">
                                                     <div class="avatar avatar-sm">
-                                                        <img class="avatar-img rounded-circle" src="https://togoactu.com/assets/images/avatar/03.jpg" alt="avatar">
+                                                        <img class="avatar-img rounded-circle" :src="`/assets/images/avatar/03.jpg`" alt="avatar">
                                                     </div>
                                                 </div>
                                                 <div>
@@ -247,20 +346,20 @@
                                 <div class="d-flex align-items-center">
                                     <!-- Avatar -->
                                     <div class="btn btn-primary-soft btn-round mb-0 ">
-                                        <i class="bi bi-person" ></i>
+                                       <router-link to="#"> <i class="bi bi-person" ></i></router-link>
                                     </div>
                                     &nbsp; &nbsp; &nbsp;
                                     <div v-if="dataReady">
-                                        <a class="h6 mt-2 mt-sm-0" href="#">{{meProfileUserName}}</a>
+                                        <router-link class="h6 mt-2 mt-sm-0" to="#">{{meProfileUserName}}</router-link>
                                         <p class="small m-0">{{meProfileRoleName}}</p>
                                     </div>
                                 </div>
                                 <hr>
                             </li>
                             <!-- Links -->
-                            <li><router-link class="dropdown-item" :to="{name: 'admin.profile'}"><i class="bi bi-person fa-fw me-2"></i>Modifier mon profil</router-link></li>
+                            <li><router-link class="dropdown-item" to="#"><i class="bi bi-person fa-fw me-2"></i>Modifier mon profil</router-link></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-people-fill fa-fw me-2"></i>Gerer les utilisateurs</a></li>
-                            <li><router-link class="dropdown-item" :to="{name: 'admin.newsletters'}"><i class="bi bi-send fa-fw me-2"></i> Les Newsletters</router-link></li>
+                            <li><router-link class="dropdown-item" to="#"><i class="bi bi-send fa-fw me-2"></i> Les Newsletters</router-link></li>
                             <li>
                                 <span class="dropdown-item" v-if="!logoutCheck" style="cursor: pointer" @click="logout"><i class="bi bi-power fa-fw me-2"></i>Se deconnecter</span>
                                 <span class="dropdown-item" v-else ><i class="bi bi-power fa-fw me-2"></i>Déconnexion en cours ...</span>
@@ -277,110 +376,4 @@
     </header>
     <!-- =======================Header END -->
 </template>
-<script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
-import store from '../../../../store/index'
-export default {
-    // inside your script
-    data () {
-        return {
-            dataReady: false,
-            meProfileUserName: null,
-            meProfileRoleName: null,
-            logoutCheck: false,
-            // other data
-        }
-    },
-    computed: {
-        ...mapGetters("meProfile",{
-            gettersMeProfileUserName:"getMeProfileUserName",
-            gettersMeProfileRoleName:"getMeProfileRoleName",
-            gettersMeProfileStatus:'getMeProfileStatus',
-        }),
-        ...mapGetters("login", {
-            gettersAuthData: "getAuthData",
-        }),
 
-        ...mapGetters('logout',{
-            getterLogoutStatus:'getLogoutStatus',
-            getterLogoutMessage:'getLogoutMessage',
-
-        })
-    },
-    methods:{
-      ...mapActions("meProfile",{
-          actionsGetMeProfile:'getMeProfile'
-      }),
-      ...mapActions("logout",{
-          actionsGetLogout:'getLogoutApi'
-      }),
-
-      ...mapMutations('login',{
-            saveTokenData: 'saveTokenData'
-      }),
-
-      ...mapMutations('logout',{
-            setlogout: 'setLogout'
-      }),
-
-      async show(){
-
-        await this.actionsGetMeProfile();
-
-        if(this.gettersMeProfileStatus === 'success'){
-
-            this.meProfileRoleName = this.gettersMeProfileRoleName
-
-            this.meProfileUserName = this.gettersMeProfileUserName
-
-            this.dataReady = true;
-
-        }
-      },
-
-      async logout(){
-
-        this.logoutCheck = true
-
-        await this.actionsGetLogout();
-
-        if(this.getterLogoutStatus === 'success'){
-
-            const Toast = this.$swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                    toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                }
-            })
-
-            Toast.fire({
-                icon: 'success',
-                title: this.getterLogoutMessage
-            })
-
-            const  clearToken = {
-                access_token: null,
-                expires_in: null
-            }
-
-            store.getters["login/getAuthData"].access_token = clearToken.access_token
-            store.getters["login/getAuthData"].expires_in = clearToken.expires_in
-
-           window.location = '/auth/login'
-
-           this.logoutCheck = false
-
-        }
-
-      },
-    },
-    mounted() {
-     this.show();
-    },
-};
-</script>

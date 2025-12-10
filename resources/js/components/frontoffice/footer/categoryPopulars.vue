@@ -38,7 +38,7 @@ onMounted(() => {
 <template>
     <!-- Hot topics START -->
         <div class="d-flex justify-content-center" v-if="loading">
-            <div class="spinner-border text-dark"  role="status">
+            <div class="spinner-border text-light"  role="status">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
@@ -46,12 +46,14 @@ onMounted(() => {
         <div class="row" v-else>
             <div class="col-6">
                 <ul class="nav flex-column text-primary-hover">
-                    <li class="nav-item"><span class="nav-link pt-0" style="cursor: pointer" @click="category(info.slug)" v-for="info in categoryPopularsData.FirstSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li>
+                    <li class="nav-item text-white"><span class="nav-link pt-0" style="cursor: pointer; color: #fff" @click="category(info.slug)" v-for="info in categoryPopularsData.FirstSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li>
                 </ul>
             </div>
                 <div class="col-6">
                 <ul class="nav flex-column text-primary-hover">
-                    <li class="nav-item"><span class="nav-link pt-0" style="cursor: pointer" @click="category(info.slug)" v-for="info in categoryPopularsData.TwoSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li> 
+                    <li class="nav-item text-white"><span class="nav-link pt-0" style="cursor: pointer; color: #fff" @click="category(info.slug)" v-for="info in categoryPopularsData.TwoSectionCategory" :key="info.id"> {{ info.name.toUpperCase() }} </span></li>
+                    <li class="nav-item text-white"><span class="nav-link pt-0" style="cursor: pointer; color: #fff" @click="category('events')">EVENEMENTS</span></li>
+                    <li class="nav-item text-white"><span class="nav-link pt-0" style="cursor: pointer; color: #fff" @click="category('videos')">VIDEOS</span></li>
                 </ul>
             </div>
         </div>

@@ -1,7 +1,6 @@
 <?php
 use App\Http\Controllers\Api\Web\Frontoffice\IncludesController; 
-use App\Http\Controllers\Api\Web\Frontoffice\HomeController; 
-
+ 
 use App\Http\Controllers\Api\Web\Authentication\RegisterController;
 use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\Authentication\LoginController;
@@ -17,10 +16,7 @@ use App\Http\Controllers\Api\Web\Backoffice\Admin\NewsLetterController;
 use App\Http\Controllers\Api\Web\Backoffice\Admin\TypePublicationController;
 use App\Http\Controllers\Api\Web\Backoffice\Admin\CategoryController;
 use App\Http\Controllers\Api\Web\Backoffice\Admin\TagsAdminController;
-use App\Http\Controllers\Api\Web\Backoffice\Admin\AuthorsAdminController;
-use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\CRUD\AlertInfosAnnonceController;
-use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\CRUD\ArticlesController;
-use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\CRUD\PublicitesController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\AuthorsAdminController; 
 use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\PublicationController;
 
 use Illuminate\Http\Request;
@@ -38,28 +34,42 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Les routes pour les données du haader
- 
+
+Route::get('/frontoffice/header/togoactualite', [IncludesController::class, 'togoActualiteRequestData']);
+
+Route::get('/frontoffice/header/rubriques', [IncludesController::class, 'rubriquesRequestData']);
+
+Route::get('/frontoffice/header/diplomatie', [IncludesController::class, 'diplomatieRequestData']);
+
+Route::get('/frontoffice/header/chroniques', [IncludesController::class, 'chroniquesRequestData']);
+
 Route::get('/frontoffice/header/economie', [IncludesController::class, 'economieRequestData']);
 
+Route::get('/frontoffice/header/diaspora', [IncludesController::class, 'diasporaRequestData']);
+
+Route::get('/frontoffice/header/fenetreSurLAfrique', [IncludesController::class, 'fenetreSurLAfriqueRequestData']);
+
 Route::get('/frontoffice/header/international', [IncludesController::class, 'internationalRequestData']);
- 
-Route::get('/frontoffice/header/politique', [IncludesController::class, 'politiqueRequestData']);
+
+Route::get('/frontoffice/header/monde', [IncludesController::class, 'mondeRequestData']);
+
+Route::get('/frontoffice/header/afrique', [IncludesController::class, 'afriqueRequestData']);
+
+Route::get('/frontoffice/header/sports', [IncludesController::class, 'sportsRequestData']);
+
+Route::get('/frontoffice/header/can', [IncludesController::class, 'canRequestData']);
+
+Route::get('/frontoffice/header/togo', [IncludesController::class, 'togoRequestData']);
 
 //Routes pour les données du footer
 
-Route::post('/frontoffice/footer/newsletter', [IncludesController::class, 'newsletterStoreRequest']); 
+Route::post('/frontoffice/footer/newsletter', [IncludesController::class, 'newsletterStoreRequest']);
 
 Route::get('/frontoffice/footer/tags_populars', [IncludesController::class, 'tagsRequestData']);
 
 Route::get('/frontoffice/footer/category_populars', [IncludesController::class, 'categoryRequestData']);
 
-//Les routes pour les données de la page d'accueil
-
-Route::get('/frontoffice/home_page/societe', [HomeController::class, 'nationalDataRequest']);
-
-Route::get('/frontoffice/home_page/opinion_faits_divers', [HomeController::class, 'opinionFaitsDiversDataRequest']);
-
-Route::get('/frontoffice/home_page/international_fenetre_afrique_sports', [HomeController::class, 'editorialDataRequest']);
+Route::get('/frontoffice/footer/articles_populars', [IncludesController::class, 'publicationsRequestData']);
 
 //Les routes pour les matricules de référence
 
@@ -80,7 +90,6 @@ Route::get('/article/{slug}/article_likes/{mtr}/check_likes', [IncludesControlle
 Route::get('/article/{slug}/article_comments/{mtr}/check_comments', [IncludesController::class, 'articleComments']);
 
 Route::post('/article/{slug}/article_comments/{mtr}/create_comments', [IncludesController::class, 'submitComment']);
-
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
@@ -118,6 +127,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
     Route::get('role', [ProfileController::class, 'getRole'])->middleware('auth:api');
 
+    
     //Gestion d'envoi de message avec connexion de l'utilisateur
 
     Route::post('/home/contact_auth', [UserActionAuthController::class, 'submitContactAuth'])->middleware('auth:api');
@@ -155,21 +165,10 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
         Route::delete('/backoffice/publicator/{slug}/tags_delete', [TagsController::class, 'delete'])->middleware('auth:api');
 
+
     //Gestion de la partie administrative
 
-        //Gestion des types de publications
-
-        Route::get('/backoffice/admin/type_publication_list', [TypePublicationController::class, 'index'])->middleware('auth:api');
-
-        Route::get('/backoffice/admin/{slug}/type_publication_show', [TypePublicationController::class, 'show'])->middleware('auth:api');
-
-        Route::post('/backoffice/admin/type_publication_store', [TypePublicationController::class, 'store'])->middleware('auth:api');
-
-        Route::put('/backoffice/admin/{slug}/type_publication_update', [TypePublicationController::class, 'update'])->middleware('auth:api');
-
-        Route::delete('/backoffice/admin/{slug}/type_publication_delete', [TypePublicationController::class, 'delete'])->middleware('auth:api');
-
-        //Gestion des catégories
+         //Gestion des catégories
 
         Route::get('/backoffice/admin/category_list', [CategoryController::class, 'index'])->middleware('auth:api');
 
@@ -234,24 +233,28 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
         Route::patch('/backoffice/admin/{slug}/news_letters_block', [NewsLetterController::class, 'block'])->middleware('auth:api');
 
+
+        //Gestion des types de publications
+
+        Route::get('/backoffice/admin/type_publication_list', [TypePublicationController::class, 'index'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/{slug}/type_publication_show', [TypePublicationController::class, 'show'])->middleware('auth:api');
+
+        Route::post('/backoffice/admin/type_publication_store', [TypePublicationController::class, 'store'])->middleware('auth:api');
+
+        Route::put('/backoffice/admin/{slug}/type_publication_update', [TypePublicationController::class, 'update'])->middleware('auth:api');
+
+        Route::delete('/backoffice/admin/{slug}/type_publication_delete', [TypePublicationController::class, 'delete'])->middleware('auth:api');
+    
         //Gestion des publications
 
         Route::get('/backoffice/admin/publications/change_programm', [PublicationController::class, 'changeStatusPublicationPrgramm']);
 
         Route::get('/backoffice/admin/publications/create/{slug}/type_publications', [PublicationController::class, 'publicationCreateBySlugType'])->middleware('auth:api');
 
-        Route::post('/backoffice/admin/publications/create/{slug}/store_info_alert_annonce', [AlertInfosAnnonceController::class, 'storeInfoAlertAnnonce'])->middleware('auth:api');
+        Route::get('/backoffice/admin/publications/create/{slug}/get_files', [PublicationController::class, 'getFiles']);
+            
+        Route::get('/backoffice/admin/publications/create/{slug}/get_files_search/{status}/search_by_type_files', [PublicationController::class, 'searchByTypeFiles']);
 
-        Route::post('/backoffice/admin/publications/create/{slug}/store_publicites', [PublicitesController::class, 'storePublicites'])->middleware('auth:api');
-
-        Route::post('/backoffice/admin/publications/create/{slug}/store_articles', [ArticlesController::class, 'storeArticles'])->middleware('auth:api');
-  
-        Route::get('/backoffice/admin/publications/create/{slug}/get_files', [ArticlesController::class, 'getFiles']);
-        
-        Route::get('/backoffice/admin/publications/create/{slug}/get_files_search/{status}/search_by_type_files', [ArticlesController::class, 'searchByTypeFiles']);
-        
-        Route::get('/backoffice/admin/publications/create/{slug}/get_files', [PublicitesController::class, 'getFiles']);
-        
-        Route::get('/backoffice/admin/publications/create/{slug}/get_files_search/{status}/search_by_type_files', [PublicitesController::class, 'searchByTypeFiles']);
 
 });

@@ -1,12 +1,796 @@
+<script setup>
+import { ref, computed, onMounted } from "vue"
+import { useStore } from "vuex"
+import { Bootstrap5Pagination, TailwindPagination } from "../../../../../libraries/pagination/lib"
+import moment from "moment"
+import Swal from 'sweetalert2';
+
+const store = useStore()
+
+
+// composants importés utilisables directement dans <template>
+const dataReady = ref(0)
+const meRoleName = ref(null)
+
+const tagsListData = ref({})
+const tagsListMessage = ref(null)
+
+const tagsStoreData = ref({})
+const tagsStoreMessage = ref(null)
+const tagsStoreErrors = ref([])
+
+const tagsUpdateData = ref({})
+const tagsUpdateMessage = ref(null)
+const tagsUpdateErrors = ref([])
+
+const tagsDeleteData = ref({})
+const tagsDeleteMessage = ref(null)
+
+const searchByDateListData = ref({});
+const searchByDateListMessage = ref(null);
+
+const style = ref("bootstrap5")
+const limit = ref(1)
+const keepLength = ref(false)
+const showDisabled = ref(false)
+const size = ref("default")
+const align = ref("left")
+const search = ref("") 
+
+const meProfileUserName = ref(null)
+const meProfileRoleName = ref(null)
+const authSectionModal = ref("LIST")
+
+const username = ref(null)
+const email = ref(null)
+const password = ref(null)
+const password_confirm = ref(null)
+
+const loadingLogin = ref(false)
+const errorLogin = ref(false)
+const errorsLogin = ref([])
+
+const loadingConnect = ref(false)
+const remember_me = ref(false)
+const authSectionStepModal = ref(1)
+
+const loadingForgotPasswordFirst = ref(false)
+const errorForgotPasswordFirstMessage = ref(false)
+const errorsForgotPasswordFirstErrors = ref([])
+
+const loadingForgotPasswordTwo = ref(false)
+const errorForgotPasswordTwoMessage = ref(false)
+const errorsForgotPasswordTwoErrors = ref([])
+
+const loadingForgotPasswordThree = ref(false)
+const errorForgotPasswordThreeMessage = ref(false)
+const errorsForgotPasswordThreeErrors = ref([])
+
+const step = ref(1)
+const name = ref(null)
+const slug = ref(null)
+
+const loadingResendOTP = ref(false)
+const loading = ref(true)
+const empty = ref(2)
+
+const otp = ref(null); 
+
+const loadingCreate = ref(false)
+const loadingUpdate = ref(false)
+const loadingDelete = ref(false)
+
+const showPsw = ref(false)
+const showPswC = ref(false)
+
+const emptySearchByDate = ref(0);
+const searchH = ref("ALL");
+const user_id = ref(0)
+
+
+const showPassword = () => {
+  const x = document.getElementById("psw-input")
+  if (x && x.type === "password") {
+    x.type = "text"
+    showPsw.value = true
+  } else if (x) {
+    x.type = "password"
+    showPsw.value = false
+  }
+}
+
+const showPasswordC = () => {
+  const x = document.getElementById("psw-input_c")
+  if (x && x.type === "password") {
+    x.type = "text"
+    showPswC.value = true
+  } else if (x) {
+    x.type = "password"
+    showPswC.value = false
+  }
+}
+
+const authFormModalTagsCreateClose = () => {
+  errorForgotPasswordFirstMessage.value = false
+  errorsForgotPasswordFirstErrors.value = []
+  errorForgotPasswordTwoMessage.value = false
+  errorsForgotPasswordTwoErrors.value = []
+  errorForgotPasswordThreeMessage.value = false
+  errorsForgotPasswordThreeErrors.value = []
+  errorLogin.value = false
+  errorsLogin.value = []
+
+  // si tu utilises jQuery pour tes modals :
+  $('#authFormModalTagsCreate').modal('hide')
+}
+
+
+const authModalClick = (action_auth = "LIST", modalName = null, modalSlug = null) => {
+  if (
+    localStorage.getItem("remember_me") === "true" &&
+    localStorage.getItem("username") &&
+    localStorage.getItem("password")
+  ) {
+    username.value = localStorage.getItem("username")
+    password.value = localStorage.getItem("password")
+    remember_me.value = localStorage.getItem("remember_me") === "true"
+  }
+
+  name.value = modalName
+  slug.value = modalSlug
+  authSectionModal.value = action_auth
+
+  if (authSectionModal.value === "CREATE") {
+    loadingCreate.value = false
+  } else if (authSectionModal.value === "UPDATE") {
+    loadingUpdate.value = false
+  } else if (authSectionModal.value === "DELETE") {
+    loadingDelete.value = false
+  }
+
+  // ouverture modal bootstrap
+  $('#authFormModalTagsCreate').modal("show")
+}
+
+const PreviousForgotPasswordStep = () => {
+  step.value = 1
+  errorForgotPasswordFirstMessage.value = null
+  errorsForgotPasswordFirstErrors.value = []
+  errorForgotPasswordTwoMessage.value = null
+  errorsForgotPasswordTwoErrors.value = []
+  errorForgotPasswordThreeMessage.value = null
+  errorsForgotPasswordThreeErrors.value = []
+  errorLogin.value = false
+  errorsLogin.value = []
+}
+
+const PreviousHForgotPasswordStep = () => {
+  step.value = 2
+  errorForgotPasswordFirstMessage.value = null
+  errorsForgotPasswordFirstErrors.value = []
+  errorForgotPasswordTwoMessage.value = null
+  errorsForgotPasswordTwoErrors.value = []
+  errorForgotPasswordThreeMessage.value = null
+  errorsForgotPasswordThreeErrors.value = []
+  errorLogin.value = false
+  errorsLogin.value = []
+}
+
+const changeAuthSectionStepModalToForgotPassword = () => {
+  errorForgotPasswordFirstMessage.value = null
+  errorsForgotPasswordFirstErrors.value = []
+  errorForgotPasswordTwoMessage.value = null
+  errorsForgotPasswordTwoErrors.value = []
+  errorForgotPasswordThreeMessage.value = null
+  errorsForgotPasswordThreeErrors.value = []
+  errorLogin.value = false
+  errorsLogin.value = []
+  authSectionStepModal.value = 2
+}
+
+const changeAuthSectionStepModalToLogin = () => {
+  errorForgotPasswordFirstMessage.value = null
+  errorsForgotPasswordFirstErrors.value = []
+  errorForgotPasswordTwoMessage.value = null
+  errorsForgotPasswordTwoErrors.value = []
+  errorForgotPasswordThreeMessage.value = null
+  errorsForgotPasswordThreeErrors.value = []
+  errorLogin.value = false
+  errorsLogin.value = []
+  authSectionStepModal.value = 1
+}
+
+// Fonction pour afficher les toasts
+const showToast = (icon, title) => {
+    const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    },
+    });
+    Toast.fire({ icon, title });
+};
+
+ // Vérifier l'email et envoyer OTP
+const submitVerifyForgotPasswordEmail = async () => {
+    loadingForgotPasswordFirst.value = true;
+    errorForgotPasswordFirstMessage.value = null;
+    errorsForgotPasswordFirstErrors.value = [];
+
+    await store.dispatch('forgot_password/sendOtpForgotPassword', { email: email.value });
+
+    const status = store.getters['forgot_password/getSendOtpForgotPasswordStatus'];
+    const message = store.getters['forgot_password/getSendOtpForgotPasswordMessage'];
+    const errors = store.getters['forgot_password/getSendOtpForgotPasswordErrors'];
+
+    if (status === 'success') {
+    showToast('success', message);
+    step.value = 2;
+    } else if (status === 'failed') {
+    errorForgotPasswordFirstMessage.value = message;
+    } else if (status === 'error') {
+    errorForgotPasswordFirstMessage.value = message;
+    errorsForgotPasswordFirstErrors.value = errors;
+    }
+
+    loadingForgotPasswordFirst.value = false;
+};
+
+// Renvoyer OTP
+const submitResendOtp = async () => {
+    loadingResendOTP.value = true;
+    errorForgotPasswordFirstMessage.value = null;
+    errorsForgotPasswordFirstErrors.value = [];
+
+    await store.dispatch('forgot_password/sendOtpForgotPassword', { email: email.value });
+
+    const status = store.getters['forgot_password/getSendOtpForgotPasswordStatus'];
+    const message = store.getters['forgot_password/getSendOtpForgotPasswordMessage'];
+    const errors = store.getters['forgot_password/getSendOtpForgotPasswordErrors'];
+
+    if (status === 'success') {
+    showToast('success', message);
+    step.value = 2;
+    } else if (status === 'failed') {
+    errorForgotPasswordFirstMessage.value = message;
+    } else if (status === 'error') {
+    errorForgotPasswordFirstMessage.value = message;
+    errorsForgotPasswordFirstErrors.value = errors;
+    }
+
+    loadingResendOTP.value = false;
+};
+
+// Vérifier l'OTP
+const submitVerifyForgotPasswordOtp = async () => {
+    loadingForgotPasswordTwo.value = true;
+     errorForgotPasswordTwoMessage.value = null;
+    errorsForgotPasswordTwoErrors.value = [];
+
+    await store.dispatch('forgot_password/checkOtpForgotPassword', { email: email.value, otp: otp.value });
+
+    const status = store.getters['forgot_password/getCheckOtpForgotPasswordStatus'];
+    const message = store.getters['forgot_password/getCheckOtpForgotPasswordMessage'];
+    const errors = store.getters['forgot_password/getCheckOtpForgotPasswordErrors'];
+
+    if (status === 'success') {
+    showToast('success', message);
+    step.value = 3;
+   } else if (status === 'failed') {
+    errorForgotPasswordTwoMessage.value = message;
+    } else if (status === 'error') {
+    errorForgotPasswordTwoMessage.value = message;
+    errorsForgotPasswordTwoErrors.value = errors;
+    }
+
+    loadingForgotPasswordTwo.value = false;
+};
+
+// Définir le nouveau mot de passe
+const submitForgotPasswordNewPass = async () => {
+    loadingForgotPasswordThree.value = true;
+    errorForgotPasswordThreeMessage.value = null;
+    errorsForgotPasswordThreeErrors.value = [];
+
+    await store.dispatch('forgot_password/newPassOtpForgotPassword', {
+    email: email.value,
+    otp: otp.value,
+    password: password.value,
+    password_confirm: password_confirm.value,
+    });
+
+    const status = store.getters['forgot_password/getNewPassOtpForgotPasswordStatus'];
+    const message = store.getters['forgot_password/getNewPassOtpForgotPasswordMessage'];
+    const errors = store.getters['forgot_password/getNewPassOtpForgotPasswordErrors'];
+
+    if (status === 'success') {
+    showToast('success', message);
+    step.value = 1;
+   } else if (status === 'failed') {
+    errorForgotPasswordThreeMessage.value = message;
+    } else if (status === 'error') {
+    errorForgotPasswordThreeMessage.value = message;
+    errorsForgotPasswordThreeErrors.value = errors;
+    }
+
+    loadingForgotPasswordThree.value = false;
+};
+const submitLogin = async () => {
+    loadingLogin.value = true;
+    errorLogin.value = false;
+    errorsLogin.value = [];
+
+    await store.dispatch('login/login', {
+    username: username.value,
+    password: password.value,
+    remember_me: remember_me.value
+    });
+
+    const loginStatus = store.getters['login/getLoginStatus'];
+    const loginMessage = store.getters['login/getLoginMessage'];
+    const loginErrors = store.getters['login/getLoginErrors'];
+
+    const showToast = (title) => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+        Toast.fire({ icon: 'success', title });
+    };
+
+    if (loginStatus === 'success admin') {
+    if (remember_me.value) {
+        localStorage.setItem('username', username.value);
+        localStorage.setItem('password', password.value);
+        localStorage.setItem('remember_me', true);
+    } else {
+        localStorage.setItem('remember_me', false);
+    }
+
+    showToast(loginMessage);
+
+    // Actions selon authSectionModal
+    if (authSectionModal.value === 'LIST') {
+        $('#authFormModalTagsCreate').modal('hide');
+        getResults();
+    } else if (authSectionModal.value === 'CREATE_AUTH') {
+        authSectionModal.value = 'CREATE';
+       tagsCreate();
+    } else if (authSectionModal.value === 'UPDATE_AUTH') {
+        authSectionModal.value = 'UPDATE';
+       tagsUpdate();
+    } else if (authSectionModal.value === 'DELETE_AUTH') {
+        authSectionModal.value = 'DELETE';
+       tagsDelete();
+    }
+
+    } else if (loginStatus === 'success pub') {
+    if (remember_me.value) {
+        localStorage.setItem('username', username.value);
+        localStorage.setItem('password', password.value);
+        localStorage.setItem('remember_me', true);
+    } else {
+        localStorage.setItem('remember_me', false);
+    }
+    loadingLogin.value = false;
+    window.location = '/pub/dashboard';
+
+    } else if (loginStatus === 'success visitor') {
+    if (remember_me.value) {
+        localStorage.setItem('username', username.value);
+        localStorage.setItem('password', password.value);
+        localStorage.setItem('remember_me', true);
+    } else {
+        localStorage.setItem('remember_me', false);
+    }
+    loadingLogin.value = false;
+    window.location = '/';
+
+    } else if (loginStatus === 'failed') {
+    errorLogin.value = loginMessage;
+    errorsLogin.value = [];
+    loadingLogin.value = false;
+
+    } else if (loginStatus === 'error') {
+    errorLogin.value = loginMessage;
+    errorsLogin.value = loginErrors;
+    loadingLogin.value = false;
+    }
+
+    loadingLogin.value = false;
+};
+
+
+const  getResultsSearchByDate = async() =>{
+ 
+
+    await store.dispatch('tagsAdmin/searchByDateListDataRequest', {});
+
+    const status = store.getters['tagsAdmin/getInfosSearchByDateListStatus'];
+    const message = store.getters['tagsAdmin/getInfosSearchByDateListMessage'];
+    const data = store.getters['tagsAdmin/getInfosSearchByDateListData'];
+
+    if (status === 'success') {
+
+        searchByDateListData.value = data
+        
+        emptySearchByDate.value = 0
+     
+    } else if (status === 'empty') {
+
+        emptySearchByDate.value = 1
+    
+    } else if (status === 'failed') {
+
+        emptySearchByDate.value = 1
+    
+    } else {
+
+        emptySearchByDate.value = 1
+    
+    }
+ 
+
+}
+
+const  handleSelection = async(event, page=1) =>{
+
+   searchH.value = event.target.value
+     authSectionModal.value = 'LIST';
+
+    await store.dispatch('tagsAdmin/tagsListHDataRequest', {
+        page, 
+        searchH: searchH.value
+    });
+
+    const status = store.getters['tagsAdmin/getInfosTagsListStatus'];
+    const message = store.getters['tagsAdmin/getInfosTagsListMessage'];
+    const data = store.getters['tagsAdmin/getInfosTagsListData'];
+
+    if (status === 'success') {
+    tagsListData.value = data;
+    empty.value = 0;
+    dataReady.value = 1;
+    loading.value = false; 
+    getResultsSearchByDate( )
+    } else if (status === 'empty') {
+    tagsListData.value = data;
+    tagsListMessage.value = message;
+    empty.value = 1;
+    dataReady.value = 1; 
+    
+    loading.value = false;
+    } else if (status === 'failed') {
+    dataReady.value = 3;
+    loading.value = false;
+    } else {
+    tagsListMessage.value = message;
+    empty.value = 3;
+    dataReady.value = 4;
+    loading.value = false;
+    }
+
+    loading.value = false;
+
+}
+
+
+const  handleSelectionUsers = async(event, page=1) =>{
+
+   user_id.value = event.target.value
+     authSectionModal.value = 'LIST';
+
+    await store.dispatch('tagsAdmin/tagsListHHDataRequest', {
+        page, 
+        user_id: user_id.value
+    });
+
+    const status = store.getters['tagsAdmin/getInfosTagsListStatus'];
+    const message = store.getters['tagsAdmin/getInfosTagsListMessage'];
+    const data = store.getters['tagsAdmin/getInfosTagsListData'];
+
+    if (status === 'success') {
+    tagsListData.value = data;
+    empty.value = 0;
+    dataReady.value = 1;
+    loading.value = false; 
+    getResultsSearchByDate( )
+    } else if (status === 'empty') {
+    tagsListData.value = data;
+    tagsListMessage.value = message;
+    empty.value = 1;
+    dataReady.value = 1; 
+    
+    loading.value = false;
+    } else if (status === 'failed') {
+    dataReady.value = 3;
+    loading.value = false;
+    } else {
+    tagsListMessage.value = message;
+    empty.value = 3;
+    dataReady.value = 4;
+    loading.value = false;
+    }
+
+    loading.value = false;
+
+}
+// Actions principales
+const getResults = async (page = 1) => {
+    authSectionModal.value = 'LIST';
+
+    await store.dispatch('tagsAdmin/tagsListDataRequest', {
+    page,
+    search: search.value
+    });
+
+    const status = store.getters['tagsAdmin/getInfosTagsListStatus'];
+    const message = store.getters['tagsAdmin/getInfosTagsListMessage'];
+    const data = store.getters['tagsAdmin/getInfosTagsListData'];
+
+    if (status === 'success') {
+    tagsListData.value = data;
+    empty.value = 0;
+    dataReady.value = 1;
+    loading.value = false;
+    getResultsSearchByDate()
+    } else if (status === 'empty') {
+    tagsListData.value = data;
+    tagsListMessage.value = message;
+    empty.value = 1;
+    dataReady.value = 1;
+    
+    loading.value = false;
+    } else if (status === 'failed') {
+    dataReady.value = 3;
+    
+    loading.value = false;
+    } else {
+    tagsListMessage.value = message;
+    empty.value = 3;
+    dataReady.value = 4;
+    
+    loading.value = false;
+    }
+
+    loading.value = false;
+};
+
+const tagsCreate = async () => {
+    loadingCreate.value = true;
+    authSectionModal.value = 'CREATE';
+
+    await store.dispatch('tagsAdmin/tagsStoreDataRequest', { name: name.value });
+
+    const status = store.getters['tagsAdmin/getInfosTagsStoreStatus'];
+    const message = store.getters['tagsAdmin/getInfosTagsStoreMessage'];
+    const data = store.getters['tagsAdmin/getInfosTagsStoreData'];
+    const errors = store.getters['tagsAdmin/getInfosTagsStoreErrors'];
+
+    if (status === 'success') {
+    tagsStoreData.value = data;
+    showToast('success',message);
+    loadingCreate.value = false;
+    name.value = null;
+    slug.value = null;
+    $('#authFormModalTagsCreate').modal('hide');
+    getResults();
+    } else if (status === 'empty') {
+    tagsStoreMessage.value = message;
+    tagsStoreErrors.value = errors;
+    loadingCreate.value = false;
+    } else if (status === 'error') {
+    tagsStoreMessage.value = message;
+    tagsStoreErrors.value = [];
+    loadingCreate.value = false;
+    }
+};
+
+const tagsUpdate = async () => {
+    loadingUpdate.value = true;
+    authSectionModal.value = 'UPDATE';
+
+    await store.dispatch('tagsAdmin/tagsUpdateDataRequest', {
+    name: name.value,
+    slug: slug.value
+    });
+
+    const status = store.getters['tagsAdmin/getInfosTagsUpdateStatus'];
+    const message = store.getters['tagsAdmin/getInfosTagsUpdateMessage'];
+    const data = store.getters['tagsAdmin/getInfosTagsUpdateData'];
+    const errors = store.getters['tagsAdmin/getInfosTagsUpdateErrors'];
+
+    if (status === 'success') {
+    tagsUpdateData.value = data;
+    showToast('success',message);
+    loadingUpdate.value = false;
+    name.value = null;
+    slug.value = null;
+    $('#authFormModalTagsCreate').modal('hide');
+    getResults();
+    } else if (status === 'empty') {
+    tagsUpdateMessage.value = message;
+    tagsUpdateErrors.value = errors;
+    loadingUpdate.value = false;
+    } else if (status === 'error') {
+    tagsUpdateMessage.value = message;
+    tagsUpdateErrors.value = [];
+    loadingUpdate.value = false;
+    }
+};
+
+const tagsDelete = async () => {
+    loadingDelete.value = true;
+    authSectionModal.value = 'DELETE';
+
+    await store.dispatch('tagsAdmin/tagsDeleteDataRequest', { slug: slug.value });
+
+    const status = store.getters['tagsAdmin/getInfosTagsDeleteStatus'];
+    const message = store.getters['tagsAdmin/getInfosTagsDeleteMessage'];
+    const data = store.getters['tagsAdmin/getInfosTagsDeleteData'];
+    const errors = store.getters['tagsAdmin/getInfosTagsDeleteErrors'];
+
+    if (status === 'success') {
+        tagsDeleteData.value = data;
+        showToast('success',message);
+        loadingDelete.value = false;
+        name.value = null;
+        slug.value = null;
+        $('#authFormModalTagsCreate').modal('hide');
+        getResults();
+    } else if (status === 'empty') {
+        tagsDeleteMessage.value = message;
+        tagsDeleteErrors.value = errors;
+        loadingDelete.value = false;
+    } else if (status === 'error') {
+        tagsDeleteMessage.value = message;
+        loadingDelete.value = false;
+    }
+};
+
+// --- CREATE ---
+const create = async () => {
+  loadingCreate.value = true;
+  authSectionModal.value = 'CREATE';
+
+  const accessToken = localStorage.getItem('access_token');
+  const nbRsp = localStorage.getItem('nbRsp');
+
+  if (accessToken && nbRsp) {
+    await store.dispatch('roleSecurity/getMeRole');
+
+    const roleStatus = store.getters['roleSecurity/getRoleStatus'];
+    const meRole = store.getters['roleSecurity/getMeRoleName'];
+
+    if (roleStatus === 'success') {
+      meRoleName.value = meRole;
+
+      if (meRoleName.value === nbRsp && nbRsp === '&nbtsd!?') {
+        await tagsCreate();
+      } else {
+        loadingCreate.value = true;
+      }
+    } else if (roleStatus === 'failed') {
+      authSectionModal.value = 'CREATE_AUTH';
+    }
+  } else {
+    authSectionModal.value = 'CREATE_AUTH';
+  }
+};
+
+// --- UPDATE ---
+const update = async () => {
+  loadingUpdate.value = true;
+  authSectionModal.value = 'UPDATE';
+
+  const accessToken = localStorage.getItem('access_token');
+  const nbRsp = localStorage.getItem('nbRsp');
+
+  if (accessToken && nbRsp) {
+    await store.dispatch('roleSecurity/getMeRole');
+
+    const roleStatus = store.getters['roleSecurity/getRoleStatus'];
+    const meRole = store.getters['roleSecurity/getMeRoleName'];
+
+    if (roleStatus === 'success') {
+      meRoleName.value = meRole;
+
+      if (meRoleName.value === nbRsp && nbRsp === '&nbtsd!?') {
+        await tagsUpdate();
+      } else {
+        loadingUpdate.value = true;
+      }
+    } else if (roleStatus === 'failed') {
+      authSectionModal.value = 'UPDATE_AUTH';
+    }
+  } else {
+    authSectionModal.value = 'UPDATE_AUTH';
+  }
+};
+
+// --- DESTROY ---
+const destroy = async () => {
+  loadingDelete.value = true;
+  authSectionModal.value = 'DELETE';
+
+  const accessToken = localStorage.getItem('access_token');
+  const nbRsp = localStorage.getItem('nbRsp');
+
+  if (accessToken && nbRsp) {
+    await store.dispatch('roleSecurity/getMeRole');
+
+    const roleStatus = store.getters['roleSecurity/getRoleStatus'];
+    const meRole = store.getters['roleSecurity/getMeRoleName'];
+
+    if (roleStatus === 'success') {
+      meRoleName.value = meRole;
+
+      if (meRoleName.value === nbRsp && nbRsp === '&nbtsd!?') {
+        await tagsDelete();
+      } else {
+        loadingDelete.value = true;
+      }
+    } else if (roleStatus === 'failed') {
+      authSectionModal.value = 'DELETE_AUTH';
+    }
+  } else {
+    authSectionModal.value = 'DELETE_AUTH';
+  }
+};
+// Fonction show() adaptée
+const show = async () => {
+    if (localStorage.getItem('access_token') && localStorage.getItem('nbRsp')) {
+
+    await store.dispatch('roleSecurity/getMeRole');
+
+    authSectionModal.value = 'LIST';
+
+    const roleStatus = store.getters['roleSecurity/getRoleStatus'];
+    const roleName = store.getters['roleSecurity/getMeRoleName'];
+
+    if (roleStatus === 'success') {
+        meRoleName.value = roleName;
+
+        if (meRoleName.value === localStorage.getItem('nbRsp') && localStorage.getItem('nbRsp') === '&nbtsd!?') {
+        
+            getResults();
+        } else {
+            dataReady.value = 2;
+        }
+
+    } else if (roleStatus === 'failed') {
+        dataReady.value = 3;
+    }
+
+    } else {
+    dataReady.value = 4;
+    }
+};
+
+onMounted(() => {
+  show();
+});
+</script>
 <template>
-    <!-- =======================Author list START -->
-    <section class="py-4">
+     <section class="py-4">
         <div class="container">
 
             <div  v-if="dataReady == 0" >
                 <br/><br/><br/><br/><br/><br/><br/>
                 <div class="d-flex justify-content-center">
-                    <img src="https://actualitetogo.com/assets/images/logo.png"  style="width: 150px;" alt="empty">
+                    <img :src="`/assets/images/logo.png`"  style="width: 150px;" alt="empty">
                 </div>
                 <div class="d-flex justify-content-center mt-3">
                     <div class="spinner-border text-success" style="color: #006633" role="status">
@@ -27,7 +811,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row g-4">
                     <div class="col-12">
                         <!-- Card START -->
@@ -36,8 +819,9 @@
                             <div class="card-header border-bottom p-3">
                                 <!-- Search and select START -->
                                 <div class="row g-3 align-items-center justify-content-between">
-                                    <div class="col-md-10">
-                                        <div class="row" v-if="emptySearchByDate == 0">
+                                    <!-- Search bar -->
+                                    <div class="col-md-10 col-sm-10 col-xs-10">
+                                         <div class="row" v-if="emptySearchByDate == 0">
                                             <div class="col-md-6">
                                                 <form class="rounded position-relative" method="GET" @submit.prevent="getResults">
                                                     <input class="form-control bg-transparent" v-model="search" @input="show" name="search" type="search" placeholder="Rechercher un tag ..." aria-label="Search">
@@ -73,10 +857,9 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <!-- Search bar -->
                                     </div>
                                     <!-- Tab buttons -->
-                                    <div class="col-md-2">
+                                    <div class="col-md-2 col-sm-2 col-xs-2">
                                         <!-- Tabs START -->
                                         <ul class="list-inline mb-0 nav nav-pills nav-pill-dark-soft border-0 justify-content-end" id="pills-tab" role="tablist">
 
@@ -112,7 +895,7 @@
                                                 <!-- Table head -->
                                                 <thead class="table-dark">
                                                     <tr>
-                                                        <th scope="col" class="border-0 rounded-start">Tag</th>
+                                                        <th scope="col" class="border-0 rounded-start">Tags</th>
                                                         <th scope="col" class="border-0">Publications</th>
                                                         <th scope="col" class="border-0">Ajouté le</th>
                                                         <th scope="col" class="border-0">Actions</th>
@@ -125,12 +908,12 @@
                                                     <tr v-for="result in tagsListData.tags.data" :key="result.id">
 
                                                         <!-- Table data -->
-                                                        <th> {{ result.name }} </th>
+                                                        <th> <router-link to="#"> {{ result.name }} </router-link> </th>
                                                         <!-- Table data -->
                                                         <td>
                                                             <span v-if="result.count_publications === 0" class="badge bg-danger bg-opacity-10 text-danger mb-2">Aucune publication</span>
-                                                            <span v-else-if="result.count_publications == 1" class="badge bg-success bg-opacity-10 text-white-force mb-2">1 publication</span>
-                                                            <span v-else class="badge bg-success bg-opacity-10 text-white-force mb-2"> {{ result.count_publications }} publications</span>
+                                                            <span v-else-if="result.count_publications == 1" class="badge bg-primary bg-opacity-10 text-primary mb-2">1 publication</span>
+                                                            <span v-else class="badge bg-primary bg-opacity-10 text-primary mb-2"> {{ result.count_publications }} publications</span>
                                                         </td>
                                                         <!-- Table data -->
                                                         <td>{{ moment(result.date_publish).format("DD/MM/YYYY") }}</td>
@@ -139,6 +922,12 @@
                                                         <!-- Table data -->
                                                         <td>
                                                             <div class="d-flex gap-2">
+                                                                <router-link to="#"> 
+                                                                    
+                                                                    <span style="cursor: pointer; font-size: 30px"  class="btn btn-success btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Message" aria-label="Message">
+                                                                        <i class="bi bi-eye"></i>
+                                                                    </span>
+                                                                </router-link>
                                                                 <span style="cursor: pointer" @click="authModalClick('UPDATE',result.name, result.slug )" class="btn btn-primary btn-round mb-0" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Message" aria-label="Message">
                                                                 <i class="bi bi-pencil-fill"></i>
                                                                 </span>
@@ -208,7 +997,7 @@
 
                                                     <!-- Card footer -->
                                                     <div class="card-footer border-top text-center p-3">
-                                                        <a href="#" class="btn btn-primary-soft w-100 mb-0">Voir les publications</a>
+                                                        <router-link to="#" class="btn btn-primary-soft w-100 mb-0">Ajouter une publication</router-link>
                                                     </div>
                                                 </div>
                                                 <!-- tags item END -->
@@ -222,7 +1011,7 @@
                                     <div class="col-md-3"></div>
                                     <div class="col-md-6">
                                       <div style="position: relative; height: 250px;">
-                                          <img src="https://actualitetogo.com/assets/images/empty.png" style="width: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" alt="empty">
+                                          <img :src="`/assets/images/empty.png`" style="width: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" alt="empty">
                                       </div>
                                       <h5 style="text-align: center; margin-top: -50px"> {{ tagsListMessage  }} </h5>
                                     </div>
@@ -299,12 +1088,12 @@
         </div>
     </section>
     <!-- Modal Form -->
-    <div class="modal fade" id="authFormModalTagsList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="authFormModalTagsCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" v-if="authSectionModal == 'CREATE'">
                 <div class="modal-header">
                     <h5 class="modal-title">Ajouter un tag</h5>
-                    <button type="button" class="btn-close" @click="authFormModalTagsListClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" @click="authFormModalTagsCreateClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form>
                     <div class="modal-body">
@@ -316,22 +1105,22 @@
 
                         <!-- Email -->
                         <div class="mb-3" v-if="tagsStoreErrors.name">
-                            <label class="form-label" for="exampleInputEmailTagsCreate">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control is-invalid" id="exampleInputEmailTagsCreate" placeholder="Entrez le nom du tag">
+                            <label class="form-label" for="exampleInputEmailtagsCreate">Tag</label>
+                            <input type="text" v-model="name" name="name" class="form-control is-invalid" id="exampleInputEmailtagsCreate" placeholder="Entrez le tag">
                             <div v-for="errorname in tagsStoreErrors.name" :key="errorname" class="invalid-feedback">
                                 {{ errorname }}
                             </div>
                         </div>
                         <div class="mb-3" v-else>
-                            <label class="form-label" for="exampleInputEmailLoginInvalid">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control" id="exampleInputEmailTagsCreate" placeholder="Entrez le nom du tag">
+                            <label class="form-label" for="exampleInputEmailLoginInvalid">Tag</label>
+                            <input type="text" v-model="name" name="name" class="form-control" id="exampleInputEmailtagsCreate" placeholder="Entrez le tag">
                         </div>
                     </div>
                     <div class="modal-footer" >
                         <div  v-if="!loadingCreate" style="margin-top: -5px; margin-bottom: -10px">
                             <button type="submit" @click.prevent="create" class="btn btn-primary">Ajouter</button>
                             &nbsp;
-                            <span><span class="btn btn-danger" @click="authFormModalTagsListClose">Fermez</span></span>
+                            <span><span class="btn btn-danger" @click="authFormModalTagsCreateClose">Fermez</span></span>
                         </div>
                         <div style="margin-top: -5px; margin-bottom: -10px" v-else>
                             <button type="button" disabled class="btn btn-primary   mx-auto w-100">
@@ -345,7 +1134,7 @@
             <div class="modal-content" v-if="authSectionModal == 'UPDATE'">
                 <div class="modal-header">
                     <h5 class="modal-title">Modifier un tag</h5>
-                    <button type="button" class="btn-close" @click="authFormModalTagsListClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" @click="authFormModalTagsCreateClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form>
                     <div class="modal-body">
@@ -357,22 +1146,22 @@
 
                         <!-- Email -->
                         <div class="mb-3" v-if="tagsUpdateErrors.name">
-                            <label class="form-label" for="exampleInputEmailTagCreate">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control is-invalid" id="exampleInputEmailtagsCreate" placeholder="Entrez le nom du tag">
+                            <label class="form-label" for="exampleInputEmailtagsCreate">Tag</label>
+                            <input type="text" v-model="name" name="name" class="form-control is-invalid" id="exampleInputEmailtagsCreate" placeholder="Entrez le tag">
                             <div v-for="errorname in tagsUpdateErrors.name" :key="errorname" class="invalid-feedback">
                                 {{ errorname }}
                             </div>
                         </div>
                         <div class="mb-3" v-else>
-                            <label class="form-label" for="exampleInputEmailLoginInvalid">Nom du tag</label>
-                            <input type="text" v-model="name" name="name" class="form-control" id="exampleInputEmailtagsCreate" placeholder="Entrez le nom du tag">
+                            <label class="form-label" for="exampleInputEmailLoginInvalid">Tag</label>
+                            <input type="text" v-model="name" name="name" class="form-control" id="exampleInputEmailtagsCreate" placeholder="Entrez le tag">
                         </div>
                     </div>
                     <div class="modal-footer" >
                         <div  v-if="!loadingUpdate" style="margin-top: -5px; margin-bottom: -10px">
                             <button type="submit" @click.prevent="update" class="btn btn-primary">Modifier</button>
                             &nbsp;
-                            <span><span class="btn btn-danger" @click="authFormModalTagsListClose">Fermez</span></span>
+                            <span><span class="btn btn-danger" @click="authFormModalTagsCreateClose">Fermez</span></span>
                         </div>
                         <div style="margin-top: -5px; margin-bottom: -10px" v-else>
                             <button type="button" disabled class="btn btn-primary   mx-auto w-100">
@@ -393,12 +1182,12 @@
                         <h6>ATTENTION</h6>
                     </div>
                     <div class="d-flex justify-content-center">
-                        <p class="text-center">Toutes données relatives à ce tag seront aussi supprimées.</p>
+                        <p class="text-center">Toutes données relatives à ce Tag seront aussi supprimés.</p>
                     </div>
                     <div class="d-flex justify-content-center" v-if="!loadingDelete" style="margin-top: -5px; margin-bottom: -10px">
                         <span style="cursor: pointer" @click.prevent="destroy" class="btn btn-danger">Supprimez</span>
                         &nbsp;
-                        <span><span class="btn btn-success" @click="authFormModalTagsListClose">Annuler</span></span>
+                        <span><span class="btn btn-success" @click="authFormModalTagsCreateClose">Annuler</span></span>
                     </div>
                     <div class="d-flex justify-content-center" style="margin-top: -5px; margin-bottom: -10px" v-else>
                         <button type="button" disabled class="btn btn-primary   mx-auto w-100">
@@ -415,7 +1204,7 @@
                     <h5 class="modal-title" v-if="authSectionStepModal == 1">Se connecter</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 2">Modifier le mot de passe</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 3">S'inscrire</h5>
-                    <button type="button" class="btn-close" @click="authFormModalTagsListClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" @click="authFormModalTagsCreateClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div v-if="authSectionStepModal == 1" style="margin-bottom: -15px">
@@ -439,7 +1228,7 @@
                             </div>
                             <!-- Password -->
                             <div class="mb-3" v-if="errorsLogin.password">
-                                <label class="form-label" for="exampleInputPasswordLogin">Mot de passe</label>
+                                <label class="form-label" for="exampleInputPassword1">Mot de passe</label>
                                 <div class="input-group">
                                     <input v-model="password" name="password" class="form-control fakepassword is-invalid" type="password" id="psw-input" placeholder="*********">
                                     <span class="input-group-text p-0" @click="showPassword" style="cursor: pointer">
@@ -448,12 +1237,12 @@
                                     </span>
                                 </div>
                                 <div class="rounded mt-1" id="psw-strength"></div>
-                                <div  v-for="errorPassword in errorsLogin.password" :key="errorPassword" class="invalid-feedback">
+                                <div id="exampleInputPassword1" v-for="errorPassword in errorsLogin.password" :key="errorPassword" class="invalid-feedback">
                                     {{ errorPassword }}
                                 </div>
                             </div>
                             <div class="mb-3" v-else>
-                                <label class="form-label"  for="exampleInputPasswordLoginInvalid">Mot de passe</label>
+                                <label class="form-label"  for="exampleInputPassword1">Mot de passe</label>
                                 <div class="input-group">
                                     <input v-model="password" name="password" class="form-control fakepassword" type="password" id="psw-input" placeholder="*********">
                                     <span class="input-group-text p-0" @click="showPassword" style="cursor: pointer">
@@ -482,15 +1271,15 @@
                         <h6 v-else-if="step === 3">Nouveau mot de passe</h6>
 
                         <div v-if="step === 1">
-                            <div v-if="errorForgotPasswordFirst" class="mb-3">
+                            <div v-if="errorForgotPasswordFirstMessage" class="mb-3">
                                 <div class="alert alert-danger"  role="alert">
-                                    {{ errorForgotPasswordFirst }}
+                                    {{ errorForgotPasswordFirstMessage }}
                                 </div>
                             </div>
                             <form >
-                                <div class="mb-3" v-if="errorsForgotPasswordFirst.email">
+                                <div class="mb-3" v-if="errorsForgotPasswordFirstErrors.email">
                                     <input type="email" v-model="email" name="email" class="form-control is-invalid" id="exampleInputEmail1" placeholder="Veuillez entrer votre email">
-                                    <div v-for="errorForgotPasswordemail in errorsForgotPasswordFirst.email" :key="errorForgotPasswordemail" class="invalid-feedback">
+                                    <div v-for="errorForgotPasswordemail in errorsForgotPasswordFirstErrors.email" :key="errorForgotPasswordemail" class="invalid-feedback">
                                         {{ errorForgotPasswordemail }}
                                     </div>
                                 </div>
@@ -504,17 +1293,17 @@
                             </form>
                         </div>
                         <div v-if="step === 2">
-                            <div v-if="errorForgotPasswordTwo" class="mb-3">
+                            <div v-if="errorForgotPasswordTwoMessage" class="mb-3">
 
                                 <div class="alert alert-danger"  role="alert">
-                                    {{ errorForgotPasswordTwo }}
+                                    {{ errorForgotPasswordTwoMessage }}
                                 </div>
                             </div>
                             <form>
-                                <div class="mb-3" v-if="errorsForgotPasswordTwo.otp">
+                                <div class="mb-3" v-if="errorsForgotPasswordTwoErrors.otp">
 
                                     <input type="text" v-model="otp" name="otp" class="form-control is-invalid" id="exampleInputOtp1" placeholder="Veuillez entrer votre code de vérification">
-                                    <div v-for="errorForgotPasswordOtp in errorsForgotPasswordTwo.otp" :key="errorForgotPasswordOtp" class="invalid-feedback">
+                                    <div v-for="errorForgotPasswordOtp in errorsForgotPasswordTwoErrors.otp" :key="errorForgotPasswordOtp" class="invalid-feedback">
                                         {{ errorForgotPasswordOtp }}
                                     </div>
                                 </div>
@@ -546,30 +1335,30 @@
                             </form>
                         </div>
                         <div v-if="step === 3">
-                            <div v-if="errorForgotPasswordThree" class="mb-3">
+                            <div v-if="errorForgotPasswordThreeMessage" class="mb-3">
                                 <div class="alert alert-danger"  role="alert">
-                                    {{ errorForgotPasswordThree }}
+                                    {{ errorForgotPasswordThreeMessage }}
                                 </div>
                             </div>
                             <form>
-                                <div class="mb-3" v-if="errorsForgotPasswordThree.password">
+                                <div class="mb-3" v-if="errorsForgotPasswordThreeErrors.password">
                                     <label class="form-label" for="exampleInputpassword1">Votre nouveau mot de passe</label>
                                     <div class="input-group">
-                                        <input v-model="password" name="password" class="form-control fakepassword is-invalid" type="password" id="psw-input" placeholder="Veuillez entrer votre nouveau mot de passe .">
+                                        <input v-model="password" name="password" class="form-control fakepassword is-invalid" type="password" id="psw-input" placeholder="Veuillez entrer votre nouveau mot de passe">
                                         <span class="input-group-text p-0" @click="showPassword" style="cursor: pointer">
                                             <i v-if="showPsw == false" class="fakepasswordicon far fa-eye cursor-pointer p-2 w-40px"></i>
                                             <i v-else class="fakepasswordicon far fa-eye-slash cursor-pointer p-2 w-40px"></i>
                                         </span>
                                     </div>
                                     <div class="rounded mt-1" id="psw-strength"></div>
-                                    <div v-for="errorForgotPasswordpassword in errorsForgotPasswordThree.password" :key="errorForgotPasswordpassword" class="invalid-feedback">
-                                        {{ errorForgotPasswordpassword }}
+                                    <div id="exampleInputpassword1" v-for="errorpassword in errorsForgotPasswordThreeErrors.password" :key="errorpassword" class="invalid-feedback">
+                                        {{ errorpassword }}
                                     </div>
                                 </div>
                                 <div class="mb-3" v-else>
                                     <label class="form-label" for="exampleInputpassword1">Votre nouveau mot de passe</label>
                                     <div class="input-group">
-                                        <input v-model="password" name="password" class="form-control fakepassword" type="password" id="psw-input" placeholder="Veuillez entrer votre nouveau mot de passe .">
+                                        <input v-model="password" name="password" class="form-control fakepassword" type="password" id="psw-input" placeholder="Veuillez entrer votre nouveau mot de passe">
                                         <span class="input-group-text p-0" @click="showPassword" style="cursor: pointer">
                                             <i v-if="showPsw == false" class="fakepasswordicon far fa-eye cursor-pointer p-2 w-40px"></i>
                                             <i v-else class="fakepasswordicon far fa-eye-slash cursor-pointer p-2 w-40px"></i>
@@ -578,26 +1367,26 @@
                                     <div class="rounded mt-1" id="psw-strength"></div>
                                 </div>
 
-                                <div class="mb-3" v-if="errorsForgotPasswordThree.password_confirm">
+                                <div class="mb-3" v-if="errorsForgotPasswordThreeErrors.password_confirm">
                                     <label class="form-label" for="exampleInputpassword1">Confirmer le mot de passe</label>
                                     <div class="input-group">
                                         <input type="password" v-model="password_confirm" class="form-control fakepassword is-invalid"  name="password_confirm"  id="psw-input_c" placeholder="Veuillez confirmer le mot de passe">
                                         <span class="input-group-text p-0" @click="showPasswordC" style="cursor: pointer">
-                                            <i v-if="showPswC == false" class="fakepasswordicon far fa-eye cursor-pointer p-2 w-40px"></i>
+                                            <i v-if="showPsw == false" class="fakepasswordicon far fa-eye cursor-pointer p-2 w-40px"></i>
                                             <i v-else class="fakepasswordicon far fa-eye-slash cursor-pointer p-2 w-40px"></i>
                                         </span>
                                     </div>
                                     <div class="rounded mt-1" id="psw-strength"></div>
-                                    <div v-for="errorForgotPasswordpassword_confirm in errorsForgotPasswordThree.password_confirm" :key="errorForgotPasswordpassword_confirm" class="invalid-feedback">
-                                        {{ errorForgotPasswordpassword_confirm }}
+                                    <div id="exampleInputpassword1" v-for="errorpassword_confirm in errorsForgotPasswordThreeErrors.password_confirm" :key="errorpassword_confirm" class="invalid-feedback">
+                                        {{ errorpassword_confirm }}
                                     </div>
                                 </div>
                                 <div class="mb-3" v-else>
                                     <label class="form-label" for="exampleInputpassword1">Confirmer le mot de passe</label>
                                     <div class="input-group">
-                                        <input type="password" v-model="password_confirm" class="form-control fakepassword "  name="password_confirm"  id="psw-input_c" placeholder="Veuillez confirmer le mot de passe">
+                                        <input type="password" v-model="password_confirm" class="form-control fakepassword"  name="password_confirm"  id="psw-input_c" placeholder="Veuillez confirmer le mot de passe">
                                         <span class="input-group-text p-0" @click="showPasswordC" style="cursor: pointer">
-                                            <i v-if="showPswC == false" class="fakepasswordicon far fa-eye cursor-pointer p-2 w-40px"></i>
+                                            <i v-if="showPsw == false" class="fakepasswordicon far fa-eye cursor-pointer p-2 w-40px"></i>
                                             <i v-else class="fakepasswordicon far fa-eye-slash cursor-pointer p-2 w-40px"></i>
                                         </span>
                                     </div>
@@ -606,7 +1395,7 @@
                                 <div class="row" v-if="loadingForgotPasswordThree">
                                     <div class="col-md-12">
                                         <button type="button" disabled class="btn btn-success  mx-auto w-100"> <i  style="color: #fff" class="fa fa-spinner fa-spin fa-1x fa-fw"></i>
-                                            <span class="sr-only">Loading...</span>Modification
+                                            <span class="sr-only">Loading...</span>Validation
                                         </button>
                                     </div>
                                 </div>
@@ -635,1209 +1424,5 @@
             </div>
         </div>
     </div>
-</template>
-<script>
-import { mapGetters, mapActions} from "vuex";
-import {Bootstrap5Pagination, TailwindPagination } from '../../../../../libraries/pagination/lib';
-
-import moment from 'moment'
-export default {
-    // inside your script
-    components: {
-        Bootstrap5Pagination,
-        TailwindPagination,
-
-    },
-    data () {
-        return {
-            dataReady: 0,
-            meRoleName: null,
-            tagsListData: {},
-            tagsListMessage: null,
-            searchByDateListData: {},
-            searchByDateListMessage: null,
-            tagsStoreData: {},
-            tagsStoreMessage: null,
-            tagsStoreErrors: [],
-            tagsUpdateData: {},
-            tagsUpdateMessage: null,
-            tagsUpdateErrors: [],
-            tagsDeleteData: {},
-            tagsDeleteMessage: null,
-            style: 'bootstrap5',
-            limit: 1,
-            keepLength: false,
-            showDisabled: false,
-            size: 'default',
-            align: 'left',
-            search: '',
-            meProfileUserName: null,
-            meProfileRoleName: null,
-            authSectionModal: 'LIST',
-            username: null,
-            email:null,
-            password: null,
-            password_confirm: null,
-            loadingLogin: false,
-            errorLogin: false,
-            errorsLogin: [],
-            loadingConnect: false,
-            remember_me: false,
-            authSectionStepModal: 1,
-            loadingForgotPasswordFirst: false,
-            loadingResendOTP: false,
-            errorForgotPasswordFirst: false,
-            errorsForgotPasswordFirst: [],
-            loadingForgotPasswordTwo: false,
-            errorForgotPasswordTwo: false,
-            errorsForgotPasswordTwo: [],
-            loadingForgotPasswordThree: false,
-            errorForgotPasswordThree: false,
-            errorsForgotPasswordThree: [],
-            step: 1,
-            name: null,
-            slug: null,
-            loadingCreate: false,
-            loadingUpdate: false,
-            loadingDelete: false,
-            showPsw: false,
-            showPswC: false,
-            emptySearchByDate: 0,
-            searchH:"ALL",
-            user_id: 0
-        }
-    },
-    computed: {
-        ...mapGetters("roleSecurity",{
-            gettersMeRoleName:"getMeRoleName",
-            gettersRoleStatus:'getRoleStatus',
-        }),
-
-        ...mapGetters('tagsAdmin',{
-            getterInfosTagsListStatus:'getInfosTagsListStatus',
-            getterInfosTagsListMessage:'getInfosTagsListMessage',
-            getterInfosTagsListData:'getInfosTagsListData',
-            getterInfosSearchByDateListStatus:'getInfosSearchByDateListStatus',
-            getterInfosSearchByDateListMessage:'getInfosSearchByDateListMessage',
-            getterInfosSearchByDateListData:'getInfosSearchByDateListData',
-            getterInfosSearchByUserListStatus:'getInfosSearchByUserListStatus',
-            getterInfosSearchByUserListMessage:'getInfosSearchByUserListMessage',
-            getterInfosSearchByUserListData:'getInfosSearchByUserListData',
-            getterInfosTagsStoreStatus:'getInfosTagsStoreStatus',
-            getterInfosTagsStoreMessage:'getInfosTagsStoreMessage',
-            getterInfosTagsStoreErrors:'getInfosTagsStoreErrors',
-            getterInfosTagsStoreData:'getInfosTagsStoreData',
-            getterInfosTagsUpdateStatus:'getInfosTagsUpdateStatus',
-            getterInfosTagsUpdateMessage:'getInfosTagsUpdateMessage',
-            getterInfosTagsUpdateErrors:'getInfosTagsUpdateErrors',
-            getterInfosTagsUpdateData:'getInfosTagsUpdateData',
-            getterInfosTagsDeleteStatus:'getInfosTagsDeleteStatus',
-            getterInfosTagsDeleteMessage:'getInfosTagsDeleteMessage',
-            getterInfosTagsDeleteData:'getInfosTagsDeleteData',
-        }),
-        ...mapGetters('login',{
-            getterLoginStatus:'getLoginStatus',
-            getterLoginMessage:'getLoginMessage',
-            getterLoginErrors:'getLoginErrors',
-        }),
-
-        ...mapGetters("meProfile",{
-            gettersMeProfileUserName:"getMeProfileUserName",
-            gettersMeProfileRoleName:"getMeProfileRoleName",
-            gettersProfileStatus:'getProfileStatus',
-        }),
-
-        ...mapGetters("forgot_password",{
-            gettersSendOtpForgotPasswordStatus:'getSendOtpForgotPasswordStatus',
-            gettersSendOtpForgotPasswordErrors:'getSendOtpForgotPasswordErrors',
-            gettersSendOtpForgotPasswordMessage:'getSendOtpForgotPasswordMessage',
-            gettersCheckOtpForgotPasswordStatus:'getCheckOtpForgotPasswordStatus',
-            gettersCheckOtpForgotPasswordErrors:'getCheckOtpForgotPasswordErrors',
-            gettersCheckOtpForgotPasswordMessage:'getCheckOtpForgotPasswordMessage',
-            gettersNewPassOtpForgotPasswordStatus:'getNewPassOtpForgotPasswordStatus',
-            gettersNewPassOtpForgotPasswordErrors:'getNewPassOtpForgotPasswordErrors',
-            gettersNewPassOtpForgotPasswordMessage:'getNewPassOtpForgotPasswordMessage',
-        }),
-
-    },
-    methods:{
-
-        ...mapActions('login',{
-            actionLogin:'login'
-        }),
-
-        ...mapActions("meProfile",{
-            actionsGetMeProfile:'getMeProfile'
-        }),
-
-        ...mapActions("forgot_password",{
-            actionsSendOtpForgotPassword:'sendOtpForgotPassword',
-            actionsCheckOtpForgotPassword:'checkOtpForgotPassword',
-            actionsNewPassOtpForgotPassword:'newPassOtpForgotPassword'
-        }),
-
-        ...mapActions("register",{
-            actionsSendOtpRegister:'sendOtpRegister',
-            actionsCheckOtpRegister:'checkOtpRegister',
-            actionsNewInfoOtpRegister:'newInfoOtpRegister',
-            actionsNewPassOtpRegister:'newPassOtpRegister'
-        }),
-
-        ...mapActions("roleSecurity",{
-          actionsGetMeRole:'getMeRole'
-        }),
-
-        ...mapActions("tagsAdmin",{
-          actionsTagsListDataRequest:'tagsListDataRequest',
-          actionsTagsListHDataRequest:'tagsListHDataRequest',
-          actionsTagsListHHDataRequest:'tagsListHHDataRequest',
-          actionsSearchByDateListDataRequest:'searchByDateListDataRequest', 
-          actionsTagsStoreDataRequest:'tagsStoreDataRequest',
-          actionsTagsUpdateDataRequest:'tagsUpdateDataRequest',
-          actionsTagsDeleteDataRequest:'tagsDeleteDataRequest'
-        }),
-
-
-        authFormModalTagsListClose(){
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            this.errorLogin = false
-            this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-            $('#authFormModalTagsList').modal('hide');
-        },
-
-        showPassword(){
-            var x = document.getElementById("psw-input");
-            if (x.type === "password") {
-                x.type = "text";
-                this.showPsw = true
-            } else {
-                x.type = "password";
-                this.showPsw = false
-            }
-        },
-
-        showPasswordC(){
-            var x = document.getElementById("psw-input_c");
-            if (x.type === "password") {
-                x.type = "text";
-                this.showPswC = true
-            } else {
-                x.type = "password";
-                this.showPswC = false
-            }
-        },
-
-        authModalClick(action_auth="LIST", name=null, slug=null){
-
-            if(localStorage.getItem('remember_me') == "true" && localStorage.getItem('username') && localStorage.getItem('password')){
-
-                this.username = localStorage.getItem('username')
-
-                this.password = localStorage.getItem('password')
-
-                this.remember_me = localStorage.getItem('remember_me')
-            }
-
-            this.name = name
-
-            this.slug = slug
-
-            this.authSectionModal= action_auth
-
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            this.errorLogin = false
-            this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-
-            if(this.authSectionModal == "CREATE"){
-
-                this.loadingCreate = false
-
-            }else if(this.authSectionModal == "UPDATE"){
-
-                this.loadingUpdate = false
-
-            }else if(this.authSectionModal == "DELETE"){
-
-                this.loadingDelete = false
-
-            }
-
-            $('#authFormModalTagsList').modal('show');
-        },
-
-        PreviousForgotPasswordStep(){
-            this.step = 1
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            this.errorLogin = false
-            this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-        },
-
-        PreviousHForgotPasswordStep(){
-            this.step = 2
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            this.errorLogin = false
-            this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-        },
-
-        changeAuthSectionStepModalToForgotPassword(){
-            this.authSectionStepModal = 2
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            this.errorLogin = false
-            this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-        },
-
-        changeAuthSectionStepModalToLogin(){
-            this.authSectionStepModal = 1
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            this.errorLogin = false
-            this.errorsLogin = []
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-        },
-
-        async submitVerifyForgotPasswordEmail(){
-            this.loadingForgotPasswordFirst = true
-            this.errorForgotPasswordFirst = null
-            this.errorsForgotPasswordFirst = []
-            await this.actionsSendOtpForgotPassword({email:this.email});
-
-            if(this.gettersSendOtpForgotPasswordStatus === 'success'){
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.gettersSendOtpForgotPasswordMessage
-                })
-
-                this.errorForgotPasswordFirst = null
-                this.errorsForgotPasswordFirst = []
-
-                this.loadingForgotPasswordFirst = false
-
-                this.step = 2
-
-            }else if(this.gettersSendOtpForgotPasswordStatus === 'failed'){
-
-                this.errorsForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
-
-                this.errorsForgotPasswordFirst = []
-
-                this.loadingForgotPasswordFirst = false
-
-            }else if(this.gettersSendOtpForgotPasswordStatus === 'error'){
-
-                this.errorForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
-
-                this.errorsForgotPasswordFirst = this.gettersSendOtpForgotPasswordErrors
-
-                this.loadingForgotPasswordFirst = false
-            }
-
-            this.loadingForgotPasswordFirst = false
-        },
-
-        async submitResendOtp(){
-                this.loadingResendOTP = true
-                this.errorForgotPasswordFirst = null
-                this.errorsForgotPasswordFirst = []
-                await this.actionsSendOtpForgotPassword({email:this.email});
-
-                if(this.gettersSendOtpForgotPasswordStatus === 'success'){
-
-                    const Toast = this.$swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                        }
-                    })
-
-                    Toast.fire({
-                        icon: 'success',
-                        title: this.gettersSendOtpForgotPasswordMessage
-                    })
-
-                    this.errorForgotPasswordFirst = null
-                    this.errorsForgotPasswordFirst = []
-
-                    this.loadingResendOTP = false
-
-                    this.step = 2
-
-                }else if(this.gettersSendOtpForgotPasswordStatus === 'failed'){
-
-                    this.errorForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
-
-                    this.errorsForgotPasswordFirst = []
-
-                    this.loadingResendOTP = false
-
-                }else if(this.gettersSendOtpForgotPasswordStatus === 'error'){
-
-                    this.errorForgotPasswordFirst = this.gettersSendOtpForgotPasswordMessage
-
-                    this.errorsForgotPasswordFirst = this.gettersSendOtpForgotPasswordErrors
-
-                    this.loadingResendOTP = false
-                }
-
-                this.loadingResendOTP = false
-            },
-
-        async submitVerifyForgotPasswordOtp(){
-            this.loadingForgotPasswordTwo = true
-            this.errorForgotPasswordTwo = null
-            this.errorsForgotPasswordTwo = []
-            await this.actionsCheckOtpForgotPassword({email:this.email, otp :this.otp });
-
-            if(this.gettersCheckOtpForgotPasswordStatus === 'success'){
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.gettersCheckOtpForgotPasswordMessage
-                })
-
-                this.errorForgotPasswordTwo = null
-                this.errorsForgotPasswordTwo = []
-
-                this.loadingForgotPasswordTwo = false
-
-                this.step = 3
-
-            }else if(this.gettersCheckOtpForgotPasswordStatus === 'failed'){
-
-                this.errorForgotPasswordTwo = this.gettersCheckOtpForgotPasswordMessage
-
-                this.errorsForgotPasswordTwo = []
-
-                this.loadingForgotPasswordTwo = false
-
-            }else if(this.gettersCheckOtpForgotPasswordStatus === 'error'){
-
-                this.errorForgotPasswordTwo = this.gettersCheckOtpForgotPasswordMessage
-
-                this.errorsForgotPasswordTwo = this.gettersCheckOtpForgotPasswordErrors
-
-                this.loadingForgotPasswordTwo = false
-            }
-            this.loadingForgotPasswordTwo = false
-        },
-
-        async submitForgotPasswordNewPass(){
-            this.loadingForgotPasswordThree = true
-            this.errorForgotPasswordThree = null
-            this.errorsForgotPasswordThree = []
-            await this.actionsNewPassOtpForgotPassword({email:this.email, otp :this.otp, password :this.password ,password_confirm :this.password_confirm});
-
-            if(this.gettersNewPassOtpForgotPasswordStatus === 'success'){
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.gettersNewPassOtpForgotPasswordMessage
-                })
-
-                this.errorForgotPasswordThree = null
-                this.errorsForgotPasswordThree = []
-
-                this.authSectionStepModal = 1
-
-            }else if(this.gettersNewPassOtpForgotPasswordStatus === 'failed'){
-
-                this.errorForgotPasswordThree = this.gettersNewPassOtpForgotPasswordMessage
-
-                this.errorsForgotPasswordThree = []
-
-                this.loadingForgotPasswordThree = false
-
-            }else if(this.gettersNewPassOtpForgotPasswordStatus === 'error'){
-
-                this.errorForgotPasswordThree = this.gettersNewPassOtpForgotPasswordMessage
-
-                this.errorsForgotPasswordThree = this.gettersNewPassOtpForgotPasswordErrors
-
-                this.loadingForgotPasswordThree = false
-            }
-            this.loadingForgotPasswordThree = false
-
-        },
-
-        async submitLogin(){
-            this.loadingLogin = true
-            this.errorLogin = false
-            this.errorsLogin = []
-            await this.actionLogin({username:this.username, password:this.password, remember_me: this.remember_me});
-
-            if(this.getterLoginStatus === 'success admin'){
-
-                this.errorsLogin = []
-
-                this.errorLogin = false
-
-                if(this.remember_me){
-
-                    localStorage.setItem('username', this.username )
-
-                    localStorage.setItem('password', this.password)
-
-                    localStorage.setItem('remember_me', true)
-
-                    this.loadingLogin = false
-
-                    const Toast = this.$swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                        }
-                    })
-
-                    Toast.fire({
-                        icon: 'success',
-                        title: this.getterLoginMessage
-                    })
-
-
-
-                    if(this.authSectionModal== 'LIST'){
-
-                        this.authFormModalTagsListClose()
-
-                        this.getResults()
-
-                    }else if(this.authSectionModal == "CREATE_AUTH"){
-
-                        this.authSectionModal = "CREATE"
-
-                        this.tagsCreate()
-
-                    }else if(this.authSectionModal == "UPDATE_AUTH"){
-
-                        this.authSectionModal = "UPDATE"
-
-                        this.tagsUpdate()
-
-                    }else if(this.authSectionModal == "DELETE_AUTH"){
-
-                        this.authSectionModal = "DELETE"
-
-                        this.tagsDelete()
-
-                    }
-
-
-                }else{
-
-                    localStorage.setItem('remember_me', false)
-
-                    this.loadingLogin = false
-
-                    const Toast = this.$swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                        }
-                    })
-
-                    Toast.fire({
-                        icon: 'success',
-                        title: this.getterLoginMessage
-                    })
-
-
-
-
-                   if(this.authSectionModal== 'LIST'){
-
-                        this.authFormModalTagsListClose()
-
-                        this.getResults()
-
-                    }else if(this.authSectionModal == "CREATE_AUTH"){
-
-                        this.authSectionModal = "CREATE"
-
-                        this.tagsCreate()
-
-                    }else if(this.authSectionModal == "UPDATE_AUTH"){
-
-                        this.authSectionModal = "UPDATE"
-
-                        this.tagsUpdate()
-
-                    }else if(this.authSectionModal == "DELETE_AUTH"){
-
-                        this.authSectionModal = "DELETE"
-
-                        this.tagsDelete()
-
-                    }
-
-                }
-
-            }else if(this.getterLoginStatus === 'success pub'){
-
-                if(this.remember_me){
-
-                    localStorage.setItem('username', this.username )
-
-                    localStorage.setItem('password', this.password)
-
-                    localStorage.setItem('remember_me', true)
-
-                    this.loadingLogin = false
-
-                    window.location = '/pub/dashboard'
-
-
-                }else{
-
-                    localStorage.setItem('remember_me', false)
-
-                    this.loadingLogin = false
-
-                    window.location = '/pub/dashboard'
-                }
-
-
-
-            }else if(this.getterLoginStatus === 'success visitor'){
-
-                if(this.remember_me){
-
-                    localStorage.setItem('username', this.username )
-
-                    localStorage.setItem('password', this.password)
-
-                    localStorage.setItem('remember_me', true)
-
-                    this.loadingLogin = false
-
-                    window.location = '/'
-
-
-                }else{
-
-                    localStorage.setItem('remember_me', false)
-
-                    this.loadingLogin = false
-
-                    window.location = '/'
-                }
-
-
-
-            }else if(this.getterLoginStatus === 'failed'){
-
-                this.errorLogin = this.getterLoginMessage
-
-                this.errorsLogin = []
-
-                this.loadingLogin = false
-
-            }else if(this.getterLoginStatus === 'error'){
-
-                this.errorLogin = this.getterLoginMessage
-
-                this.errorsLogin = this.getterLoginErrors
-
-                this.loadingLogin = false
-            }
-        },
-
-        async show(){
-
-            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-                await this.actionsGetMeRole();
-
-                this.authSectionModal= 'LIST'
-
-                if(this.gettersRoleStatus === 'success'){
-
-                    this.meRoleName = this.gettersMeRoleName
-
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
-
-                        this.getResults()
-
-                    }else{
-
-                        this.dataReady= 2
-
-                    }
-
-                }else if(this.gettersRoleStatus === 'failed'){
-
-                    this.dataReady = 3;
-                }
-
-            }else{
-
-                this.dataReady = 4;
-
-            }
-
-        },
-
-
-        async getResults(page = 1){
-
-            this.loading = true
-
-            this.authSectionModal= 'LIST'
-
-            await this.actionsTagsListDataRequest({ page : page, search: this.search});
-
-            if( this.getterInfosTagsListStatus ==="success"){
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.getResultsSearchByDate( )
-
-                this.empty = 0
-
-                this.dataReady = 1
-
-                this.authFormModalTagsListClose()
-
-            }else if( this.getterInfosTagsListStatus ==="empty"){
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.empty = 1
-
-                this.dataReady = 1
-
-            }else if(this.getterInfosTagsListStatus === 'failed'){
-
-                this.dataReady = 3;
-
-            }else{
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.empty = 3
-
-                this.dataReady = 4
-
-            }
-        },
-
-        async getResultsSearchByDate( ){
-
-            await this.actionsSearchByDateListDataRequest({  });
-
-            if( this.getterInfosSearchByDateListStatus ==="success"){
-
-                this.searchByDateListData = this.getterInfosSearchByDateListData
-
-                this.emptySearchByDate = 0
-
-            }else if( this.getterInfosSearchByDateListStatus ==="empty"){
-
-                this.emptySearchByData = 1
-
-            }
-        },
-
-        async handleSelection(event, page=1){
-            this.searchH = event.target.value
-
-            this.authSectionModal= 'LIST'
-
-            await this.actionsTagsListHDataRequest({ page : page, searchH: this.searchH});
-
-            if( this.getterInfosTagsListStatus ==="success"){
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.getResultsSearchByDate( )
-
-                this.empty = 0
-
-                this.dataReady = 1
-
-                this.authFormModalTagsListClose()
-
-            }else if( this.getterInfosTagsListStatus ==="empty"){
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.empty = 1
-
-                this.dataReady = 1
-
-            }else if(this.getterInfosTagsListStatus === 'failed'){
-
-                this.dataReady = 3;
-
-            }else{
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.empty = 3
-
-                this.dataReady = 4
-
-            }
-        },
-
-        async handleSelectionUsers(event, page=1){
-            this.user_id = event.target.value
-
-            this.authSectionModal= 'LIST'
-
-            await this.actionsTagsListHHDataRequest({ page : page, user_id: this.user_id});
-
-            if( this.getterInfosTagsListStatus ==="success"){
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.getResultsSearchByDate( )
-
-                this.empty = 0
-
-                this.dataReady = 1
-
-                this.authFormModalTagsListClose()
-
-            }else if( this.getterInfosTagsListStatus ==="empty"){
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.tagsListData = this.getterInfosTagsListData
-
-                this.empty = 1
-
-                this.dataReady = 1
-
-            }else if(this.getterInfosTagsListStatus === 'failed'){
-
-                this.dataReady = 3;
-
-            }else{
-
-                this.tagsListMessage = this.getterInfosTagsListMessage
-
-                this.empty = 3
-
-                this.dataReady = 4
-
-            }
-        },
-
-        async create(){
-
-            this.loadingCreate = true
-
-            this.authSectionModal= 'CREATE'
-
-            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-                await this.actionsGetMeRole();
-
-                if(this.gettersRoleStatus === 'success'){
-
-                    this.meRoleName = this.gettersMeRoleName
-
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
-
-                        this.tagsCreate()
-
-                    }else{
-
-                        this.loadingCreate = true
-
-                        //this.authSectionModal= 'CREATE'
-
-                    }
-
-                }else if(this.gettersRoleStatus === 'failed'){
-
-                    this.authSectionModal= 'CREATE_AUTH'
-                }
-
-            }else{
-
-                this.authSectionModal= 'CREATE_AUTH'
-
-            }
-
-        },
-
-        async tagsCreate(){
-
-            this.loadingCreate = true
-
-            this.authSectionModal= 'CREATE'
-
-            this.tagsStoreMessage =  null
-            this.tagsStoreErrors = []
-
-            await this.actionsTagsStoreDataRequest({ name : this.name});
-
-            if( this.getterInfosTagsStoreStatus ==="success"){
-
-                this.tagsStoreData = this.getterInfosTagsStoreData
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.getterInfosTagsStoreMessage
-                })
-
-                this.loadingCreate = false
-
-                this.name = null
-
-                this.slug= null
-
-                this.tagsStoreMessage =  null
-                this.tagsStoreErrors = []
-
-                this.authFormModalTagsListClose()
-
-                this.getResults()
-
-            }else if( this.getterInfosTagsStoreStatus ==="empty"){
-
-                this.tagsStoreMessage = this.getterInfosTagsStoreMessage
-
-                this.tagsStoreErrors = this.getterInfosTagsStoreErrors
-
-                this.loadingCreate = false
-
-
-            }else if( this.getterInfosTagsStoreStatus ==="error"){
-
-                this.tagsStoreMessage = this.getterInfosTagsStoreMessage
-
-                this.tagsStoreErrors = []
-
-                this.loadingCreate = false
-
-            }
-        },
-
-        async update(){
-
-            this.loadingUpdate = true
-
-            this.authSectionModal= 'UPDATE'
-
-            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-                await this.actionsGetMeRole();
-
-                if(this.gettersRoleStatus === 'success'){
-
-                    this.meRoleName = this.gettersMeRoleName
-
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
-
-                        this.tagsUpdate()
-
-                    }else{
-
-                        this.loadingUpdate = true
-
-                        //this.authSectionModal= 'CREATE'
-
-                    }
-
-                }else if(this.gettersRoleStatus === 'failed'){
-
-                    this.authSectionModal= 'UPDATE_AUTH'
-                }
-
-            }else{
-
-                this.authSectionModal= 'UPDATE_AUTH'
-
-            }
-
-        },
-
-        async tagsUpdate(){
-
-            this.loadingUpdate = true
-
-            this.authSectionModal= 'UPDATE'
-
-            this.tagsUpdateMessage =  null
-            this.tagsUpdateErrors = []
-
-            await this.actionsTagsUpdateDataRequest({ name : this.name, slug : this.slug,});
-
-            if( this.getterInfosTagsUpdateStatus ==="success"){
-
-                this.tagsUpdateData = this.getterInfosTagsUpdateData
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.getterInfosTagsUpdateMessage
-                })
-
-                this.loadingUpdate = false
-
-                this.tagsUpdateMessage =  null
-                this.tagsUpdateErrors = []
-
-                this.name = null
-
-                this.slug= null
-
-                this.authFormModalTagsListClose()
-
-                this.getResults()
-
-            }else if( this.getterInfosTagsUpdateStatus ==="empty"){
-
-                this.tagsUpdateMessage = this.getterInfosTagsUpdateMessage
-
-                this.tagsUpdateErrors = this.getterInfosTagsUpdateErrors
-
-                this.loadingUpdate = false
-
-
-            }else if( this.getterInfosTagsUpdateStatus ==="error"){
-
-                this.tagsUpdateMessage = this.getterInfosTagsUpdateMessage
-
-                this.tagsUpdateErrors = []
-
-                this.loadingUpdate = false
-
-            }
-        },
-
-        async destroy(){
-
-            this.loadingDelete = true
-
-            this.authSectionModal= 'DELETE'
-
-            if(localStorage.getItem('access_token') && localStorage.getItem('nbRsp')){
-
-                await this.actionsGetMeRole();
-
-                if(this.gettersRoleStatus === 'success'){
-
-                    this.meRoleName = this.gettersMeRoleName
-
-                    if((this.meRoleName == localStorage.getItem('nbRsp')) && (localStorage.getItem('nbRsp') === '&nbtsd!?')){
-
-                        this.tagsDelete()
-
-                    }else{
-
-                        this.loadingDelete = true
-
-                        //this.authSectionModal= 'CREATE'
-
-                    }
-
-                }else if(this.gettersRoleStatus === 'failed'){
-
-                    this.authSectionModal= 'DELETE_AUTH'
-                }
-
-            }else{
-
-                this.authSectionModal= 'DELETE_AUTH'
-
-            }
-
-        },
-
-        async tagsDelete(){
-
-            this.loadingDelete = true
-
-            this.authSectionModal= 'DELETE'
-
-            await this.actionsTagsDeleteDataRequest({slug : this.slug});
-
-            if( this.getterInfosTagsDeleteStatus ==="success"){
-
-                this.tagsDeleteData = this.getterInfosTagsDeleteData
-
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
-
-                Toast.fire({
-                    icon: 'success',
-                    title: this.getterInfosTagsDeleteMessage
-                })
-
-                this.loadingDelete = false
-
-                this.name = null
-
-                this.slug= null
-
-                this.authFormModalTagsListClose()
-
-                this.getResults()
-
-            }else if( this.getterInfosTagsDeleteStatus ==="empty"){
-
-                this.tagsDeleteMessage = this.getterInfosTagsDeleteMessage
-
-                this.tagsDeleteErrors = this.getterInfosTagsDeleteErrors
-
-                this.loadingDelete = false
-
-
-            }else if( this.getterInfosTagsDeleteStatus ==="error"){
-
-                this.tagsDeleteMessage = this.getterInfosTagsDeleteMessage
-
-                this.loadingDelete = false
-
-            }
-        },
-
-    },
-    mounted() {
-        this.moment = moment
-        this.show();
-    },
-};
-</script>
+   
+</template> 

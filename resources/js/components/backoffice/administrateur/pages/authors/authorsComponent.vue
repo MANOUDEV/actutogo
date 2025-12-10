@@ -1,7 +1,4 @@
-<script>
-</script>
 <template>
-    
     <!-- =======================Author list START -->
     <section class="py-4">
         <div class="container">
@@ -11,7 +8,7 @@
                 <div class="col-12">
                     <!-- Title -->
                     <div class="d-sm-flex justify-content-sm-between align-items-center">
-                        <h1 class="mb-2 mb-sm-0 h2">Mes auteurs</h1>			
+                        <h1 class="mb-2 mb-sm-0 h2">Tableau de bord</h1>			
                         
                     </div>
                 </div>
@@ -19,4 +16,7 @@
         </div>
     </section>
    
-</template> 
+</template>
+<script>
+
+</script>

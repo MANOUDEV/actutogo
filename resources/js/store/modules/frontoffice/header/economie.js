@@ -26,7 +26,7 @@ const actions = {
         if (response && (response.data.data.status == 200)) {
             commit("setInfosEconomieStatus", "success");
             commit("setInfosEconomieMessage", response.data.message);
-            commit("setInfosEconomieData", response.data.data);
+            commit("setInfosEconomieData", response.data.data.economieData);
         }else if(response.data.data.status == 401) {
             commit("setInfosEconomieStatus", "empty");
             commit("setInfosEconomieMessage", response.data.message);

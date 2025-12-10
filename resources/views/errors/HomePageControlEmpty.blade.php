@@ -2,7 +2,8 @@
 
 @section('title') Aucune publication @endsection
 
-@section('content') 
+@section('content')
+ 
     <main>
                 
         <section class="overflow-hidden">

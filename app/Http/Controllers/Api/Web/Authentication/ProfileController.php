@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Routing\Controllers\Middleware;  
+use Illuminate\Routing\Controllers\Middleware; 
 use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends BaseController

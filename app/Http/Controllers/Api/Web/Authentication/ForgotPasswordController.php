@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\Web\Authentication;
 
 use App\Http\Controllers\Api\BaseController; 
 use App\Mail\VerifyOtp;
-use App\Models\User; 
+use App\Models\User;
+use App\Models\Publication;
 use App\Models\OtpForgotPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Routing\Controllers\Middleware; 
-use Illuminate\Support\Facades\Mail;
 
 class ForgotPasswordController extends BaseController
 {
@@ -26,7 +26,6 @@ class ForgotPasswordController extends BaseController
 
     public function forgot_password(){
 
-       
         return view('authentication.forgot_password');
        
     }

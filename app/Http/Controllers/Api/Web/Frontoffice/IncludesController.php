@@ -1,21 +1,13 @@
 <?php
 namespace App\Http\Controllers\Api\Web\Frontoffice;
 use App\Http\Controllers\Api\BaseController;
-use App\Models\Category;
-use App\Models\Message;
+use App\Models\Category; 
 use App\Models\NewsLetter;
 use App\Models\Tag;
-use App\Models\Publication;
-use App\Models\SenderMessage;
-use App\Models\PublicationViews;
-use App\Models\PublicationLikes;
-use App\Models\Comment;
-use App\Models\Commentator;
-use App\Models\VisitorMatricule; 
+use App\Models\Publication; 
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str; 
 
 class IncludesController extends BaseController
 {
@@ -26,6 +18,159 @@ class IncludesController extends BaseController
 
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+    */
+    public function togoActualiteRequestData(){
+
+        $togoactualiteDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 34)->count();
+
+        if($togoactualiteDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur togoactualité n\'est publiée.');
+
+        }else if ($togoactualiteDataCount !== 0){
+
+            $togoactualiteData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 35)
+                ->orWhere("category_id", 1)
+                ->orWhere("category_id", 2)
+                ->orWhere("category_id", 27)
+                ->orWhere("category_id", 34);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'togoactualiteData' =>  $togoactualiteData,
+                'status' => 200
+            ], 'Listes de publications de togoactualité publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function rubriquesRequestData(){
+
+        $rubriquesDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 28)->count();
+
+        if($rubriquesDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur rubriques n\'est publiée.');
+
+        }else if ($rubriquesDataCount !== 0){
+
+            $rubriquesData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 28);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'rubriquesData' =>  $rubriquesData,
+                'status' => 200
+            ], 'Listes de publications de rubriques publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function diplomatieRequestData(){
+
+        $diplomatieDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 11)->count();
+
+        if($diplomatieDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur diplomatie n\'est publiée.');
+
+        }else if ($diplomatieDataCount !== 0){
+
+            $diplomatieData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 11);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'diplomatieData' =>  $diplomatieData,
+                'status' => 200
+            ], 'Listes de publications de diplomatie publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function chroniquesRequestData(){
+
+        $chroniquesDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 5)->count();
+
+        if($chroniquesDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur chroniques n\'est publiée.');
+
+        }else if ($chroniquesDataCount !== 0){
+
+            $chroniquesData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 5);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'chroniquesData' =>  $chroniquesData,
+                'status' => 200
+            ], 'Listes de publications de chroniques publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+    }
 
     /**
      * Display a listing of the resource.
@@ -34,11 +179,11 @@ class IncludesController extends BaseController
      */
     public function economieRequestData(){
 
-        $economieDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 11)->count();
+        $economieDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 12)->count();
 
         if($economieDataCount === 0){
 
-            return $this->sendResponse(['status' => 401], 'Acune publication sur économie n\'est publiée.');
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur économie n\'est publiée.');
 
         }else if ($economieDataCount !== 0){
 
@@ -51,38 +196,8 @@ class IncludesController extends BaseController
             ->take(4)
             ->get();
 
-             $diaspora = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
-            ->where(function ($query) {
-                $query->where("status", 1);
-            })->where(function ($query) {
-                $query->where("category_id", 10);
-            })->orderBy('date_publish', 'desc')
-            ->take(4)
-            ->get();
-
-             $rubriques = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
-            ->where(function ($query) {
-                $query->where("status", 1);
-            })->where(function ($query) {
-                $query->where("category_id", 28);
-            })->orderBy('date_publish', 'desc')
-            ->take(4)
-            ->get();
-
-             $societe = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
-            ->where(function ($query) {
-                $query->where("status", 1);
-            })->where(function ($query) {
-                $query->where("category_id", 30);
-            })->orderBy('date_publish', 'desc')
-            ->take(4)
-            ->get();
-
             return $this->sendResponse([
                 'economieData' =>  $economieData,
-                'societe' =>  $societe,
-                'diaspora' =>  $diaspora,
-                'rubriques' =>  $rubriques,
                 'status' => 200
             ], 'Listes de publications de économie publiés');
 
@@ -96,7 +211,84 @@ class IncludesController extends BaseController
 
     }
 
-   
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function diasporaRequestData(){
+
+        $diasporaDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 10)->count();
+
+        if($diasporaDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur diaspora n\'est publiée.');
+
+        }else if ($diasporaDataCount !== 0){
+
+            $diasporaData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 10);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'diasporaData' =>  $diasporaData,
+                'status' => 200
+            ], 'Listes de publications de diaspora publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+     public function fenetreSurLAfriqueRequestData(){
+
+        $fenetreSurLAfriqueDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 16)->count();
+
+        if($fenetreSurLAfriqueDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur fenêtre sur l\'afrique n\'est publiée.');
+
+        }else if ($fenetreSurLAfriqueDataCount !== 0){
+
+            $fenetreSurLAfriqueData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 16);
+            })->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'fenetreSurLAfriqueData' =>  $fenetreSurLAfriqueData,
+                'status' => 200
+            ], 'Listes de publications de fenêtre sur l\'afrique publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+
+
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -105,11 +297,11 @@ class IncludesController extends BaseController
 
     public function internationalRequestData(){
 
-        $internationalDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 20)->orWhere("category_id", 23)->count();
+        $internationalDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 20)->count();
 
         if($internationalDataCount === 0){
 
-            return $this->sendResponse(['status' => 401], 'Acune publication sur international n\'est publiée.');
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur international n\'est publiée.');
 
         }else if ($internationalDataCount !== 0){
 
@@ -117,7 +309,7 @@ class IncludesController extends BaseController
             ->where(function ($query) {
                 $query->where("status", 1);
             })->where(function ($query) {
-                $query->where("category_id", 20)->orWhere("category_id", 23);
+                $query->where("category_id", 20);
             })->orderBy('date_publish', 'desc')
             ->orderBy('date_publish', 'desc')
             ->take(4)
@@ -138,35 +330,118 @@ class IncludesController extends BaseController
 
     }
 
-    /**
+     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function politiqueRequestData(){
 
-        $politiqueDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 28)->count();
+     public function mondeRequestData(){
 
-        if($politiqueDataCount === 0){
+        $mondeDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 24)->count();
 
-            return $this->sendResponse(['status' => 401], 'Acune publication sur politique n\'est publiée.');
+        if($mondeDataCount === 0){
 
-        }else if ($politiqueDataCount !== 0){
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur monde n\'est publiée.');
 
-            $politiqueData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+        }else if ($mondeDataCount !== 0){
+
+            $mondeData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
             ->where(function ($query) {
                 $query->where("status", 1);
             })->where(function ($query) {
-                $query->where("category_id", 28);
+                $query->where("category_id", 24);
             })->orderBy('date_publish', 'desc')
             ->orderBy('date_publish', 'desc')
             ->take(4)
             ->get();
 
             return $this->sendResponse([
-                'politiqueData' =>  $politiqueData,
+                'mondeData' =>  $mondeData,
                 'status' => 200
-            ], 'Listes de publications de politique publiés');
+            ], 'Listes de publications de monde publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+
+
+    }
+
+     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+     public function afriqueRequestData(){
+
+        $afriqueDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 3)->count();
+
+        if($afriqueDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur afrique n\'est publiée.');
+
+        }else if ($afriqueDataCount !== 0){
+
+            $afriqueData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 3);
+            })->orderBy('date_publish', 'desc')
+            ->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'afriqueData' =>  $afriqueData,
+                'status' => 200
+            ], 'Listes de publications de afrique publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+
+
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function sportsRequestData(){
+
+        $sportsDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 31)->count();
+
+        if($sportsDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur sports n\'est publiée.');
+
+        }else if ($sportsDataCount !== 0){
+
+            $sportsData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 31);
+            })->orderBy('date_publish', 'desc')
+            ->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'sportsData' =>  $sportsData,
+                'status' => 200
+            ], 'Listes de publications de sports publiés');
 
         }else{
 
@@ -176,7 +451,82 @@ class IncludesController extends BaseController
 
     }
 
-    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function canRequestData(){
+
+        $canDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 4)->count();
+
+        if($canDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur can n\'est publiée.');
+
+        }else if ($canDataCount !== 0){
+
+            $canData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 4);
+            })->orderBy('date_publish', 'desc')
+            ->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'canData' =>  $canData,
+                'status' => 200
+            ], 'Listes de publications de can publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function togoRequestData(){
+
+        $togoDataCount = Publication::where("status", 1)->where("type_publication_id", 1)->where("category_id", 34)->count();
+
+        if($togoDataCount === 0){
+
+            return $this->sendResponse(['status' => 401], 'Aucune publication sur togo n\'est publiée.');
+
+        }else if ($togoDataCount !== 0){
+
+            $togoData = Publication::select(array("id", "content", "truncate_content","title", "slug", "date_publish" ,"author_name", "author_slug","image_cover_url"))
+            ->where(function ($query) {
+                $query->where("status", 1);
+            })->where(function ($query) {
+                $query->where("category_id", 34);
+            })->orderBy('date_publish', 'desc')
+            ->orderBy('date_publish', 'desc')
+            ->take(4)
+            ->get();
+
+            return $this->sendResponse([
+                'togoData' =>  $togoData,
+                'status' => 200
+            ], 'Listes de publications de togo publiés');
+
+        }else{
+
+            return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+
+        }
+
+    }
+
 
      /**
      * Display a listing of the resource.
@@ -225,7 +575,7 @@ class IncludesController extends BaseController
      */
     public function tagsRequestData()
     {
-       $tags = Tag::orderBy('tags.count_publications', 'desc')->take(6)->get();
+       $tags = Tag::orderBy('tags.count_publications', 'desc')->take(20)->get();
 
        return $this->sendResponse(['tagsPopularsData' => $tags, 'status' => 200], 'les mots clés populaires');
 
@@ -282,388 +632,6 @@ class IncludesController extends BaseController
 
         return $this->sendResponse(['publicationsPopularsData' => $publications, 'status' => 200], 'les publications populaires');
 
-    }
+    } 
     
-    public function submitContact(Request $request){
-
-        $datas = $request->all();
-
-        $validator = Validator::make($datas, [
-            'email' => ['required', 'email', 'max:255'],
-            'nom_complet' => ['required', 'string', 'max:255'],
-            'content' => ['required'],
-        ],[
-            'required' => 'Votre :attribute est obligatoire.',
-        ], [
-            'email' => 'email',
-            'nom_complet' => 'nom complet',
-            'content' => 'contenu',
-        ]);
-
-        if ($validator->fails()) {
-
-            return $this->sendResponse(['errors'=> $validator->errors(), 'status' => 401],'Erreur de validation');
-
-        }
-
-        $datas['slug'] = Str::slug($datas['nom_complet']);
-
-        $check_sender_message = SenderMessage::where('nom_complet', $datas['nom_complet'])->where('email', $datas['email'])->first();
-
-        if($check_sender_message){
-
-            $create_contact = Message::create([
-                'sender_message_id' => $check_sender_message->id,
-                'content' => $datas['content'],
-                'subject' => $datas['subject'] ? $datas['subject'] : null,
-            ]);
-
-            $check_sender_message->count_messages += 1;
-
-            $check_sender_message->update();
-
-        }else{
-
-            $create_sender_contact = SenderMessage::create([
-                'nom_complet' => $datas['nom_complet'],
-                'slug' => $datas['slug'],
-                'email' => $datas['email'],
-            ]);
-
-            $create_contact = Message::create([
-                'sender_message_id' => $create_sender_contact->id,
-                'content' => $datas['content'],
-                'subject' => $datas['subject'] ? $datas['subject'] : null,
-            ]);
-
-            $create_sender_contact->count_messages += 1;
-
-            $create_sender_contact->update();
-
-        }
-
-        return $this->sendResponse(['result' => $create_contact , 'status' => 200], 'Message envoyé.');
-
-    }
-  
-    public function generateVisitorMatricule(){
-
-        $matricule_visitors_count = VisitorMatricule::count();
-
-        if($matricule_visitors_count == 0){
-
-            $visitor_matricule_create = VisitorMatricule::create([
-                'matricule_reference' => $this->str_replace_all("/", "", Hash::make(time().'-1'))
-            ]);
-
-            return $this->sendResponse(['visitor_matricule_create' => $visitor_matricule_create, 'status' => 200], 'Matricule de référence pour un visiteur géneré.');
-
-        }else{
-
-            $matricule_visitor_latest = VisitorMatricule::latest()->first();
-
-            if($matricule_visitor_latest){
-
-                $visitor_matricule_create = VisitorMatricule::create([
-                    'matricule_reference' => $this->str_replace_all("/", "", Hash::make(time().'-'.$matricule_visitor_latest->id + 1))
-                ]);
-
-                return $this->sendResponse(['visitor_matricule_create' => $visitor_matricule_create, 'status' => 200], 'Matricule de référence pour un visiteur géneré.');
-
-            }else{
-                return $this->sendResponse(['result' => 'Error', 'status' => 401], 'Impossible de générer un matricule de référence pour ce visiteur.');
-            }
-
-        }
-
-    }
-
-    public function checkVisitorMatricule($matricule) {
-
-        $matricule_visitors_count = VisitorMatricule::count();
-
-        if($matricule_visitors_count !== 0){
-
-            $check_matricule_reference = VisitorMatricule::where('matricule_reference', $matricule)->first();
-
-            if($check_matricule_reference){
-
-                return $this->sendResponse(['check_matricule_reference' => $check_matricule_reference, 'status' => 200], 'Ce matricule de réference existe déjà.');
-
-            }else{
-
-                return $this->sendResponse(['result' => 'Error', 'status' => 401], 'Ce matricule de réference n\'existe pas encore.');
-
-            }
-        }else{
-
-            return $this->sendResponse(['result' => 'Error', 'status' => 401], 'Aucun matricule de réference n\'existe encore.');
-
-        }
-
-    }
-
-     public function articleState($slug, $mtr){ 
-
-        $article = Publication::where('status', 1)->where('slug', $slug)->where('deja_citer', 0)->first();
-
-        $user_views = VisitorMatricule::where('matricule_reference', $mtr)->first();
- 
-        if($article && $user_views){
-
-            $check_views = PublicationViews::where('publication_id', $article->id)->where('visitor_matricule_id', $user_views->id)->first();
-
-            if($check_views){
-
-                $check_likes = PublicationLikes::where('publication_id', $article->id)->where('visitor_matricule_id', $user_views->id)->first();
-
-                if($check_likes){
-
-                    return $this->sendResponse(['article' => $article, 'status' => 202], 'Les statistiques sur un article.');
-
-                }else{
-
-                    return $this->sendResponse(['article' => $article, 'status' => 201], 'Les statistiques sur un article.');
-
-                }
-
-            }else{
-
-                $articles = Publication::where('status', 1)->where('slug', $slug)->where('deja_citer', 1)->get();
-
-                foreach($articles as $result){
-
-                    $views_create = PublicationViews::create([
-                        'visitor_matricule_id' => $user_views->id,
-                        'publication_id' => $result->id
-                    ]);
-
-                    $result->views_count += 1;
-
-                    $result->update();
-
-                }
-
-                $view_create = PublicationViews::create([
-                    'visitor_matricule_id' => $user_views->id,
-                    'publication_id' => $article->id
-                ]);
-
-                $article->views_count += 1;
-
-                $article->update();
-
-                return $this->sendResponse(['article' => $article, 'status' => 200], 'Les statistiques sur un article.');
-            }
-
-        }else{
-
-            return $this->sendResponse(['article' => null, 'status' => 422], 'Impossible de chager les données.');
-
-        }
-
-    }
-
-     public function actionsLikes($slug, $mtr){
- 
-        $article = Publication::where('status', 1)->where('slug', $slug)->where('deja_citer', 0)->first();
-
-        $user = VisitorMatricule::where('matricule_reference', $mtr)->first();
-
-        if($article && $user){
-
-            $check_likes = PublicationLikes::where('publication_id', $article->id)->where('visitor_matricule_id', $user->id)->first();
-
-            if($check_likes){
-
-                $articles = Publication::where('status', 1)->where('slug', $slug)->where('deja_citer', 1)->get();
-
-                foreach($articles as $articleH){
-
-                    $check_likess = PublicationLikes::where('publication_id', $articleH->id)->where('visitor_matricule_id', $user->id)->first();
-
-                    foreach($check_likess as $result){ 
-
-                        $result->delete();
-        
-                        $articleH->likes_count -= 1;
-        
-                        $articleH->update();
-
-                    }
-                }
-
-               
-                $check_likes->delete();
-
-                $article->likes_count -= 1;
-        
-                $article->update();
-
-                return $this->sendResponse(['article' => $article, 'status' => 202], 'null');
-
-            }else{
-
-                $articles = Publication::where('status', 1)->where('slug', $slug)->where('deja_citer', 1)->get();
-
-                foreach($articles as $articleH){
-
-                    $likes_create = PublicationLikes::create([
-                        'visitor_matricule_id' => $user->id, 
-                        'publication_id' => $articleH->id,
-                        'date_publish'=>now()
-                    ]);
-
-                    $articleH->likes_count += 1;
-
-                    $articleH->update();
-                
-                }
-
-                $likes_create = PublicationLikes::create([
-                    'visitor_matricule_id' => $user->id, 
-                    'publication_id' => $article->id,
-                    'date_publish'=>now()
-                ]);
-
-                $article->likes_count += 1;
-
-                $article->update();
-
-                return $this->sendResponse(['article' => $article, 'status' => 201], 'Merci d\'avoir aimé cette publication');
-
-            }
-        }
-
-    }
-
-    public function articleComments($slug, $mtr){
-
-        $article = Publication::where('status', 1)->where('slug', $slug)->first();
-
-        $user = VisitorMatricule::where('matricule_reference', $mtr)->first();
-
-        if($article && $user){
-
-            $comments = Comment::select(array("comments.id", "comments.content", "comments.date_publish", "commentators.username", "commentators.nom_complet", "comments.commentator_id"))
-            ->where('comments.status', 1)
-            ->where('comments.publication_id', $article->id)
-            ->leftJoin("commentators", "commentators.id", "=", "comments.commentator_id")
-            ->orderBy('comments.date_publish', 'desc')
-            ->get();
-
-            return $this->sendResponse(['article' => $article, 'comments' => $comments, 'status' => 200], 'Les commentaires sur un article.');
-
-        }else{
-
-            return $this->sendResponse(['article' => null, 'status' => 422], 'Impossible de chager les données.');
-
-        }
-
-    }
-
-    public function submitComment(Request $request, $slug, $mtr){
-
-        $datas = $request->all();
-
-        $validator = Validator::make($datas, [
-            'email' => ['required', 'email', 'max:255'],
-            'nom_complet' => ['required', 'string', 'max:255'],
-            'content' => ['required'],
-        ],[
-            'required' => 'Votre :attribute est obligatoire.',
-        ], [
-            'email' => 'email',
-            'nom_complet' => 'nom complet',
-            'content' => 'commentaire',
-        ]);
-
-        if ($validator->fails()) {
-
-            return $this->sendResponse(['errors'=> $validator->errors(), 'status' => 401],'Erreur de validation');
-
-        }
-
-        $datas['slug'] = Str::slug($datas['nom_complet']);
-
-        $check_sender_comment = Commentator::where('nom_complet', $datas['nom_complet'])->where('email', $datas['email'])->first();
- 
-        $article = Publication::where('status', 1)->where('slug', $slug)->first();
-
-        $user = VisitorMatricule::where('matricule_reference', $mtr)->first();
-
-        if($article){
-
-            if($user){
-
-                if($check_sender_comment){
-
-                    $articles = Publication::where('status', 1)->where('slug', $slug)->get();
-
-                    foreach($articles as $articleH){
-
-                        $create_comment = Comment::create([
-                            'commentator_id' => $check_sender_comment->id,
-                            'content' => $datas['content'],
-                            'publication_id' => $articleH->id,
-                            'date_publish'=>now()
-                        ]);
-
-                        $articleH->comment_count += 1;
-
-                        $articleH->update();
-
-                    }
-
-                    $check_sender_comment->count_comments += 1;
-
-                    $check_sender_comment->update();
-
-                }else{
-
-                    $articles = Publication::where('status', 1)->where('slug', $slug)->get();
-
-                    $create_sender_comment = Commentator::create([
-                        'nom_complet' =>  $datas['nom_complet'], 
-                        'email' =>  $datas['email'], 
-                        'slug'=> $datas['slug'],
-                        'date_publish'=>now()
-                    ]);
-
-                    foreach($articles as $articleH){
-
-                        $create_comment = Comment::create([
-                            'commentator_id' => $create_sender_comment->id,
-                            'content' => $datas['content'],
-                            'publication_id' => $articleH->id,
-                            'date_publish'=>now()
-                        ]);
-
-                        $articleH->comment_count += 1;
-
-                        $articleH->update();
-            
-                    }
-
-                    $create_sender_comment->count_comments += 1;
-            
-                    $create_sender_comment->update();
-
-                }
-
-            }else{
-
-                return $this->sendResponse(['result' => 'Error', 'status' => 422], 'Ce matricule de réference n\'existe pas encore.');
-
-            }
-
-        }else{
-
-            return $this->sendResponse(['result' => 'Error', 'status' => 422], 'Cette publication n\'existe pas encore.');
-
-        }
-
-        return $this->sendResponse(['result' => $create_comment , 'status' => 200], 'Commentaire envoyé.');
-
-    }
 }

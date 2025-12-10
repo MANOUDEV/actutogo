@@ -38,14 +38,15 @@ onMounted(() => {
 <template>
     <!-- Hot topics START -->
     <div class="d-flex justify-content-center" v-if="loading">
-        <div class="spinner-border text-dark"  role="status">
+        <div class="spinner-border text-light"  role="status">
             <span class="sr-only">Loading...</span>
         </div>
     </div>
     <div class="row" v-else>
-        <ul class="list-inline">
-					<li class="list-inline-item"  v-for="info in tagsPopularsData" :key="info.id"><span @click="tag(info.slug)" style="cursor: pointer" class="btn btn-sm btn-primary-soft">#{{ info.name }}</span></li>
-				</ul>
+        <h5 class="mb-2 text-white">Les mots clés populaires</h5>
+        <ul class="list-inline text-primary-hover lh-lg">
+            <li class="list-inline-item" v-for="info in tagsPopularsData" :key="info.id"><span @click="tag(info.slug)" style="cursor: pointer">#{{ info.name }} </span></li>
+        </ul>
     </div>
     <!-- Hot topics END -->
 </template>

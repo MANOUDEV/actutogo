@@ -1,5 +1,5 @@
 <?php
-use App\Http\Controllers\Api\Web\Frontoffice\HomeController;
+use App\Http\Controllers\Api\Web\Frontoffice\HomeController; 
 use App\Http\Controllers\Api\Web\Frontoffice\OneSlugController;
 
 use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
@@ -20,12 +20,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-
 //La route pour la page d'accueil
 
 Route::get('/', [HomeController::class, 'home'] );
-
-Route::view('/ads.txt', 'adsense.ads');
 
 //La route pour les pages à lien unique
 
@@ -34,6 +31,7 @@ Route::get('/{slug}', [OneSlugController::class, 'slug']);
 Route::get('/tags/{slug}', [OneSlugController::class, 'tags']);
 
 Route::get('/authors/{slug}', [OneSlugController::class, 'authors']);
+
 
 //les routes pour l'authentification
 
@@ -60,10 +58,10 @@ Route::get('/admin/authors',[WebRouteController::class, 'administrateur']);
 Route::get('/admin/authors/create',[WebRouteController::class, 'administrateur']);
 
 Route::get('/admin/authors/{slug}/update',[WebRouteController::class, 'administrateur']);
-
+ 
 Route::get('/admin/publications/create',[WebRouteController::class, 'administrateur']);
  
-Route::get('/admin/publications/create/{slug}/type_publications',[WebRouteController::class, 'administrateur']); 
+Route::get('/admin/publications/create/{slug}/types_publications',[WebRouteController::class, 'administrateur']); 
 
 //Les routes pour les publicateurs
 

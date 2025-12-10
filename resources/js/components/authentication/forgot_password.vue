@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 const store = useStore(); 
 const loadingVerifyEmail = ref(false); 
 const loadingNewPass = ref(false);
-const loadingResendOtp = ref(false); 
+const loadingResendOTP = ref(false); 
 const loadingVerifyOtp = ref(false);  
 const email = ref(null);
 const otp = ref(null);
@@ -50,7 +50,7 @@ const showPasswordC = () => {
   }
 };
 
-PreviousStep= () =>{
+const PreviousStep= () =>{
     errorFirst.value = null
     errorsFirst.value = []
     errorTwo.value = null
@@ -60,7 +60,7 @@ PreviousStep= () =>{
     step.value = 1
 };
 
-PreviousHStep= () =>{
+const PreviousHStep= () =>{
     errorFirst.value = null
     errorsFirst.value = []
     errorTwo.value = null
@@ -129,7 +129,7 @@ const submitVerifyEmail = async () => {
 };
 
 const submitResendOtp = async () => {
-    loadingResendOtp.value = true
+    loadingResendOTP.value = true
     errorFirst.value = null
     errorsFirst.value = []
     
@@ -162,7 +162,7 @@ const submitResendOtp = async () => {
         errorFirst.value = null
         errorsFirst.value = []
 
-        loadingResendOtp.value = false
+        loadingResendOTP.value = false
 
         step.value = 2
 
@@ -172,7 +172,7 @@ const submitResendOtp = async () => {
 
         errorsFirst.value = []
 
-        loadingResendOtp.value = false
+        loadingResendOTP.value = false
 
     }else if(getterSendOtpForgotPasswordStatus === 'error'){
 
@@ -180,10 +180,10 @@ const submitResendOtp = async () => {
 
         errorsFirst.value = getterSendOtpForgotPasswordErrors
 
-        loadingResendOtp.value = false
+        loadingResendOTP.value = false
     }
 
-    loadingResendOtp.value = false
+    loadingResendOTP.value = false
 }
 
 const submitVerifyOtp = async () => {
@@ -349,6 +349,8 @@ const show = async () => {
       remember_me.value = localStorage.getItem('remember_me');
     }
   }
+
+  console.log(dataReady.value)
 };
 
 
@@ -369,7 +371,7 @@ onMounted(() => {
             </div>
             <br><br><br><br><br><br>
         </div>
-        <section v-if="dataReady == 2">
+        <section v-if="dataReady == 2 || dataReady == 3">
             <div class="container">
                 <div class="row">
                     <div class="col-md-10 col-lg-8 col-xl-6 mx-auto">

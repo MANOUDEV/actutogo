@@ -7,7 +7,7 @@ const store = useStore();
 const loadingVerifyEmail = ref(false); 
 const loadingNewPass = ref(false);
 const loadingNewInfo = ref(false);
-const loadingResendOtp = ref(false); 
+const loadingResendOTP = ref(false); 
 const loadingVerifyOtp = ref(false);  
 const email = ref(null);
 const otp = ref(null);
@@ -58,7 +58,7 @@ const showPasswordC = () => {
 };
 
 
-PreviousStep= () =>{
+const PreviousStep= () =>{
     errorFirst.value = null
     errorsFirst.value = []
     errorTwo.value = null
@@ -70,7 +70,7 @@ PreviousStep= () =>{
     step.value = 1
 };
 
-PreviousHStep= () =>{
+const PreviousHStep= () =>{
     errorFirst.value = null
     errorsFirst.value = []
     errorTwo.value = null
@@ -83,7 +83,7 @@ PreviousHStep= () =>{
 };
 
 
-PreviousHHStep= () =>{
+const PreviousHHStep= () =>{
     errorFirst.value = null
     errorsFirst.value = []
     errorTwo.value = null
@@ -153,7 +153,7 @@ const submitVerifyEmail = async () => {
 };
 
 const submitResendOtp = async () => {
-    loadingResendOtp.value = true
+    loadingResendOTP.value = true
     errorFirst.value = null
     errorsFirst.value = []
     
@@ -186,7 +186,7 @@ const submitResendOtp = async () => {
         errorFirst.value = null
         errorsFirst.value = []
 
-        loadingResendOtp.value = false
+        loadingResendOTP.value = false
 
         step.value = 2
 
@@ -196,7 +196,7 @@ const submitResendOtp = async () => {
 
         errorsFirst.value = []
 
-        loadingResendOtp.value = false
+        loadingResendOTP.value = false
 
     }else if(getterSendOtpRegisterStatus === 'error'){
 
@@ -204,10 +204,10 @@ const submitResendOtp = async () => {
 
         errorsFirst.value = getterSendOtpRegisterErrors
 
-        loadingResendOtp.value = false
+        loadingResendOTP.value = false
     }
 
-    loadingResendOtp.value = false
+    loadingResendOTP.value = false
 }
 
 const submitVerifyOtp = async () => {
@@ -246,7 +246,7 @@ const submitVerifyOtp = async () => {
 
         loadingVerifyOtp.value = false
 
-        step.value = 3
+        step.value = 4
 
     }else if(getterCheckOtpRegisterStatus === 'failed'){
 
@@ -302,7 +302,7 @@ const submitNewInfo = async () => {
         errorFour.value = null
         errorsFour.value = []
 
-        step.value =  4
+        step.value =  3
 
     }else if(getterNewInfoOtpRegisterStatus === 'failed'){
 
@@ -449,7 +449,7 @@ onMounted(() => {
             </div>
             <br><br><br><br><br><br>
         </div>
-        <section v-if="dataReady == 2">
+        <section v-if="dataReady == 2 || dataReady == 3">
             <div class="container">
                 <div class="row">
                     <div class="col-md-10 col-lg-8 col-xl-6 mx-auto">

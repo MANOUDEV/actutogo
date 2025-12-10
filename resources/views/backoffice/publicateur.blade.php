@@ -2,6 +2,5 @@
 
 @section('content')
 
-    <div id="pub"></div>
    
 @endsection

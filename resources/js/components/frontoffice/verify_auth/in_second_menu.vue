@@ -93,31 +93,25 @@ onMounted(() => {
 });
 </script>
 
-<template>
-  <div v-if="dataReady === 0 || dataReady === 2">
-    <div class="nav-item ms-2 ms-md-3">
-      <span class="avatar avatar-xs" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">
-        <div class="btn btn-primary btn-round mb-0 ">
-          <i class="bi bi-person" ></i>
-        </div> 
-      </span>
-      <span class="avatar avatar-xs" v-else>
-        <div class="btn btn-primary btn-round mb-0 ">
-          <i  style="color: #fff" class="fa fa-spinner fa-spin fa-1x fa-fw"></i><span class="sr-only">Loading...</span> 
-        </div> 
-      </span>
-    </div>
+<template> 
+  <div class="nav-item ms-2 ms-md-3" v-if="dataReady === 0 || dataReady === 2">
+    <span class="avatar avatar-xs" v-if="!loadingConnect" @click="loginClick" style="cursor: pointer">
+      <div class="btn btn-primary btn-round mb-0 ">
+        <i class="bi bi-person" ></i>
+      </div> 
+    </span>
+    <span class="avatar avatar-xs" v-else>
+      <div class="btn btn-primary btn-round mb-0 ">
+        <i  style="color: #fff" class="fa fa-spinner fa-spin fa-1x fa-fw"></i><span class="sr-only">Loading...</span> 
+      </div> 
+    </span>
   </div> 
-  <div class="nav-item ms-2 ms-md-3 dropdown" v-else-if="dataReady === 1">
-    <a class="avatar avatar-xs" href="#" role="button" data-bs-toggle="dropdown">
-      <div class="avatar-img rounded-circle bg-primary">
-        <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small">
-          {{ meProfileUserName[0].toUpperCase() }}
-        </span>
-      </div>
-    </a>
-    <ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3">
-      <li class="px-3">
+  <div class="nav-item ms-2 ms-md-3 dropdown"  v-else-if="dataReady === 1">
+    <a class="btn btn-primary btn-round mb-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+      {{ meProfileUserName[0].toUpperCase() }}
+    </a> 
+    <ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3" aria-labelledby="profileDropdown">
+      <li class="dropdown-item">
         <div class="d-flex align-items-center">
           <div class="avatar avatar-xs">
             <div class="avatar-img rounded-circle bg-primary">
@@ -142,5 +136,5 @@ onMounted(() => {
         <span class="dropdown-item" v-else><i class="bi bi-power fa-fw me-2"></i>Déconnexion en cours ...</span>
       </li>
     </ul>
-  </div>
+  </div> 
 </template>

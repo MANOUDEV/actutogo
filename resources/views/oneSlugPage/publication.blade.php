@@ -12,29 +12,6 @@
 
             <div class="container">
 
-                <div class="row">
-                    <div class="col-12">
-                        <div class="tiny-slider arrow-dark arrow-hover arrow-round rounded-3">
-                            <div class="tiny-slider-inner"
-                                data-autoplay="true"
-                                data-hoverpause="true"
-                                data-gutter="24"
-                                data-arrow="true"
-                                data-dots="false"
-                                data-items-xl="1"
-                                data-items-lg="1"
-                                data-items-md="1"
-                                data-items-sm="1"
-                                data-items-xs="1">
-                                    <div>
-                                        <div class="card card-fold bg-dark">
-                                            <img src="{{$article->image_cover_url}}" class="card-img-top alauneH_first_section_img_rectangle" alt="{{$article->title}}">
-                                         </div>
-                                    </div> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
                    
                 <div class="d-md-flex justify-content-between text-md-start my-2 ">
 					<!-- Tag -->
