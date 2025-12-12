@@ -1,454 +1,203 @@
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'; 
-import { useStore } from "vuex" 
-import { Bootstrap5Pagination, TailwindPagination } from "../../../../../../libraries/pagination/lib"
-import 'vue-multiselect/dist/vue-multiselect.min.css';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
 import VueMultiselect from 'vue-multiselect';
-import { useRoute } from "vue-router"; // ✅ import
+import { Bootstrap5Pagination } from '../../../../../../libraries/pagination/lib';
+import 'vue-multiselect/dist/vue-multiselect.min.css'; 
 
-const store = useStore();
-const route = useRoute(); 
-
-const content = ref('');
-const status = ref('publier_maintenant'); // statut par défaut
+import { defineProps } from 'vue';
 
 const props = defineProps({
   publicationCreate: {
     type: Object,
-    default: null
+    default: () => ({ authors: [], categories: [], tags: [] })
   }
-})
+});
 
-// Dates et heures
+const store = useStore();
+const route = useRoute();
+
+// 🔹 Publication fields
+const title = ref('');
+const content = ref('');
+const source = ref('');
+const author = ref(null);
+const category = ref([]);
+const tag = ref([]);
+const status = ref('1');
 const startDate = ref('');
 const startTime = ref('');
 const endDate = ref('');
 const endTime = ref('');
-const empty = ref(0);
-const source = ref(null);
-const author = ref(null);
-const category = ref(null);
-const tag = ref(null); 
-
-// Activation/désactivation des champs
-const isStartDisabled = ref(true);
-const isEndDisabled = ref(false);
-
-const sites = [
-  { name: 'Togoactu', logo: '/assets/images/logo-togoactu.png', description: 'Partagez cette publication sur Togoactu.' },
-  { name: 'News228', logo: '/assets/images/logo-news228.png', description: 'Partagez cette publication sur News228.' }
-]
 const selectedSites = ref([]);
 
-// Intervalle pour live clock
-let intervalId = null;
+// 🔹 Files
+const allFiles = ref([]);
+const coverImage = ref(null);
+const fileInput = ref(null);
 
-// Mettre à jour la date et l’heure de début
-const updateStartNow = () => {
-  const now = new Date();
-  startDate.value = now.toISOString().slice(0, 10);
-  startTime.value = now.toTimeString().slice(0, 5);
-};
+// 🔹 Pagination / files DB
+const filesData = ref({ files: { data: [], meta: {} } });
+const filesMessage = ref('');
+const emptyFiles = ref(0);
+const loadingFiles = ref(true);
+const statut = ref('3'); // 3 = tous les fichiers
+const statusFiles = ref('3'); // select filter files
+const limit = ref(1);
+const keepLength = ref(false);
+const showDisabled = ref(false);
+const size = ref('default');
+const align = ref('left');
+const search = ref('');
 
-// Gestion du changement de statut
-const addCategory = () => {
-
-}
-
-
-// Gestion du changement de statut
-const addTag = () => {
-
-}
-// Gestion du changement de statut
-const handleStatusChange = (newStatus) => {
-  clearInterval(intervalId);
-
-  if (newStatus === 'publier_maintenant') {
-    updateStartNow();
-    intervalId = setInterval(updateStartNow, 1000); // mise à jour chaque seconde
-    isStartDisabled.value = true;
-    isEndDisabled.value = false;
-    endDate.value = '';
-    endTime.value = '';
-  } else if (newStatus === 'definir_date') {
-    isStartDisabled.value = false;
-    isEndDisabled.value = false;
-    startDate.value = '';
-    startTime.value = '';
-    endDate.value = '';
-    endTime.value = '';
-  } else {
-    isStartDisabled.value = true;
-    isEndDisabled.value = true;
-    startDate.value = '';
-    startTime.value = '';
-    endDate.value = '';
-    endTime.value = '';
-  }
-};
-
-// Initialisation au montage
-onMounted(() => {
-  handleStatusChange(status.value); 
-});
-
-// Nettoyage
-onUnmounted(() => {
-  clearInterval(intervalId);
-});
-
-// Toggle site
-const toggleSite = (siteName) => {
-  if (selectedSites.value.includes(siteName)) {
-    selectedSites.value = selectedSites.value.filter(s => s !== siteName);
-  } else {
-    selectedSites.value.push(siteName);
-  }
-};
-
-// Bouton Tout sélectionner / Tout désélectionner
-const toggleAllSites = () => {
-  if (selectedSites.value.length === sites.length) {
-    selectedSites.value = [] // tout désélectionner
-  } else {
-    selectedSites.value = sites.map(s => s.name) // tout sélectionner
-  }
-}
-
-// Sauvegarde
-const saveForm = () => {
-  console.log({
-    content: content.value,
-    status: status.value,
-    startDate: startDate.value,
-    startTime: startTime.value,
-    endDate: endDate.value,
-    endTime: endTime.value,
-    selectedSites: selectedSites.value
-  });
-  alert('Formulaire enregistré ! (voir console)');
-};
-
-// Watcher statut
-watch(status, handleStatusChange);
-
-
+// 🔹 Modal & type
+const currentType = ref(null);
+const fileModal = ref(null);
 const fileTypes = [
-  { id: 1, title: 'Ajouter des fichiers',  icon: 'bi bi-cloud-arrow-up'},
+  { id: 1, title: 'Ajouter des fichiers', icon: 'bi bi-cloud-arrow-up' },
   { id: 2, title: 'Sélectioner des fichiers', icon: 'bi bi-archive' },
-  { id: 3, title: 'Ajouter des URL FILES', icon: 'bi bi-link-45deg' },
+  { id: 3, title: 'Ajouter des liens vidéos', icon: 'bi bi-link-45deg' },
   { id: 4, title: 'Ajouter des codes Iframes', icon: 'bi bi-youtube' },
 ];
 
-const currentType = ref(null);
-const fileModal = ref(null);
+// 🔹 Sites partenaires
+const sites = [
+  { name: 'Togoactu', logo: '/assets/images/logo-togoactu.png', description: 'Partagez cette publication sur Togoactu.' },
+  { name: 'News228', logo: '/assets/images/logo-news228.png', description: 'Partagez cette publication sur News228.' }
+];
 
-const filesMessage= ref(null);
-const statut = ref('')
-const filesData = ref({ });
-const emptyFiles = ref(0);
-const statusFiles = ref(3);
-const loadingFiles = ref(true);
-const style = ref("bootstrap5")
-const limit = ref(1)
-const keepLength = ref(false)
-const showDisabled = ref(false)
-const size = ref("default")
-const align = ref("left")
-const search = ref("")
-
-const allFiles = ref([]);
-const coverImage = ref(null);
-
-// Exemple de fichiers en DB
-const dbFiles = ref([
-  { id: 1, url: 'https://via.placeholder.com/150', type: 'image', selected: false },
-  { id: 2, url: 'https://sample-videos.com/video123/mp4/240/big_buck_bunny_240p.mp4', type: 'video', selected: false },
-]);
-
-const getFiles = async ( page=1) =>{
-
-  await store.dispatch('publicationAdmin/publicationGetFilesDataRequest',{slug : route.params.slug, page : page, search: search.value });
-
-    const status = store.getters['publicationAdmin/getInfosPublicationGetFilesStatus'];
-    const message = store.getters['publicationAdmin/getInfosPublicationGetFilesMessage'];
-    const data = store.getters['publicationAdmin/getInfosPublicationGetFilesData'];
-
-  if( status === "success"){
-
-      filesData.value = data
-
-      empty.value = 0
-
-      loadingFiles.value = false
-
-  }else if( status ==="empty"){
-
-    filesMessage.value = message
-
-    empty.value = 1
-
-    loadingFiles.value = false
-
-  } else{
-
-    filesMessage.value = message
-
-    empty.value = 3
-
-    loadingFiles.value = false
-
-  }
-};
-
-const  handleSelectionSearchByStatusFiles = async ( event, page=1) =>{
-
-  statut.value = event.target.value
-
-  await store.dispatch('publicationAdmin/publicationSearchByTypeFilesDataRequest',{slug : route.params.slug, page : page, search: search.value , status: statut.value});
-
-    const status = store.getters['publicationAdmin/getInfosPublicationSearchByTypeFilesStatus'];
-    const message = store.getters['publicationAdmin/getInfosPublicationSearchByTypeFilesMessage'];
-    const data = store.getters['publicationAdmin/getInfosPublicationSearchByTypeFilesData'];
-
-  if( status === "success"){
-
-      filesData.value = data
-
-      empty.value = 0
-
-      loadingFiles.value = false
-
-  }else if( status ==="empty"){
-
-    filesMessage.value = message
-
-    empty.value = 1
-
-    loadingFiles.value = false
-
-  } else{
-
-    filesMessage.value = message
-
-    empty.value = 3
-
-    loadingFiles.value = false
-
-  }
-};
-
-const videoLink = ref('');
-const iframeCode = ref('');
-
-const openModal = (id) => {
-  currentType.value = fileTypes.find(t => t.id === id);
-  const modal = new bootstrap.Modal(fileModal.value);
-  modal.show();
-};
-
-const closeModal = () => {
-  const modal = bootstrap.Modal.getInstance(fileModal.value);
-  modal.hide();
-};
-
-
-const fileInput = ref(null);
-
-const getImage = (slug) => {
-    return slug;
-};
-
-const triggerFileInput = () => {
-  if (fileInput.value) {
-    fileInput.value.click();
-  }
-};
-
+// 🔹 Drag & drop helpers
+const isDuplicate = (file) => allFiles.value.some(f => f.file === file || f.url === URL.createObjectURL(file));
 const addFile = (file) => {
-  const url = URL.createObjectURL(file);
-
-  if (isDuplicate(url)) {
-    alert("Ce fichier est déjà ajouté !");
-    return;
-  }
-
-  const type = file.type.startsWith("video")
-    ? "video"
-    : file.type.startsWith("image")
-    ? "image"
-    : "other";
-
-  allFiles.value.push({
-    url,
-    type,
-    name: file.name,
-    caption: "",
-    isCover: false,
-  });
+  if (isDuplicate(file)) { alert("Ce fichier est déjà ajouté !"); return; }
+  const type = file.type.startsWith("video") ? "video" : file.type.startsWith("image") ? "image" : "other";
+  allFiles.value.push({ file, url: URL.createObjectURL(file), type, name: file.name, caption: '', isCover: false });
 };
-const handleDrop = (e) => {
-  const files = e.dataTransfer.files; // c'est un FileList
-  for (let file of files) {
-    addFile(file);
-  }
-};
-
-const handleInput = (e) => {
-  const files = e.target.files; // FileList aussi
-  for (let file of files) {
-    addFile(file);
-  }
-};
-
-// Fonction utilitaire : vérifier doublons
-const isDuplicate = (url) => {
-  return allFiles.value.some(f => f.url === url);
-};
-
-// Ajouter fichiers via drag & drop ou input
-const handleFiles = (e) => {
-  const files = e.target.files;
-  for (let file of files) {
-    const url = URL.createObjectURL(file);
-    if (isDuplicate(url)) {
-      alert("Ce fichier est déjà ajouté !");
-      continue;
-    }
-    const type = file.type.startsWith("video")
-      ? "video"
-      : file.type.startsWith("image")
-      ? "image"
-      : "other";
-
-    allFiles.value.push({
-      url,
-      type,
-      name: file.name,
-      caption: "",
-      isCover: false,
-    });
-  }
-};
-
-// Depuis la base de données
-const addFromDb = (file) => {
-  let type = "image";
-  if (file.type_file_id == 2) type = "video";
-  if (file.type_file_id == 3) type = "iframe";
-
-  if (isDuplicate(file.file_url)) {
-    alert("Ce fichier est déjà sélectionné !");
-    return;
-  }
-
-  allFiles.value.push({
-    url: file.file_url,
-    type,
-    name: file.file_name,
-    caption: file.caption || "",
-    isCover: false,
-  });
-};
-
-// Ajouter un lien vidéo (MP4 ou YouTube)
-const addVideoLink = () => {
-  if (!videoLink.value) return;
-
-  const url = videoLink.value.trim();
-
-  // MP4 direct
-  if (url.toLowerCase().endsWith('.mp4')) {
-    allFiles.value.push({
-      url,
-      type: 'video',
-      name: 'Vidéo',
-      caption: '',
-      isCover: false
-    });
-    videoLink.value = '';
-    return;
-  }
-
-  // YouTube (watch, embed, youtu.be)
-  const ytRegex = /(?:youtube\.com\/.*[?&]v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/;
-  const match = url.match(ytRegex);
-
-  if (match && match[1]) {
-    const embedUrl = `https://www.youtube.com/embed/${match[1]}`;
-    if (isDuplicate(embedUrl)) {
-    alert("Cette vidéo est déjà ajoutée !");
-    return;
-  }
-    allFiles.value.push({
-      url: embedUrl,
-      type: 'iframe',
-      name: 'YouTube vidéo',
-      caption: '',
-      isCover: false
-    });
-    videoLink.value = '';
-    return;
-  }
-
-  alert('Lien vidéo non supporté');
-};
-// Traiter iframe embed
-const addIframe = () => {
-  if (!iframeCode.value) return;
-
-  const match = iframeCode.value.match(/src=["']([^"']+)["']/);
-  if (!match) {
-    alert("Code d'intégration non valide !");
-    return;
-  }
-
-  const embedUrl = match[1];
-
-  if (isDuplicate(embedUrl)) {
-    alert("Cet iframe est déjà ajouté !");
-    return;
-  }
-
-  allFiles.value.push({
-    url: embedUrl,
-    type: "iframe",
-    name: "Iframe intégré",
-    caption: "",
-    isCover: false,
-  });
-
-  iframeCode.value = "";
-};
-
- 
+const handleDrop = (e) => { e.preventDefault(); for (let file of e.dataTransfer.files) addFile(file); };
+const handleFiles = (e) => { for (let file of e.target.files) addFile(file); };
+const triggerFileInput = () => fileInput.value?.click();
 const removeFile = (index) => {
-  if(allFiles.value[index].isCover){
-    allFiles.value[index].isCover = false;
-  }
+  if (allFiles.value[index].isCover) coverImage.value = null;
   allFiles.value.splice(index, 1);
 };
-
-// Définir ou annuler couverture
 const toggleCover = (file) => {
-  // Si déjà couverture, on annule
-  if(file.isCover){
-    file.isCover = false;
-    coverImage.value = null
-  } else {
-    // On retire la couverture des autres images
-    allFiles.value.forEach(f => { if(f.type.includes('image')) f.isCover = false });
-    file.isCover = true;
-    coverImage.value = file 
-
-  }
+  if(file.isCover) { file.isCover = false; coverImage.value = null; }
+  else { allFiles.value.forEach(f => { if(f.type === 'image') f.isCover = false; }); file.isCover = true; coverImage.value = file; }
 };
 
-onMounted(() => {
-  getFiles();
-});
+// 🔹 Ajouter fichier depuis DB
+const addFromDb = (file) => {
+  let type = file.type_file_id === 2 ? 'video' : file.type_file_id === 3 ? 'iframe' : 'image';
+  if(allFiles.value.some(f => f.url === file.file_url)) { alert("Ce fichier est déjà sélectionné !"); return; }
+  allFiles.value.push({ file: null, url: file.file_url, type, name: file.file_name, caption: file.caption||'', isCover: false });
+};
+
+// 🔹 Ajouter lien vidéo ou iframe
+const videoLink = ref('');
+const iframeCode = ref('');
+const addVideoLink = () => {
+  if(!videoLink.value) return;
+  const url = videoLink.value.trim();
+  if(url.toLowerCase().endsWith('.mp4')) { addFile(new File([], 'Vidéo.mp4')); videoLink.value=''; return; }
+  const ytRegex = /(?:youtube\.com\/.*[?&]v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(ytRegex);
+  if(match && match[1]) { allFiles.value.push({ file: null, url: `https://www.youtube.com/embed/${match[1]}`, type:'iframe', name:'YouTube vidéo', caption:'', isCover:false }); videoLink.value=''; return; }
+  alert('Lien vidéo non supporté');
+};
+const addIframe = () => {
+  if(!iframeCode.value) return;
+  const match = iframeCode.value.match(/src=["']([^"']+)["']/);
+  if(!match) { alert("Code d'intégration non valide !"); return; }
+  if(allFiles.value.some(f => f.url === match[1])) { alert("Cet iframe est déjà ajouté !"); return; }
+  allFiles.value.push({ file: null, url: match[1], type:'iframe', name:'Iframe intégré', caption:'', isCover:false });
+  iframeCode.value='';
+};
+
+// 🔹 Pagination & fetch fichiers DB
+const getFiles = async (page=1) => {
+  loadingFiles.value = true;
+  await store.dispatch('publicationAdmin/publicationGetFilesDataRequest', { slug: route.params.slug, page, search: search.value });
+  const statusResp = store.getters['publicationAdmin/getInfosPublicationGetFilesStatus'];
+  const dataResp = store.getters['publicationAdmin/getInfosPublicationGetFilesData'];
+  const messageResp = store.getters['publicationAdmin/getInfosPublicationGetaFilesMessage'];
+  if(statusResp === 'success'){ filesData.value = dataResp; emptyFiles.value=0; }
+  else if(statusResp === 'empty'){ filesMessage.value = messageResp; emptyFiles.value=1; }
+  else{ filesMessage.value = messageResp; emptyFiles.value=3; }
+  loadingFiles.value=false;
+};
+const handleSelectionSearchByStatusFiles = async (e, page=1) => {
+  statut.value = e.target.value;
+  await store.dispatch('publicationAdmin/publicationSearchByTypeFilesDataRequest',{slug: route.params.slug, page, search: search.value, status: statut.value});
+  const statusResp = store.getters['publicationAdmin/getInfosPublicationSearchByTypeFilesStatus'];
+  const dataResp = store.getters['publicationAdmin/getInfosPublicationSearchByTypeFilesData'];
+  const messageResp = store.getters['publicationAdmin/getInfosPublicationSearchByTypeFilesMessage'];
+  if(statusResp === 'success'){ filesData.value = dataResp; emptyFiles.value=0; }
+  else if(statusResp === 'empty'){ filesMessage.value = messageResp; emptyFiles.value=1; }
+  else{ filesMessage.value = messageResp; emptyFiles.value=3; }
+};
+
+// 🔹 Modal
+const openModal = (id) => { currentType.value = fileTypes.find(t=>t.id===id); new bootstrap.Modal(fileModal.value).show(); };
+const closeModal = () => bootstrap.Modal.getInstance(fileModal.value)?.hide();
+
+// 🔹 Sites partenaires
+const toggleSite = (name) => selectedSites.value.includes(name) ? selectedSites.value = selectedSites.value.filter(s=>s!==name) : selectedSites.value.push(name);
+const toggleAllSites = () => selectedSites.value.length===sites.length ? selectedSites.value=[] : selectedSites.value = sites.map(s=>s.name);
+
+// 🔹 Dates / statut
+const isStartDisabled = ref(true);
+const isEndDisabled = ref(false);
+const updateStartNow = () => {
+  const now = new Date();
+  startDate.value = now.toISOString().slice(0,10);
+  startTime.value = now.toTimeString().slice(0,5);
+};
+const handleStatusChange = (newStatus) => {
+  clearInterval(intervalId);
+  if(newStatus==='1'){ updateStartNow(); intervalId=setInterval(updateStartNow,1000); isStartDisabled.value=true; isEndDisabled.value=false; endDate.value=''; endTime.value=''; }
+  else if(newStatus==='definir_date'){ isStartDisabled.value=false; isEndDisabled.value=false; startDate.value=''; startTime.value=''; endDate.value=''; endTime.value=''; }
+  else { isStartDisabled.value=true; isEndDisabled.value=true; startDate.value=''; startTime.value=''; endDate.value=''; endTime.value=''; }
+};
+let intervalId = null;
+watch(status, handleStatusChange);
+onMounted(()=>{ handleStatusChange(status.value); getFiles(); });
+onUnmounted(()=>{ clearInterval(intervalId); });
+
+// 🔹 Ajouter category / tag
+const addCategory = (newTag) => category.value.push({ name: newTag });
+const addTag = (newTag) => tag.value.push({ name: newTag });
+
+// 🔹 Enregistrer publication
+const storePublication = async () => {
+  const formData = new FormData();
+  allFiles.value.forEach(f => { if(f.file) formData.append("files[]", f.file); });
+  formData.append("title", title.value);
+  formData.append("content", content.value);
+  formData.append("source", source.value);
+  formData.append("author", JSON.stringify(author.value));
+  formData.append("category", JSON.stringify(category.value));
+  formData.append("tag", JSON.stringify(tag.value));
+  formData.append("status", status.value);
+  formData.append("date_publish", startDate.value);
+  formData.append("startTime", startTime.value);
+  formData.append("date_publish_end", endDate.value);
+  formData.append("endTime", endTime.value);
+  formData.append("selectedSites", JSON.stringify(selectedSites.value));
+
+  try{
+    await store.dispatch('publicationAdmin/publicationStoreDataRequest', formData);
+    const statutResp = store.getters['publicationAdmin/getInfosPublicationStoreStatus'];
+    const messageResp = store.getters['publicationAdmin/getInfosPublicationStoreMessage'];
+    if(statutResp==='success'){ alert("Publication enregistrée !"); allFiles.value=[]; author.value=null; category.value=[]; tag.value=[]; }
+    else alert("Données rejetées par le serveur en raison d'une incompatibilité openSSL");  
+  } catch(e){ console.error(e); alert("Données rejetées par le serveur en raison d'une incompatibilité openSSL du serveur."); }
+};
+
+// 🔹 Helper getImage
+const getImage = (url) => url;
 </script>
+
 
 <style>
 /* Mettre en évidence la carte sélectionnée */
@@ -518,7 +267,7 @@ onMounted(() => {
         <div class="col-md-12">
             <div class="mb-3">
                 <label class="form-label">Titre de l'article</label>
-                <QuillEditor theme="snow" />
+                <QuillEditor theme="snow" v-model:content="title" contentType="html" />
             </div>
         </div>
         <div class="col-md-12">
@@ -865,7 +614,7 @@ onMounted(() => {
             <div class="mb-3">
                 <label class="form-label">Statut</label>
                 <select v-model="status" class="form-select">
-                    <option value="publier_maintenant">Publier à l’instant</option>
+                    <option value="1">Publier à l’instant</option>
                     <option value="brouillon">Mettre en brouillon</option>
                     <option value="attente_validation">Mettre en attente de validation</option>
                     <option value="definir_date">Définir une date de publication</option>
@@ -936,6 +685,6 @@ onMounted(() => {
         </div>
        
     </div>
-    <button class="btn btn-primary" @click="saveForm">Enregistrer</button>
+    <button class="btn btn-primary" @click="storePublication">Enregistrer</button>
   </div>
 </template>

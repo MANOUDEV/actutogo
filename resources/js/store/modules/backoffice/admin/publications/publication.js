@@ -14,6 +14,11 @@ const state = () => ({
     infosPublicationSearchByTypeFilesMessage:null,
     infosPublicationSearchByTypeFilesData:[],
     infosPublicationSearchByTypeFilesErrors:[],
+
+    infosPublicationStoreStatus:null,
+    infosPublicationStoreMessage:null,
+    infosPublicationStoreData:[],
+    infosPublicationStoreErrors:[],
  
 });
 const getters = {
@@ -61,6 +66,22 @@ const getters = {
     
     getInfosPublicationSearchByTypeFilesErrors(state){
         return state.infosPublicationSearchByTypeFilesErrors;
+    },  
+
+     getInfosPublicationStoreStatus(state){
+        return state.infosPublicationStoreStatus;
+    },
+
+    getInfosPublicationStoreMessage(state){
+        return state.infosPublicationStoreMessage;
+    },
+
+    getInfosPublicationStoreData(state){
+        return state.infosPublicationStoreData;
+    },  
+    
+    getInfosPublicationStoreErrors(state){
+        return state.infosPublicationStoreErrors;
     },  
  
 }
@@ -114,6 +135,24 @@ const actions = {
             commit("setInfosPublicationSearchByTypeFilesMessage", response.data.message);
         }
     },
+
+    async publicationStoreDataRequest({ commit }, payload) {
+        const response = await axios.post(`/api/auth/backoffice/admin/publications/create/${payload.slug}/store`, payload, {
+            headers: { "Content-Type": "multipart/form-data" }
+        }).catch((err) => { console.log(err);});
+        if (response && (response.data.data.status == 200)) {
+            commit("setInfosPublicationStoreStatus", "success");
+            commit("setInfosPublicationStoreMessage", response.data.message);
+            commit("setInfosPublicationStoreData", response.data.data);
+        }else if(response.data.data.status == 401) {
+            commit("setInfosPublicationStoreStatus", "empty");
+            commit("setInfosPublicationStoreErrors", response.data.data.errors);
+            commit("setInfosPublicationStoreMessage", response.data.message);
+        }else if(response.data.data.status == 422){
+            commit("setInfosPublicationStoreStatus", "error");
+            commit("setInfosPublicationStoreMessage", response.data.message);
+        }
+    },
 }
 
 const mutations = {
@@ -162,6 +201,23 @@ const mutations = {
 
     setInfosPublicationSearchByTypeFilesErrors(state, value){
         state.infosPublicationSearchByTypeFilesErrors = value;
+    },
+
+
+    setInfosPublicationStoreStatus(state, value){
+        state.infosPublicationStoreStatus = value;
+    },
+
+    setInfosPublicationStoreMessage(state, value){
+        state.infosPublicationStoreMessage = value;
+    },
+
+    setInfosPublicationStoreData(state, value){
+        state.infosPublicationStoreData = value;
+    },
+
+    setInfosPublicationStoreErrors(state, value){
+        state.infosPublicationStoreErrors = value;
     },
  
  
