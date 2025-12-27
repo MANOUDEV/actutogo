@@ -19,7 +19,7 @@ class HomeController extends BaseController
 
             $alaUne =  Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(18)->get();
 
-            return view('welcome', ['alaUne' => $alaUne, 'sports' => $sports, 'economie' => $economie]);
+            return view('welcome', ['alaUne' => $alaUne]);
 
         }
     }
