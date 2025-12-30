@@ -26,7 +26,7 @@
 					<a class="nav-link" href="/contact">Contactez Nous</a>
 				</li>
 				<li class="nav-item h5">
-                    {{-- <off-canvas></off-canvas> --}}
+                    <off-canvas></off-canvas>
                 </li>
                 
 			</ul>
@@ -47,6 +47,7 @@
 	</div>
 </div>
 <!-- Offcanvas END -->
+<header>
 <!-- Navbar top -->
 <div class="navbar-top d-none d-lg-block">
 	<div class="container-fluid">
@@ -173,7 +174,7 @@
 				<!-- Nav right START -->
 				<div class="nav flex-nowrap align-items-center me-2">
 
-					{{-- <in-second-menu class="nav-item" style="margin-top: -7px"></in-second-menu> --}}
+					<in-second-menu></in-second-menu>
 
 					<div class="nav-item dropdown nav-search dropdown-toggle-icon-none">
 						<a class="nav-link pe-0 dropdown-toggle" role="button" href="#" id="navSearch" data-bs-toggle="dropdown" aria-expanded="false">
@@ -201,3 +202,4 @@
 	</nav>
 </div>
 <!-- Navbar END -->
+</header>

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>@yield('title') | Togo actu</title>
+        <title>@yield('title') | Togo actu </title>
         <!-- Favicon -->
 	    <link rel="shortcut icon" href="/assets/images/logo.png">
         <!-- Google Font -->
@@ -17,6 +17,7 @@
 
         <!-- Theme CSS -->
         <link id="style-switch" rel="stylesheet" type="text/css" href="/assets/css/style.css">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5594963864359932" crossorigin="anonymous"></script>
         @vite(['resources/js/app.js', 'resources/css/app.css'])
     </head>
     <body >

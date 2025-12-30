@@ -5,7 +5,15 @@ use App\Http\Controllers\Api\Web\Authentication\RegisterController;
 use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\Authentication\LoginController;
 use App\Http\Controllers\Api\Web\Authentication\LogoutController;
-use App\Http\Controllers\Api\Web\Authentication\ProfileController;
+use App\Http\Controllers\Api\Web\Authentication\ProfileController; 
+
+use App\Http\Controllers\Api\Web\Backoffice\Publicateur\TagsController; 
+
+use App\Http\Controllers\Api\Web\Backoffice\Admin\NewsLetterController; 
+use App\Http\Controllers\Api\Web\Backoffice\Admin\CategoryController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\TagsAdminController; 
+use App\Http\Controllers\Api\Web\Backoffice\Admin\TypePublicationController;
+use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\PublicationController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -72,5 +80,73 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::put('updateMePassword', [ProfileController::class, 'updateMePassword'])->middleware('auth:api');
 
     Route::get('role', [ProfileController::class, 'getRole'])->middleware('auth:api');
+ 
+    //Gestion de la partie des publicateurs
 
+        //Gestion des tags
+
+        Route::get('/backoffice/publicator/tags_list', [TagsController::class, 'index'])->middleware('auth:api');
+
+        Route::get('/backoffice/publicator/tags_search_by_date', [TagsController::class, 'searchByDate'])->middleware('auth:api');
+
+        Route::get('/backoffice/publicator/tags_search_by_date_infos', [TagsController::class, 'searchByDateInfos'])->middleware('auth:api');
+
+        Route::get('/backoffice/publicator/{slug}/tags_show', [TagsController::class, 'show'])->middleware('auth:api');
+
+        Route::post('/backoffice/publicator/tags_store', [TagsController::class, 'store'])->middleware('auth:api');
+
+        Route::put('/backoffice/publicator/{slug}/tags_update', [TagsController::class, 'update'])->middleware('auth:api');
+
+        Route::delete('/backoffice/publicator/{slug}/tags_delete', [TagsController::class, 'delete'])->middleware('auth:api');
+
+
+    //Gestion de la partie administrative
+
+        //Gestion des catégories
+
+        Route::get('/backoffice/admin/category_list', [CategoryController::class, 'index'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/{slug}/category_show', [CategoryController::class, 'show'])->middleware('auth:api');
+
+        Route::post('/backoffice/admin/category_store', [CategoryController::class, 'store'])->middleware('auth:api');
+
+        Route::put('/backoffice/admin/{slug}/category_update', [CategoryController::class, 'update'])->middleware('auth:api');
+
+        Route::delete('/backoffice/admin/{slug}/category_delete', [CategoryController::class, 'delete'])->middleware('auth:api');
+
+        //Gestion des tags
+
+        Route::get('/backoffice/admin/tags_list', [TagsAdminController::class, 'index'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/tags_search_by_date', [TagsAdminController::class, 'searchByDate'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/tags_search_by_date_infos', [TagsAdminController::class, 'searchByDateInfos'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/tags_search_by_user_infos', [TagsAdminController::class, 'searchByUserInfos'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/{slug}/tags_show', [TagsAdminController::class, 'show'])->middleware('auth:api');
+
+        Route::post('/backoffice/admin/tags_store', [TagsAdminController::class, 'store'])->middleware('auth:api');
+
+        Route::put('/backoffice/admin/{slug}/tags_update', [TagsAdminController::class, 'update'])->middleware('auth:api');
+
+        Route::delete('/backoffice/admin/{slug}/tags_delete', [TagsAdminController::class, 'delete'])->middleware('auth:api');
+
+        //Gestion des newsletters
+
+        Route::get('/backoffice/admin/news_letters_list', [NewsLetterController::class, 'index'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/{status}/news_letters_search_by_status', [NewsLetterController::class, 'searchByStatus'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/{slug}/news_letters_show', [NewsLetterController::class, 'show'])->middleware('auth:api');
+
+        Route::post('/backoffice/admin/news_letters_store', [NewsLetterController::class, 'store'])->middleware('auth:api');
+
+        Route::put('/backoffice/admin/{slug}/news_letters_update', [NewsLetterController::class, 'update'])->middleware('auth:api');
+
+        Route::delete('/backoffice/admin/{slug}/news_letters_delete', [NewsLetterController::class, 'delete'])->middleware('auth:api');
+
+        Route::patch('/backoffice/admin/{slug}/news_letters_activate', [NewsLetterController::class, 'activate'])->middleware('auth:api');
+
+        Route::patch('/backoffice/admin/{slug}/news_letters_block', [NewsLetterController::class, 'block'])->middleware('auth:api');
 });
