@@ -35,14 +35,19 @@ import roleModule from './modules/backoffice/role'
 //Importation des modules gérant les données de la partie administrative
 
 import categoryAdminModule from './modules/backoffice/admin/category'
-  
+ 
+import typePublicationAdminModule from './modules/backoffice/admin/typePublication'
+
 import tagsAdminModule from './modules/backoffice/admin/tags'
 
 import newsLetterAdminModule from './modules/backoffice/admin/newsLetter'
- 
+
+import  publicationAdminModule from './modules/backoffice/admin/publications/publication'
+
 //Importation des modules gérant les données de la partie des publicateurs
 
 import tagsPubModule from './modules/backoffice/publicator/tags'
+ 
  
 const store = createStore({
     modules:{
@@ -57,7 +62,7 @@ const store = createStore({
         newsletter: newsletterModule, 
         categoryPopulars: categoryPopularsModule,
         tagsPopulars: tagsPopularsModule,     
-        
+
         //Déclaration des modules gérant les données du système d'authenitification
                         
         login: loginModule,
@@ -73,6 +78,8 @@ const store = createStore({
         //Déclaration des modules gérant les données de la partie administrative
                         
         categoryAdmin: categoryAdminModule, 
+        typePublicationAdmin: typePublicationAdminModule,
+        publicationAdmin: publicationAdminModule,
         tagsAdmin: tagsAdminModule,
         newsLetterAdmin: newsLetterAdminModule,
 

@@ -11,7 +11,7 @@ use App\Http\Controllers\Api\Web\Backoffice\Publicateur\TagsController;
 
 use App\Http\Controllers\Api\Web\Backoffice\Admin\NewsLetterController; 
 use App\Http\Controllers\Api\Web\Backoffice\Admin\CategoryController;
-use App\Http\Controllers\Api\Web\Backoffice\Admin\TagsAdminController; 
+use App\Http\Controllers\Api\Web\Backoffice\Admin\TagsAdminController;  
 use App\Http\Controllers\Api\Web\Backoffice\Admin\TypePublicationController;
 use App\Http\Controllers\Api\Web\Backoffice\Admin\Publications\PublicationController;
 
@@ -149,4 +149,29 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
         Route::patch('/backoffice/admin/{slug}/news_letters_activate', [NewsLetterController::class, 'activate'])->middleware('auth:api');
 
         Route::patch('/backoffice/admin/{slug}/news_letters_block', [NewsLetterController::class, 'block'])->middleware('auth:api');
+
+        //Gestion des types de publications
+
+        Route::get('/backoffice/admin/type_publication_list', [TypePublicationController::class, 'index'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/{slug}/type_publication_show', [TypePublicationController::class, 'show'])->middleware('auth:api');
+
+        Route::post('/backoffice/admin/type_publication_store', [TypePublicationController::class, 'store'])->middleware('auth:api');
+
+        Route::put('/backoffice/admin/{slug}/type_publication_update', [TypePublicationController::class, 'update'])->middleware('auth:api');
+
+        Route::delete('/backoffice/admin/{slug}/type_publication_delete', [TypePublicationController::class, 'delete'])->middleware('auth:api');
+    
+        //Gestion des publications
+
+        Route::get('/backoffice/admin/publications/change_programm', [PublicationController::class, 'changeStatusPublicationPrgramm']);
+
+        Route::get('/backoffice/admin/publications/create/{slug}/type_publications', [PublicationController::class, 'publicationCreateBySlugType'])->middleware('auth:api');
+
+        Route::get('/backoffice/admin/publications/create/{slug}/get_files', [PublicationController::class, 'getFiles']);
+            
+        Route::get('/backoffice/admin/publications/create/{slug}/get_files_search/{status}/search_by_type_files', [PublicationController::class, 'searchByTypeFiles']);
+
+        Route::post('/backoffice/admin/publications/create/{slug}/store', [PublicationController::class, 'storePublication']);
+
 });

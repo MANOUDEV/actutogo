@@ -49,6 +49,10 @@ Route::get('/admin/newsletters',[WebRouteController::class, 'administrateur']);
 Route::get('/admin/tags',[WebRouteController::class, 'administrateur']);
 
 Route::get('/admin/category',[WebRouteController::class, 'administrateur']);
+
+Route::get('/admin/publications/create',[WebRouteController::class, 'administrateur']);
+ 
+Route::get('/admin/publications/create/{slug}/types_publications',[WebRouteController::class, 'administrateur']); 
  
 //Les routes pour les publicateurs
 

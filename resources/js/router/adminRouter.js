@@ -3,6 +3,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 //Importation du composant du tableau de bord de l'administrateur
 
 import DashboardAdmin from '../components/backoffice/administrateur/pages/DashboardComponent.vue';
+
+import CreatePublicationAdmin from '../components/backoffice/administrateur/pages/publications/TypesPublicationsComponent.vue';
+
+import PublicationAdmin from '../components/backoffice/administrateur/pages/publications/TypesPublicationsSlugComponent.vue';
   
 //Importation du composant du gestion des catégories de l'administrateur
 
@@ -23,6 +27,13 @@ const routes =[
   //Tableau de bord
 
   {path:'/admin/dashboard',component: DashboardAdmin, name: 'admin.dashboard' ,meta: { requiredAuth: true }},
+
+  //Gestion des publications
+  
+  {path:'/admin/publications/create',component: CreatePublicationAdmin, name: 'admin.publications.create' ,meta: { requiredAuth: true }},
+
+  {path:'/admin/publications/:slug/types_publications',component: PublicationAdmin, name: 'admin.publications.create.types_publications' ,meta: { requiredAuth: true }},
+
 
   //Gestion des categories
 
