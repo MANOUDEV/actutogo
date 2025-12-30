@@ -1,12 +1,12 @@
 <?php
-use App\Http\Controllers\Api\Web\Frontoffice\HomeController;  
+use App\Http\Controllers\Api\Web\Frontoffice\HomeController; 
+use App\Http\Controllers\Api\Web\Frontoffice\OneSlugController; 
 
 use App\Http\Controllers\Api\Web\Authentication\ForgotPasswordController;
 use App\Http\Controllers\Api\Web\Authentication\LoginController;
 use App\Http\Controllers\Api\Web\Authentication\RegisterController;
 
 use App\Http\Controllers\Api\Web\Backoffice\WebRouteController;
- 
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +24,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'home'] );
 
-Route::view('/ads.txt', 'adsense.ads');
+//La route pour les pages à lien unique
+
+Route::get('/{slug}', [OneSlugController::class, 'slug']);
+
+Route::get('/tags/{slug}', [OneSlugController::class, 'tags']);
+
+Route::get('/authors/{slug}', [OneSlugController::class, 'authors']);
 
 //les routes pour l'authentification
 
