@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('publication_id');
             $table->integer('status')->default(1);
             $table->unsignedBigInteger('commentator_id');
+            $table->unsignedBigInteger('wp_comment_id');
             $table->integer('count_signal')->default(0);
             $table->integer('content_answer_status')->default(0);
             $table->integer('content_answer_count')->default(0);
