@@ -61,9 +61,16 @@ import newsLetterAdminModule from './modules/backoffice/admin/newsLetter'
 
 import  publicationAdminModule from './modules/backoffice/admin/publications/publication'
 
+import  alertInfosAnnonceAdminModule from './modules/backoffice/admin/publications/create/alertInfosAnnonce'
+
+import  articlesAdminModule from './modules/backoffice/admin/publications/create/articles'
+
+import  publicitesAdminModule from './modules/backoffice/admin/publications/create/publicites'
+
 //Importation des modules gérant les données de la partie des publicateurs
 
 import tagsPubModule from './modules/backoffice/publicator/tags'
+
  
  
 const store = createStore({
@@ -110,9 +117,12 @@ const store = createStore({
             
         //Déclaration des modules gérant les données de la partie administrative
                         
-        categoryAdmin: categoryAdminModule, 
         typePublicationAdmin: typePublicationAdminModule,
         publicationAdmin: publicationAdminModule,
+        alertInfosAnnonceAdmin: alertInfosAnnonceAdminModule,
+        articlesAdmin: articlesAdminModule,
+        publicitesAdmin: publicitesAdminModule,
+        categoryAdmin: categoryAdminModule, 
         tagsAdmin: tagsAdminModule,
         newsLetterAdmin: newsLetterAdminModule,
 

@@ -1,30 +1,30 @@
 <script setup>
-    
-import { ref, computed, onMounted } from "vue"
-import { useStore } from "vuex" 
+import { ref, watch, onMounted, onUnmounted } from 'vue'; 
+import { useStore } from "vuex"
 import Swal from 'sweetalert2';
-import StoreAlertInfosAnnonceComponent from './store_publications/alertInfosAnnoncesComponent.vue'
-import StorePublicitesComponent from './store_publications/publicitesComponent.vue'
-import StoreArticlesComponent from './store_publications/articlesComponent.vue'
-import StoreVideosComponent from './store_publications/videosComponent.vue'
-import StoreEventsComponent from './store_publications/eventsComponent.vue'
-import { useRoute } from "vue-router"; // ✅ import
 
-const store = useStore();
-const route = useRoute(); 
+const store = useStore()
+
+const title = ref('');
+const status = ref(1);
+const props = defineProps({
+  publicationCreate: {
+    type: Object,
+    default: null
+  }
+})
+
+const authSectionModal = ref("CREATE")
+
+const authSectionStepModal = ref(1)
 
 // composants importés utilisables directement dans <template>
 const dataReady = ref(0)
 const meRoleName = ref(null)
- 
-const publicationCreateBySlugTypeShowData = ref(null);
-const publicationCreateBySlugTypeShowMessage = ref(null);
-const categories = ref([]);
-const tags = ref([]);
 
-const meProfileUserName = ref(null)
-const meProfileRoleName = ref(null)
-const authSectionModal = ref("LIST")
+const publicationStoreInfoAlertAnnonceData = ref({})
+const publicationStoreInfoAlertAnnonceMessage = ref(null)
+const publicationStoreInfoAlertAnnonceErrors = ref([])
 
 const username = ref(null)
 const email = ref(null)
@@ -37,8 +37,7 @@ const errorsLogin = ref([])
 
 const loadingConnect = ref(false)
 const remember_me = ref(false)
-const authSectionStepModal = ref(1)
-
+ 
 const loadingForgotPasswordFirst = ref(false)
 const errorForgotPasswordFirstMessage = ref(false)
 const errorsForgotPasswordFirstErrors = ref([])
@@ -61,9 +60,92 @@ const empty = ref(2)
 
 const otp = ref(null); 
 
+
 const loadingCreate = ref(false)
-const loadingUpdate = ref(false)
-const loadingDelete = ref(false)
+
+// Dates et heures
+const startDate = ref('');
+const startTime = ref('');
+const endDate = ref('');
+const endTime = ref('');
+
+// Activation/désactivation des champs
+const isStartDisabled = ref(true);
+const isEndDisabled = ref(false);
+
+const sites = [
+  { name: 'News 228', logo: '/assets/images/logo-news228.png', description: 'Partagez cette publication sur News228.' },
+  { name: 'Togoactu', logo: '/assets/images/logo-togoactu.png', description: 'Partagez cette publication sur Togoactu.' }
+]
+const selectedSites = ref([]);
+
+// Intervalle pour live clock
+let intervalId = null;
+
+// Mettre à jour la date et l’heure de début
+const updateStartNow = () => {
+  const now = new Date();
+  startDate.value = now.toISOString().slice(0, 10);
+  startTime.value = now.toTimeString().slice(0, 5);
+};
+
+// Gestion du changement de statut
+const handleStatusChange = (newStatus) => {
+  clearInterval(intervalId);
+
+  if (newStatus == 1) {
+    updateStartNow();
+    intervalId = setInterval(updateStartNow, 1000); // mise à jour chaque seconde
+    isStartDisabled.value = true;
+    isEndDisabled.value = false;
+    endDate.value = '';
+    endTime.value = '';
+  } else if (newStatus == 2) {
+    isStartDisabled.value = false;
+    isEndDisabled.value = false;
+    startDate.value = '';
+    startTime.value = '';
+    endDate.value = '';
+    endTime.value = '';
+  } else {
+    isStartDisabled.value = true;
+    isEndDisabled.value = true;
+    startDate.value = '';
+    startTime.value = '';
+    endDate.value = '';
+    endTime.value = '';
+  }
+};
+
+// Initialisation au montage
+onMounted(() => {
+  handleStatusChange(status.value);
+  
+});
+
+// Nettoyage
+onUnmounted(() => {
+  clearInterval(intervalId);
+});
+
+// Toggle site
+const toggleSite = (siteName) => {
+  if (selectedSites.value.includes(siteName)) {
+    selectedSites.value = selectedSites.value.filter(s => s !== siteName);
+  } else {
+    selectedSites.value.push(siteName);
+  }
+};
+
+// Bouton Tout sélectionner / Tout désélectionner
+const toggleAllSites = () => {
+  if (selectedSites.value.length === sites.length) {
+    selectedSites.value = [] // tout désélectionner
+  } else {
+    selectedSites.value = sites.map(s => s.name) // tout sélectionner
+  }
+}
+
 
 const showPsw = ref(false)
 const showPswC = ref(false)
@@ -91,7 +173,7 @@ const showPasswordC = () => {
   }
 }
 
-const authFormModalpublicationCreateBySlugTypeShowClose = () => {
+const authFormModalAlertInfosAnnoncesCreateClose = () => {
   errorForgotPasswordFirstMessage.value = false
   errorsForgotPasswordFirstErrors.value = []
   errorForgotPasswordTwoMessage.value = false
@@ -102,29 +184,30 @@ const authFormModalpublicationCreateBySlugTypeShowClose = () => {
   errorsLogin.value = []
 
   // si tu utilises jQuery pour tes modals :
-  $('#authFormModalpublicationCreateBySlugTypeShow').modal('hide')
+  $('#authFormModalAlertInfosAnnoncesCreate').modal('hide')
 }
 
 
-const authModalClick = (action_auth = "LIST", nameParam = null, slugParam = null) => {
-    if (
-        localStorage.getItem("remember_me") === "true" &&
-        localStorage.getItem("username") &&
-        localStorage.getItem("password")
-    ) {
-        username.value = localStorage.getItem("username");
-        password.value = localStorage.getItem("password");
-        remember_me.value = localStorage.getItem("remember_me");
-    }
+const authModalClick = (action_auth = "CREATE_AUTH", modalName = null, modalSlug = null) => {
+  if (
+    localStorage.getItem("remember_me") === "true" &&
+    localStorage.getItem("username") &&
+    localStorage.getItem("password")
+  ) {
+    username.value = localStorage.getItem("username")
+    password.value = localStorage.getItem("password")
+    remember_me.value = localStorage.getItem("remember_me") === "true"
+  }
 
-    name.value = nameParam;
-    slug.value = slugParam;
-    authSectionModal.value = action_auth;
+  authSectionModal.value = action_auth
 
-    // ouverture du modal
-    $("#authFormModalpublicationCreateBySlugTypeShow").modal("show");
-};
+  if (authSectionModal.value === "CREATE_AUTH") {
+    loadingCreate.value = false
+  }  
 
+  // ouverture modal bootstrap
+  $('#authFormModalAlertInfosAnnoncesCreate').modal("show")
+}
 
 const PreviousForgotPasswordStep = () => {
   step.value = 1
@@ -189,7 +272,6 @@ const showToast = (icon, title) => {
     });
     Toast.fire({ icon, title });
 };
-
 
  // Vérifier l'email et envoyer OTP
 const submitVerifyForgotPasswordEmail = async () => {
@@ -336,15 +418,12 @@ const submitLogin = async () => {
 
     showToast(loginMessage);
 
-    // Actions selon authSectionModal
-    if(authSectionModal.value == 'LIST'){
-
-        $('#authFormModalpublicationCreateBySlugTypeShow').modal('hide');
-
-        getResults()
-
-    }
-
+    if (authSectionModal.value === 'CREATE_AUTH') {
+        authSectionModal.value = 'CREATE';
+        authFormModalAlertInfosAnnoncesCreateClose();
+        AlertInfosAnnoncesCreate();
+       
+    }  
     } else if (loginStatus === 'success pub') {
     if (remember_me.value) {
         localStorage.setItem('username', username.value);
@@ -381,286 +460,194 @@ const submitLogin = async () => {
     loadingLogin.value = false;
 };
 
+  const getStartDateTime = () => {
+  if (!startDate.value || !startTime.value) return null;
 
-const getResults = async (page = 1) => {
-
-    loading.value = true;
-    authSectionModal.value = "LIST";
-
-    await store.dispatch("publicationAdmin/publicationCreateBySlugTypeShowDataRequest", {
-        slug: route.params.slug
-    });
-
-    const status = store.getters["publicationAdmin/getInfosPublicationCreateBySlugTypeShowStatus"];
-
-    if (status === "success") {
-        publicationCreateBySlugTypeShowData.value = store.getters["publicationAdmin/getInfosPublicationCreateBySlugTypeShowData"];
-        categories.value = publicationCreateBySlugTypeShowData.value.categories;
-        tags.value = publicationCreateBySlugTypeShowData.value.tags;
-
-        empty.value = 0;
-        dataReady.value = 1;
-
-    } else if (status === "empty") {
-        publicationCreateBySlugTypeShowMessage.value = store.getters["publicationAdmin/getInfosPublicationCreateBySlugTypeShowMessage"];
-        publicationCreateBySlugTypeShowData.value = store.getters["publicationAdmin/getInfosPublicationCreateBySlugTypeShowData"];
-
-        empty.value = 1;
-        dataReady.value = 1;
-
-    } else if (status === "failed") {
-        dataReady.value = 3;
-
-    } else {
-        publicationCreateBySlugTypeShowMessage.value = store.getters["publicationAdmin/getInfosPublicationCreateBySlugTypeShowMessage"];
-        empty.value = 3;
-        dataReady.value = 4;
-    }
+  const localDateTime = `${startDate.value}T${startTime.value}:00`;
+  return new Date(localDateTime).toISOString();
 };
 
-// Fonction show() adaptée
-const show = async () => {
-    if (localStorage.getItem('access_token') && localStorage.getItem('nbRsp')) {
+const getEndDateTime = () => {
+  if (!endDate.value || !endTime.value) return null;
 
+  const localDateTime = `${endDate.value}T${endTime.value}:00`;
+  return new Date(localDateTime).toISOString();
+};
+
+const AlertInfosAnnoncesCreate = async () => {
+    loadingCreate.value = true;
+    authSectionModal.value = 'CREATE';
+    publicationStoreInfoAlertAnnonceMessage.value = null;
+    publicationStoreInfoAlertAnnonceErrors.value = [];
+
+    await store.dispatch('alertInfosAnnonceAdmin/publicationStoreInfoAlertAnnonceDataRequest', { slug : props.publicationCreate.typePublication.slug, title: title.value, status: status.value, date_publish: getStartDateTime(), date_publish_end: getEndDateTime() });
+
+    const statut = store.getters['alertInfosAnnonceAdmin/getInfosPublicationStoreInfoAlertAnnonceStatus'];
+    const message = store.getters['alertInfosAnnonceAdmin/getInfosPublicationStoreInfoAlertAnnonceMessage'];
+    const data = store.getters['alertInfosAnnonceAdmin/getInfosPublicationStoreInfoAlertAnnonceData'];
+    const errors = store.getters['alertInfosAnnonceAdmin/getInfosPublicationStoreInfoAlertAnnonceErrors'];
+
+    if (statut === 'success') {
+      publicationStoreInfoAlertAnnonceData.value = data;
+      showToast('success',message);
+      loadingCreate.value = false;
+    } else if (statut === 'empty') {
+      publicationStoreInfoAlertAnnonceMessage.value = message;
+      publicationStoreInfoAlertAnnonceErrors.value = errors;
+      loadingCreate.value = false;
+    } else if (statut === 'error') {
+      publicationStoreInfoAlertAnnonceMessage.value = message;
+      publicationStoreInfoAlertAnnonceErrors.value = [];
+      loadingCreate.value = false;
+    }
+};
+// --- CREATE ---
+const create = async () => {
+  loadingCreate.value = true;
+  authSectionModal.value = 'CREATE';
+
+  const accessToken = localStorage.getItem('access_token');
+  const nbRsp = localStorage.getItem('nbRsp');
+
+  if (accessToken && nbRsp) {
     await store.dispatch('roleSecurity/getMeRole');
 
-    authSectionModal.value = 'LIST';
-
     const roleStatus = store.getters['roleSecurity/getRoleStatus'];
-    const roleName = store.getters['roleSecurity/getMeRoleName'];
+    const meRole = store.getters['roleSecurity/getMeRoleName'];
 
     if (roleStatus === 'success') {
-        meRoleName.value = roleName;
+      meRoleName.value = meRole;
 
-        if (meRoleName.value === localStorage.getItem('nbRsp') && localStorage.getItem('nbRsp') === '&nbtsd!?') {
-        
-            getResults();
-        } else {
-            dataReady.value = 2;
-        }
-
+      if (meRoleName.value === nbRsp && nbRsp === '&nbtsd!?') {
+        await AlertInfosAnnoncesCreate();
+      } else {
+        loadingCreate.value = true;
+      }
     } else if (roleStatus === 'failed') {
-        dataReady.value = 3;
+      authSectionModal.value = 'CREATE_AUTH';
+      authModalClick(authSectionModal.value)
     }
-
-    } else {
-    dataReady.value = 4;
-    }
+  } else {
+    authSectionModal.value = 'CREATE_AUTH';
+    authModalClick(authSectionModal.value)
+  }
 };
 
-onMounted(() => {
-  show();
-});
+
+// Watcher statut
+watch(status, handleStatusChange);
 </script>
+
+<style>
+/* Mettre en évidence la carte sélectionnée */
+.card.border-primary {
+  border-width: 2px !important;
+}
+</style>
+
 <template>
-    <!-- =======================Author list START -->
-    <section class="py-4">
-        <div class="container">
-            <div  v-if="dataReady == 0" >
-                <br/><br/><br/><br/><br/><br/><br/>
-                <div class="d-flex justify-content-center">
-                    <img :src="`/assets/images/logo.png`"  style="width: 150px;" alt="empty">
-                </div>
-                <div class="d-flex justify-content-center mt-3">
-                    <div class="spinner-border text-success" style="color: #006633" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </div>
-                </div>
-                <br/><br/><br/><br/><br/><br/><br/>
-            </div>
-            <div v-else-if="dataReady== 1">
-                <div v-if="empty == 0">
-                    <!-- Author list title START -->
-                    <div class="row pb-4 mb-2" v-if="publicationCreateBySlugTypeShowData">
-                        <div class="col-12">
-
-                            <div class="d-sm-flex justify-content-sm-between align-items-center">
-                                <h1 class="mb-2 mb-sm-0 h2">
-                                    <router-link  :to="{name: 'admin.publications.create'}"  >
-                                        <div class="btn btn-primary-soft  btn-round mb-0 " style="font-size: 25px">
-                                            <i  class="bi bi-arrow-left-short"></i>
-                                        </div>
-                                    </router-link>
-                                    {{publicationCreateBySlugTypeShowData.typePublication.name}}
-                                </h1>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row g-4" v-if="publicationCreateBySlugTypeShowData.typePublication.id === 2 || publicationCreateBySlugTypeShowData.typePublication.id === 3 ">
-                        <StoreAlertInfosAnnonceComponent  :publicationCreate="publicationCreateBySlugTypeShowData" />
-                    </div>
-
-                    <div class="row g-4" v-else-if="publicationCreateBySlugTypeShowData.typePublication.id === 5">
-                        <StorePublicitesComponent  :publicationCreate="publicationCreateBySlugTypeShowData" />
-                    </div>
-
-                    <div class="row g-4" v-else-if="publicationCreateBySlugTypeShowData.typePublication.id === 1">
-                        <StoreArticlesComponent  :publicationCreate="publicationCreateBySlugTypeShowData" />
-                    </div>
-
-                    <div class="row g-4" v-else-if="publicationCreateBySlugTypeShowData.typePublication.id === 4">
-                        <StoreVideosComponent  :publicationCreate="publicationCreateBySlugTypeShowData" />
-                    </div>
-
-                    <div class="row g-4" v-else-if="publicationCreateBySlugTypeShowData.typePublication.id === 6">
-                        <StoreEventsComponent  :publicationCreate="publicationCreateBySlugTypeShowData" />
-                    </div>
-                    
-                    <div class="row g-4" v-else >
-
-                        <section class="overflow-hidden">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-9 text-center mx-auto my-0 my-md-5 py-0 py-lg-5 position-relative z-index-9">
-                                        <!-- SVG shape START -->
-                                        <figure class="position-absolute top-50 start-50 translate-middle opacity-7 z-index-n9">
-                                        <svg width="650" height="379" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"  viewBox="0 0 510 297">
-                                            <g>
-                                            <path class="fill-primary opacity-1" d="M121,147.4c0,6-4.8,10.8-10.8,10.8H47.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V147.4z"/>
-                                            <path class="fill-primary opacity-1" d="M179.4,90.2c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V78.7c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V90.2z"/>
-                                            <path class="fill-primary opacity-1" d="M459.1,26.3c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V14.8c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V26.3z"/>
-                                            <path class="fill-primary opacity-1" d="M422.1,66.9c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V55.3c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V66.9z"/>
-                                            <path class="fill-primary opacity-1" d="M275.8,282.6c0,5.9-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V282.6z"/>
-                                            <path class="fill-primary opacity-1" d="M87.7,42.9c0,5.9-4.8,10.8-10.8,10.8H14.3c-6,0-10.8-4.8-10.8-10.8V31.4c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V42.9z"/>
-                                            <path class="fill-primary opacity-1" d="M505.9,123.4c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V123.4z"/>
-                                            <path class="fill-primary opacity-1" d="M482.5,204.9c0,5.9-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c5.9,0,10.8,4.8,10.8,10.8V204.9z"/>
-                                            <path class="fill-primary opacity-1" d="M408.3,258.8c0,5.9-4.8,10.8-10.8,10.8H335c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V258.8z"/>
-                                            <path class="fill-primary opacity-1" d="M147,252.5c0,5.9-4.8,10.8-10.8,10.8H73.6c-6,0-10.8-4.8-10.8-10.8V241c0-5.9,4.8-10.8,10.8-10.8h62.6
-                                            c6,0,10.8,4.8,10.8,10.8V252.5z"/>
-                                            </g>
-                                        </svg>
-                                        </figure>
-                                        <!-- SVG shape START -->
-                                        <!-- Content -->
-                                        <h1 class="display-1 text-primary">Indisponible</h1>
-                                        <h5>Le formulaire pour ce type de publication n'est pas encore disponible pour le moment.Merci de bien vouloir patienter un moment.</h5>
-                                        <router-link :to="{name: 'admin.publications.create' }"   class="btn btn-danger-soft mt-3"><i class="fas fa-long-arrow-alt-left me-3"></i>Voir les types de publications.</router-link>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                    </div>
-
-                </div>
-
-                <div  v-else-if="empty == 1">
-                    <section class="overflow-hidden">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-9 text-center mx-auto my-0 my-md-5 py-0 py-lg-5 position-relative z-index-9">
-                                    <!-- SVG shape START -->
-                                    <figure class="position-absolute top-50 start-50 translate-middle opacity-7 z-index-n9">
-                                    <svg width="650" height="379" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"  viewBox="0 0 510 297">
-                                        <g>
-                                        <path class="fill-primary opacity-1" d="M121,147.4c0,6-4.8,10.8-10.8,10.8H47.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V147.4z"/>
-                                        <path class="fill-primary opacity-1" d="M179.4,90.2c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V78.7c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V90.2z"/>
-                                        <path class="fill-primary opacity-1" d="M459.1,26.3c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V14.8c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V26.3z"/>
-                                        <path class="fill-primary opacity-1" d="M422.1,66.9c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V55.3c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V66.9z"/>
-                                        <path class="fill-primary opacity-1" d="M275.8,282.6c0,5.9-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V282.6z"/>
-                                        <path class="fill-primary opacity-1" d="M87.7,42.9c0,5.9-4.8,10.8-10.8,10.8H14.3c-6,0-10.8-4.8-10.8-10.8V31.4c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V42.9z"/>
-                                        <path class="fill-primary opacity-1" d="M505.9,123.4c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V123.4z"/>
-                                        <path class="fill-primary opacity-1" d="M482.5,204.9c0,5.9-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c5.9,0,10.8,4.8,10.8,10.8V204.9z"/>
-                                        <path class="fill-primary opacity-1" d="M408.3,258.8c0,5.9-4.8,10.8-10.8,10.8H335c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V258.8z"/>
-                                        <path class="fill-primary opacity-1" d="M147,252.5c0,5.9-4.8,10.8-10.8,10.8H73.6c-6,0-10.8-4.8-10.8-10.8V241c0-5.9,4.8-10.8,10.8-10.8h62.6
-                                        c6,0,10.8,4.8,10.8,10.8V252.5z"/>
-                                        </g>
-                                    </svg>
-                                    </figure>
-                                    <!-- SVG shape START -->
-                                    <!-- Content -->
-                                    <h1 class="display-1 text-primary">Erreur</h1>
-                                    <h5>{{ publicationCreateBySlugTypeShowMessage  }}</h5>
-                                    <router-link :to="{name: 'admin.publications.create' }"   class="btn btn-danger-soft mt-3"><i class="fas fa-long-arrow-alt-left me-3"></i>Voir les types de publications.</router-link>
-
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-            </div>
-            <div v-else-if="dataReady== 2"> <accessUnAuthorizedAdmin></accessUnAuthorizedAdmin> </div>
-            <div v-else-if="dataReady== 3 || dataReady == 4">
-                <section class="overflow-hidden">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-9 text-center mx-auto my-0 my-md-5 py-0 py-lg-5 position-relative z-index-9">
-                                <!-- SVG shape START -->
-                                <figure class="position-absolute top-50 start-50 translate-middle opacity-7 z-index-n9">
-                                <svg width="650" height="379" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"  viewBox="0 0 510 297">
-                                    <g>
-                                    <path class="fill-primary opacity-1" d="M121,147.4c0,6-4.8,10.8-10.8,10.8H47.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V147.4z"/>
-                                    <path class="fill-primary opacity-1" d="M179.4,90.2c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V78.7c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V90.2z"/>
-                                    <path class="fill-primary opacity-1" d="M459.1,26.3c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V14.8c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V26.3z"/>
-                                    <path class="fill-primary opacity-1" d="M422.1,66.9c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8V55.3c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V66.9z"/>
-                                    <path class="fill-primary opacity-1" d="M275.8,282.6c0,5.9-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V282.6z"/>
-                                    <path class="fill-primary opacity-1" d="M87.7,42.9c0,5.9-4.8,10.8-10.8,10.8H14.3c-6,0-10.8-4.8-10.8-10.8V31.4c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V42.9z"/>
-                                    <path class="fill-primary opacity-1" d="M505.9,123.4c0,6-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V123.4z"/>
-                                    <path class="fill-primary opacity-1" d="M482.5,204.9c0,5.9-4.8,10.8-10.8,10.8h-62.6c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c5.9,0,10.8,4.8,10.8,10.8V204.9z"/>
-                                    <path class="fill-primary opacity-1" d="M408.3,258.8c0,5.9-4.8,10.8-10.8,10.8H335c-6,0-10.8-4.8-10.8-10.8v-11.5c0-6,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V258.8z"/>
-                                    <path class="fill-primary opacity-1" d="M147,252.5c0,5.9-4.8,10.8-10.8,10.8H73.6c-6,0-10.8-4.8-10.8-10.8V241c0-5.9,4.8-10.8,10.8-10.8h62.6
-                                    c6,0,10.8,4.8,10.8,10.8V252.5z"/>
-                                    </g>
-                                </svg>
-                                </figure>
-                                <!-- SVG shape START -->
-                                <!-- Content -->
-                                <h1 class="display-1 text-primary">Session expiré! </h1>
-                                <h5>Votre delai de connexion est expiré, connectez vous pour acceder à cette page.</h5>
-                                <span style="cursor: pointer"  @click="authModalClick('LIST')" class="btn btn-danger-soft mt-3"><i class="fas fa-long-arrow-alt-left me-3"></i>Se connecter</span>
-
-                            </div>
-                        </div>
-                    </div>
-                </section>
+  <div class="container mt-4"> 
+    <div class="row">
+       <div v-if="publicationStoreInfoAlertAnnonceMessage">
+            <div class="alert alert-danger"  role="alert">
+                {{ publicationStoreInfoAlertAnnonceMessage }}
             </div>
         </div>
-    </section>
+        <div class="col-md-12">
+            <div class="mb-3">
+                <label class="form-label">Contenu de <span v-if="props.publicationCreate.typePublication.id === 2">l'alerte info</span> <span v-else-if="props.publicationCreate.typePublication.id === 3">l'annonce</span></label>
+                 <QuillEditor theme="snow"  v-model:content="title" contentType="html" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mb-3">
+                <label class="form-label">Statut</label>
+                <select v-model="status" class="form-select">
+                    <option value="1">Publier à l’instant</option>
+                    <option value="0">Mettre en brouillon</option>
+                    <option value="3">Mettre en attente de validation</option>
+                    <option value="2">Définir une date de publication</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="mb-3 row" v-if="status !== 0 && status !== 3">
+                <div class="col mb-3">
+                    <label class="form-label">Date début</label>
+                    <input type="date" class="form-control" v-model="startDate" :disabled="isStartDisabled" />
+                </div>
+                <div class="col mb-3">
+                    <label class="form-label">Heure début</label>
+                    <input type="time" class="form-control" v-model="startTime" :disabled="isStartDisabled" />
+                </div>
+                <div class="col mb-3">
+                    <label class="form-label">Date fin</label>
+                    <input type="date" class="form-control" v-model="endDate" :disabled="isEndDisabled" />
+                </div>
+                <div class="col mb-3">
+                    <label class="form-label">Heure fin</label>
+                    <input type="time" class="form-control" v-model="endTime" :disabled="isEndDisabled" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mt-3">
+            <div class="row">
+                <div class="col-md-3 mb-3 ">
+                    <h5>Diffuser sur d’autres sites partenaires</h5>
+                    <p>Choisissez les sites où vous voulez partager cette cette. Cliquez sur les logos pour sélectionner ou annuler la diffusion.</p>
+                    <span style="cursor: pointer" class="btn btn-dark mb-0" @click="toggleAllSites">
+                        {{ selectedSites.length === sites.length ? 'Tout désélectionner' : 'Tout sélectionner' }}     
+                    </span>
+                </div>
+                <div class="col-md-9 mb-3">
+                    <div class="row g-3 justify-content-center">
+                        <div v-for="site in sites" :key="site.name" class="col-md-6 mb-3">
+                            <div class="card border" @click="toggleSite(site.name)" 
+                                :class="{ 'border-primary': selectedSites.includes(site.name) }" 
+                                style="cursor:pointer;">
+                            
+                                <!-- Image -->
+                                <div class="card-img-top avatar mb-2" style="width: 100%; height: 180px">
+                                    <div class="avatar-img bg-light">
+                                        <span class="text-light position-absolute top-50 start-50 translate-middle fw-bold small" > <img :src="site.logo" :alt="site.name" style="height: 85px; width: 100%; object-fit: cover;"> </span>
+                                    </div>
+                                </div>
 
+                                <!-- Card body -->
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ site.name }}</h5>
+                                    <p class="mb-3">{{ site.description }}</p>
+                                </div>
 
-    <div class="modal fade" id="authFormModalpublicationCreateBySlugTypeShow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <!-- Card footer -->
+                                <div class="card-footer pb-3 d-grid">
+                                    <button class="btn btn-sm btn-dark mb-0">
+                                        {{ selectedSites.includes(site.name) ? 'Désélectionner' : 'Sélectionner' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+    <button class="btn btn-primary" v-if="!loadingCreate" @click="create">Enregistrer</button>
+    <button class="btn btn-primary" v-else>Enregistrement en cours ..</button>
+  </div>
+     <div class="modal fade" id="authFormModalAlertInfosAnnoncesCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-
-
-            <!-- Login Form -->
-            <div class="modal-content">
+           
+                <!-- Login Form -->
+            <div class="modal-content" v-if=" authSectionModal == 'CREATE_AUTH'">
                 <div class="modal-header">
                     <h5 class="modal-title" v-if="authSectionStepModal == 1">Se connecter</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 2">Modifier le mot de passe</h5>
                     <h5 class="modal-title" v-else-if="authSectionStepModal == 3">S'inscrire</h5>
-                    <button type="button" class="btn-close" @click="authFormModalpublicationCreateBySlugTypeShowClose" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" @click="authFormModalAlertInfosAnnoncesCreateClose" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                 <div class="modal-body">
+                <div class="modal-body">
                     <div v-if="authSectionStepModal == 1" style="margin-bottom: -15px">
                         <div v-if="errorLogin">
                             <div class="alert alert-danger"  role="alert">
@@ -877,5 +864,5 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 </template>

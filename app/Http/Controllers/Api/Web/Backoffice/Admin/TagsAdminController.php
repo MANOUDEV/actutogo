@@ -27,7 +27,7 @@ class TagsAdminController extends BaseController
 
             }else{
 
-                $infosMonthYearTags = InfosMonthYearTag::where('deja_citer', 0)->where('user_id', 1)->orderBy('id', 'desc')->get();
+                $infosMonthYearTags = InfosMonthYearTag::where('deja_citer', 0)->orderBy('id', 'desc')->get();
 
                 $users = User::where('status', 1)->get();
 

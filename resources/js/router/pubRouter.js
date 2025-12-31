@@ -8,6 +8,7 @@ import DashboardPub from '../components/backoffice/publicateur/pages/DashboardCo
 
 import TagsPub from '../components/backoffice/publicateur/pages/tags/TagsComponent.vue';
   
+ 
 const routes =[
 
   //Routes pour les fonctionnalités de l'interface de l'publicateurs
