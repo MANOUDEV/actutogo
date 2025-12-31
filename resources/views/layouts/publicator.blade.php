@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" translate="no">
 <head>
 	
 	<!-- Meta Tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
 	<title>Page de publication | Togo actu</title> 
+	<meta name="google" content="notranslate">
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="/assets/images/logo.png">
 

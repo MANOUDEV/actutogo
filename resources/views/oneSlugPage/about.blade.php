@@ -34,9 +34,9 @@
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
                         
-                        <h2><b><u><a href="https://togoactualite.com">Togo actualité</a></u></b>, votre nouvelle source d’info moderne pour tout savoir sur le Togo et l’actualité mondiale. 
+                        <h2><b><u><a href="https://togoactu.com">TogoActu</a></u></b>, votre nouvelle source d’info moderne pour tout savoir sur le Togo et l’actualité mondiale. 
 
-                        <h3 class="mt-4">Les raisons de la création du site togoactualite sont plusieurs :</h3> <br>
+                        <h3 class="mt-4">Les raisons de la création du site news228 sont plusieurs :</h3> <br>
                         <ul>
                             <li>Fournir les informations fiables sans déformation via notre site internet.</li>
                             <li>Permettre à la diaspora togolaise d’être informée de ce qui se passe dans notre cher pays.</li>
