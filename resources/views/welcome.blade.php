@@ -9,12 +9,18 @@
     <main>
 
         <section class="position-relative" style="margin-top: -45px; margin-bottom: -25px"> 
+           
             
+            @include('adsense.pub')
+           
             @include('adsense.google-ads.ads-sections-home-page')
 
             @include('sectionHomePage.alaUne.alaUne')
 
              @include('adsense.google-ads.ads-sections-home-page')
+
+             
+@include('adsense.pub')
 
             @include('sectionHomePage.national.national')
 
@@ -25,6 +31,9 @@
              @include('adsense.google-ads.ads-sections-home-page')
 
             @include('sectionHomePage.economie.economie')
+
+            
+@include('adsense.pub')
            
             @include('adsense.google-ads.ads-sections-home-page')
 
@@ -34,11 +43,17 @@
  
             @include('sectionHomePage.opinionFaitsDivivers.opinionFaitsDivivers')
 
+            
+@include('adsense.pub')
+
             @include('adsense.google-ads.ads-sections-home-page')
             
             @include('sectionHomePage.toutelActualite.toutelActualite')
 
              @include('adsense.google-ads.ads-sections-home-page')
+
+             
+@include('adsense.pub')
 
         </section> 
     </main>

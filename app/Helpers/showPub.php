@@ -26,6 +26,8 @@ function showPub($content, $category_id, $article_id){
                                     <span>A LIRE AUSSI</span>
                                     <h6 class=\"m-0\"><a href=\"/$alireaussi->slug\" class=\"stretched-link btn-link text-reset\"> $alireaussi->title </a></h6>
                                 </div>
+                                
+                                @include('adsense.pub')
                             </div>";
 
     // Séparer le paragraphe en un tableau de mots
