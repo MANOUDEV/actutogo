@@ -230,7 +230,7 @@ class IncludesController extends BaseController
                 $typePublication = TypePublication::where('slug', 'articles')->first();
 
                 // ✅ Identification correcte par ID WordPress
-                $publication = Publication::where('wp_article_id', $value['id'])->first();
+                $publications = Publication::where('wp_article_id', $value['id'])->get();
 
                 if (!$author || !$typePublication) continue;
 
@@ -300,51 +300,52 @@ class IncludesController extends BaseController
                     🔁 MODE UPDATE (SYNC WORDPRESS → LARAVEL)
                 ============================================================
                 */
-                if ($publication) {
-
-                    $publication->update([
-                        'title' => $value['title']['rendered'],
-                        'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
-                        'slug' => Str::slug(strip_tags($value['title']['rendered'])),
-                        'date_name' => $dateName,
-                        'image_cover_url' => $imageCoverUrl,
-                        'content' => $value['content']['rendered'],
-                        'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
-                        'truncate_content_max' => $value['excerpt']['rendered'],
-                        'status' => $value['status'] === 'publish' ? 1 : 0,
-                        'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
-                        'date_publish' => $value['date'],
-                        'author_id' => $author->id,
-                        'author_slug' => $author->slug,
-                        'author_name' => $author->authorName,
-                        'type_publication_id' => $typePublication->id,
-                        'type_publication_name' => $typePublication->name,
-                        'type_publication_slug' => $typePublication->slug,
-                        'source' => 'Togoactualité',
-                    ]);
-
-                    // 🔄 Sync tags
-                    PublicationTag::where('publication_id', $publication->id)->delete();
-                    foreach ($tags as $tag) {
-                        PublicationTag::create([
-                            'publication_id' => $publication->id,
-                            'tag_id' => $tag->id,
-                            'date_publish' => $value['date']
+                 if ($publications->count() > 0) {
+                        foreach ($publications as $publication) {
+                            $publication->update([
+                                'title' => $value['title']['rendered'],
+                                'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
+                            'slug' => Str::slug(strip_tags($value['title']['rendered'])),
+                            'date_name' => $dateName,
+                            'image_cover_url' => $imageCoverUrl,
+                            'content' => $value['content']['rendered'],
+                            'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
+                            'truncate_content_max' => $value['excerpt']['rendered'],
+                            'status' => $value['status'] === 'publish' ? 1 : 0,
+                            'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
+                            'date_publish' => $value['date'],
+                            'author_id' => $author->id,
+                            'author_slug' => $author->slug,
+                            'author_name' => $author->authorName,
+                            'type_publication_id' => $typePublication->id,
+                            'type_publication_name' => $typePublication->name,
+                            'type_publication_slug' => $typePublication->slug,
+                            'source' => 'Togoactualité',
                         ]);
-                    }
 
-                    // 🔄 Sync image
-                    if ($fileId) {
-                        PublicationFile::where('publication_id', $publication->id)->delete();
-                        PublicationFile::create([
-                            'publication_id' => $publication->id,
-                            'file_id' => $fileId,
-                            'date_publish' => $value['date']
-                        ]);
-                    }
+                        // 🔄 Sync tags
+                        PublicationTag::where('publication_id', $publication->id)->delete();
+                        foreach ($tags as $tag) {
+                            PublicationTag::create([
+                                'publication_id' => $publication->id,
+                                'tag_id' => $tag->id,
+                                'date_publish' => $value['date']
+                            ]);
+                        }
 
-                    continue;
-                }
+                        // 🔄 Sync image
+                        if ($fileId) {
+                            PublicationFile::where('publication_id', $publication->id)->delete();
+                            PublicationFile::create([
+                                'publication_id' => $publication->id,
+                                'file_id' => $fileId,
+                                'date_publish' => $value['date']
+                            ]);
+                        }
+
+                        continue;
+                    }
+                    }
 
                 /*
                 ============================================================
