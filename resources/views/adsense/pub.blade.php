@@ -2,8 +2,8 @@
 <!-- =======================
 Call to action and Newsletter START -->
 <section class="pt-0 pb-0 pb-sm-0 mt-2">
-  <div class="px-sm-5">
-    <div class="row g-sm-5">
+  <div class="container px-sm-5">
+    <div class=" row g-sm-5">
       
       <div class="col-lg-12">
         <!-- Newsletter START -->

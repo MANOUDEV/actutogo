@@ -218,11 +218,11 @@ class IncludesController extends BaseController
         }
 
 
-        for($i = 1; $i <= 50; $i++){
+        for($i = 1; $i <= 5; $i++){
 
             
 
-        $posts = Http::get("http://www.togoactualite.com/wp-json/wp/v2/posts?page=$i&per_page=100")->json(); 
+        $posts = Http::get("http://www.togoactualite.com/wp-json/wp/v2/posts?page=$i&per_page=10")->json(); 
 
             foreach ($posts as $value) {
 
