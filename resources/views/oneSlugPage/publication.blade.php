@@ -11,7 +11,7 @@
         <section>
 
             <div class="container">
-
+                @include('adsense.pub')
                 <div class="row">
                     <div class="col-12">
                         <div class="tiny-slider arrow-dark arrow-hover arrow-round rounded-3">
@@ -140,6 +140,8 @@
                        
                         <p> {!! showPub($article->content, $categoriesH[0]->id, $article->id)  !!} </p>
 
+                        @include('adsense.pub')
+
                         @if ($previous && $next)
                             <div class="row g-0">
                                 <div class="col-sm-6 bg-primary bg-opacity-10 p-4 position-relative border-end border-1 rounded-start">
@@ -253,6 +255,7 @@
                         </div>
                     </div>
                 </div>
+                @include('adsense.pub')
             </div>
         </section>
     </main>

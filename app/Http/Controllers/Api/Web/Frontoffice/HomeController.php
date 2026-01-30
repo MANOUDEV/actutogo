@@ -5,6 +5,13 @@ use App\Http\Controllers\Api\BaseController;
 use App\Models\Publication;
 use App\Models\Tag;
 
+use Artesaos\SEOTools\Facades\SEOMeta;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use Artesaos\SEOTools\Facades\JsonLd;
+// OR with multi
+use Artesaos\SEOTools\Facades\JsonLdMulti;
+
 class HomeController extends BaseController
 {
     public function home(){
@@ -17,6 +24,22 @@ class HomeController extends BaseController
 
         }else{
 
+        SEOMeta::setTitle('Page d\'accueil| News 228');
+        SEOMeta::setDescription('Votre site d\'actualité en ligne');
+        SEOMeta::setCanonical('https://codecasts.com.br/lesson');
+
+        OpenGraph::setDescription('Votre site d\'actualité en ligne');
+        OpenGraph::setTitle('Page d\'accueil| News 228');
+        OpenGraph::setUrl('https://news228.com');
+        OpenGraph::addProperty('type', 'articles');
+
+        TwitterCard::setTitle('Page d\'accueil| News 228page');
+        TwitterCard::setSite('@manoudev');
+
+        JsonLd::setTitle('Page d\'accueil| News 228page');
+        JsonLd::setDescription('Votre site d\'actualité en ligne');
+        JsonLd::addImage('https://news228.com/assets/images/logo.png');
+        
             $alaUne =  Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(18)->get();
 
             $sports =  Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.category_id", 31)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(18)->get();

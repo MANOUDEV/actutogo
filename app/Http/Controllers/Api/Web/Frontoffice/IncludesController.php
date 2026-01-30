@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api\Web\Frontoffice;
 use App\Http\Controllers\Api\BaseController;
+use App\Models\Author;
 use App\Models\Category;
 use App\Models\Message;
 use App\Models\NewsLetter;
@@ -11,11 +12,22 @@ use App\Models\PublicationViews;
 use App\Models\PublicationLikes;
 use App\Models\Comment;
 use App\Models\Commentator;
-use App\Models\VisitorMatricule; 
+use App\Models\File;
+use App\Models\InfosMonthYear;
+use App\Models\InfosMonthYearFile;
+use App\Models\InfosMonthYearPublication;
+use App\Models\InfosMonthYearTag;
+use App\Models\PublicationFile;
+use App\Models\PublicationTag;
+use App\Models\TypeFile;
+use App\Models\TypePublication;
+use App\Models\VisitorMatricule;
+use Carbon\Carbon;
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 class IncludesController extends BaseController
 {
@@ -26,6 +38,426 @@ class IncludesController extends BaseController
 
     }
 
+
+    
+    public function transferRequestData(){
+
+        try {
+            $response = Http::get("http://www.togoactualite.com/wp-json/wp/v2/categories?per_page=10&page=1");
+
+            if (!$response->successful()) {
+                return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+            }
+
+            $categories = $response->json();
+            
+            foreach ($categories as $categoryData) {
+
+                $category = Category::where('wp_category_id', intval($categoryData['id']))->count();
+
+                if($category == 0){
+
+                    $result = Category::Create( 
+                        [
+                            'name' => $categoryData['name'],
+                            'slug' => $categoryData['slug'],
+                            'count_publications' => 0,
+                            'date_publish' => now(),
+                            'user_id' => 1
+                        ]
+                    );
+
+                }
+                
+            }
+
+            
+        } catch (\Exception $e) {
+           return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+        }
+             
+        
+         try {
+            $response = Http::get("http://www.togoactualite.com/wp-json/wp/v2/tags?per_page=30&page=1");
+
+            if (!$response->successful()) {
+                return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+            }
+
+            $tags = $response->json();
+            
+            foreach ($tags as $tagData) {
+
+                $tag = Tag::where('wp_tag_id', intval($tagData['id']))->count();
+
+                if($tag == 0){
+
+                    $date = Carbon::now();
+                    $mois_id = $date->format('m');
+                    $year = $date->format('Y');
+
+                    $mois = InfosMonthYear::where('month_id', $mois_id)->first();
+                    $date_name = $mois->month . ' ' . $year;
+
+                    $verify_date_name = InfosMonthYearTag::where('date_name', $date_name)->first();
+
+                    if (!$verify_date_name) {
+                        InfosMonthYearTag::create(['date_name' => $date_name, 'deja_citer' => 0, 'user_id' => 1]);
+                    } else {
+                        if ($verify_date_name->deja_citer === 0) {
+                            InfosMonthYearTag::create(['date_name' => $date_name, 'deja_citer' => 1, 'user_id' => 1]);
+                        }
+                    }
+
+                    $result = Tag::Create( 
+                        [
+                            'name' => $tagData['name'],
+                            'slug' => $tagData['slug'],
+                            'count_publications' => 0,
+                            'date_publish' => now(),
+                            'user_id' => 1
+                        ]
+                    );
+
+                }
+                
+            }
+
+            
+        } catch (\Exception $e) {
+           return $this->sendResponse(['status' => 422], 'Impossible de chargez les données.');
+        }
+
+
+        $type_files = TypeFile::get();
+
+        $medias_count_by_type = [];
+
+        foreach($type_files as $type_file){
+
+            $response = Http::get("https://www.togoactualite.com/wp-json/wp/v2/media?media_type=$type_file->slug_wp&per_page=100");
+            
+            $medias_count_by_type[] = [
+                'x-wp-totalpages' => $response->getHeader('x-wp-totalpages')[0],
+                'x-wp-total' => $response->getHeader('x-wp-total')[0],
+                'type_file_id' => $type_file->id,
+                'type_file_name' => $type_file->name,
+                'type_file_slug_wp' => $type_file->slug_wp,
+            ];
+
+            $type_file->count_files = $response->getHeader('x-wp-total')[0];
+
+            $type_file->update();
+        
+        }
+
+        
+        foreach($medias_count_by_type as $result){
+
+           
+            $media_type = $result['type_file_slug_wp'];
+
+            $page = $result['x-wp-totalpages'];
+
+            $type_file_id = $result['type_file_id'];
+
+          
+            $medias = Http::get('https://www.togoactualite.com/wp-json/wp/v2/media?media_type='.$media_type.'&page=1&per_page=100')->json();
+        
+            foreach( $medias as $media ){ 
+
+
+                
+                if(isset($media['source_url'])){
+
+                    $file = File::where('wp_file', $media['source_url'])->count();
+
+                    if($file == 0){
+
+                        $link = $media['source_url']; 
+
+                        $date = Carbon::parse($media["modified_gmt"]);
+
+                        $mois_id = $date->format('m');
+
+                        $year = $date->format('Y');
+
+                        $mois = InfosMonthYear::where('month_id', $mois_id)->first();
+
+                        $date_name = $mois->month.' '.$year;
+
+                        $verify_date_name = InfosMonthYearFile::where('date_name', $date_name)->first();
+
+                        if(!$verify_date_name){
+
+                            InfosMonthYearFile::create(['date_name' => $date_name]);
+
+                        }
+
+                       
+                        $fichier_original = File::create([
+                            'file_url' => str_replace('https://togoactualite.com/wp-content/uploads', 'https://togoactualite.com/wp-content/uploads', $link),
+                            'date_name' => $date_name,
+                            'file_name' => $media['title']['rendered'],
+                            'caption' => $media['caption']['rendered'] ? strip_tags($media['caption']['rendered']) : null,
+                            'file_slug' => \Illuminate\Support\Str::slug($media['title']['rendered']),
+                            'wp_file' => $media['source_url'],
+                            'date_publish' => $media["modified_gmt"],
+                            'type_file_id' => $type_file_id,
+                            'user_id' => 1
+                        ]);
+
+
+                    }
+
+                   
+                }
+            }
+
+            
+        }
+
+
+        for($i = 1; $i <= 50; $i++){
+
+            
+
+        $posts = Http::get("http://www.togoactualite.com/wp-json/wp/v2/posts?page=$i&per_page=100")->json(); 
+
+            foreach ($posts as $value) {
+
+                $author = Author::where('wp_author_id', $value['author'])->first();
+                $typePublication = TypePublication::where('slug', 'articles')->first();
+
+                // ✅ Identification correcte par ID WordPress
+                $publication = Publication::where('wp_article_id', $value['id'])->first();
+
+                if (!$author || !$typePublication) continue;
+
+                // =========================
+                // GESTION IMAGE DE COUVERTURE
+                // =========================
+                $imageCoverUrl = null;
+                $fileId = null;
+
+                if (isset($value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl'])) {
+                    $url = str_replace(
+                        'https://togoactualite.com/wp-content/uploads',
+                        'https://togoactualite.com/wp-content/uploads',
+                        $value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl']
+                    );
+
+                    $imageCoverUrl = $url;
+
+                    $file = File::firstOrCreate(
+                        ['file_url' => $url],
+                        [
+                            'date_name' => Carbon::parse($value['date'])->format('F Y'),
+                            'date_publish' => $value['date'],
+                            'type_file_id' => 1,
+                            'user_id' => 1,
+                        ]
+                    );
+
+                    $file->increment('count_publications');
+                    $fileId = $file->id;
+                }
+
+                // =========================
+                // CATEGORIES
+                // =========================
+                $categories = collect();
+                foreach ($value['categories'] as $wpCategoryId) {
+                    $category = Category::where('wp_category_id', $wpCategoryId)->first();
+                    if ($category) {
+                        $category->increment('count_publications');
+                        $categories->push($category);
+                    }
+                }
+
+                // =========================
+                // TAGS
+                // =========================
+                $tags = collect();
+                foreach ($value['tags'] as $wpTagId) {
+                    $tag = Tag::where('wp_tag_id', $wpTagId)->first();
+                    if ($tag) {
+                        $tag->increment('count_publications');
+                        $tags->push($tag);
+                    }
+                }
+
+                // =========================
+                // DATE NAME
+                // =========================
+                $date = Carbon::parse($value['date']);
+                $month = InfosMonthYear::where('month_id', $date->format('m'))->first();
+                $dateName = $month ? $month->month . ' ' . $date->format('Y') : $date->format('F Y');
+                InfosMonthYearPublication::firstOrCreate(['date_name' => $dateName]);
+
+                /*
+                ============================================================
+                    🔁 MODE UPDATE (SYNC WORDPRESS → LARAVEL)
+                ============================================================
+                */
+                if ($publication) {
+
+                    $publication->update([
+                        'title' => $value['title']['rendered'],
+                        'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
+                        'slug' => Str::slug(strip_tags($value['title']['rendered'])),
+                        'date_name' => $dateName,
+                        'image_cover_url' => $imageCoverUrl,
+                        'content' => $value['content']['rendered'],
+                        'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
+                        'truncate_content_max' => $value['excerpt']['rendered'],
+                        'status' => $value['status'] === 'publish' ? 1 : 0,
+                        'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
+                        'date_publish' => $value['date'],
+                        'author_id' => $author->id,
+                        'author_slug' => $author->slug,
+                        'author_name' => $author->authorName,
+                        'type_publication_id' => $typePublication->id,
+                        'type_publication_name' => $typePublication->name,
+                        'type_publication_slug' => $typePublication->slug,
+                        'source' => 'Togoactualité',
+                    ]);
+
+                    // 🔄 Sync tags
+                    PublicationTag::where('publication_id', $publication->id)->delete();
+                    foreach ($tags as $tag) {
+                        PublicationTag::create([
+                            'publication_id' => $publication->id,
+                            'tag_id' => $tag->id,
+                            'date_publish' => $value['date']
+                        ]);
+                    }
+
+                    // 🔄 Sync image
+                    if ($fileId) {
+                        PublicationFile::where('publication_id', $publication->id)->delete();
+                        PublicationFile::create([
+                            'publication_id' => $publication->id,
+                            'file_id' => $fileId,
+                            'date_publish' => $value['date']
+                        ]);
+                    }
+
+                    continue;
+                }
+
+                /*
+                ============================================================
+                    🆕 MODE CREATE (CODE ORIGINAL CONSERVÉ)
+                ============================================================
+                */
+
+                if ($categories->isEmpty()) {
+
+                    $publication = Publication::create([
+                        'title' => $value['title']['rendered'],
+                        'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
+                        'slug' => Str::slug(strip_tags($value['title']['rendered'])),
+                        'date_name' => $dateName,
+                        'deja_citer' => 0,
+                        'image_cover_url' => $imageCoverUrl,
+                        'content' => $value['content']['rendered'],
+                        'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
+                        'truncate_content_max' => $value['excerpt']['rendered'],
+                        'status' => $value['status'] === 'publish' ? 1 : 0,
+                        'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
+                        'views_count' => rand(351, 2564),
+                        'likes_count' => rand(123, 554),
+                        'shares_count' => 0,
+                        'comment_count' => 0,
+                        'date_publish' => $value['date'],
+                        'author_id' => $author->id,
+                        'author_slug' => $author->slug,
+                        'author_name' => $author->authorName,
+                        'type_publication_id' => $typePublication->id,
+                        'type_publication_name' => $typePublication->name,
+                        'type_publication_slug' => $typePublication->slug,
+                        'category_id' => null,
+                        'category_name' => null,
+                        'category_slug' => null,
+                        'user_id' => 1,
+                        'source' => 'Togoactualité',
+                        'wp_article_id' => $value['id'],
+                    ]);
+
+                    foreach ($tags as $tag) {
+                        PublicationTag::firstOrCreate(
+                            ['publication_id' => $publication->id, 'tag_id' => $tag->id],
+                            ['date_publish' => $value['date']]
+                        );
+                    }
+
+                    if ($fileId) {
+                        PublicationFile::firstOrCreate(
+                            ['publication_id' => $publication->id, 'file_id' => $fileId],
+                            ['date_publish' => $value['date']]
+                        );
+                    }
+
+                } else {
+
+                    foreach ($categories as $index => $category) {
+
+                        $deja_citer = $index === 0 ? 0 : 1;
+
+                        $publication = Publication::create([
+                            'title' => $value['title']['rendered'],
+                            'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
+                            'slug' => Str::slug(strip_tags($value['title']['rendered'])) . ($index > 0 ? "-{$category->slug}" : ""),
+                            'date_name' => $dateName,
+                            'deja_citer' => $deja_citer,
+                            'image_cover_url' => $imageCoverUrl,
+                            'content' => $value['content']['rendered'],
+                            'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
+                            'truncate_content_max' => $value['excerpt']['rendered'],
+                            'status' => $value['status'] === 'publish' ? 1 : 0,
+                            'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
+                            'views_count' => rand(351, 2564),
+                            'likes_count' => rand(123, 554),
+                            'shares_count' => 0,
+                            'comment_count' => 0,
+                            'date_publish' => $value['date'],
+                            'author_id' => $author->id,
+                            'author_slug' => $author->slug,
+                            'author_name' => $author->authorName,
+                            'type_publication_id' => $typePublication->id,
+                            'type_publication_name' => $typePublication->name,
+                            'type_publication_slug' => $typePublication->slug,
+                            'category_id' => $category->id,
+                            'category_name' => $category->name,
+                            'category_slug' => $category->slug,
+                            'user_id' => 1,
+                            'source' => 'Togoactualité',
+                            'wp_article_id' => $value['id'],
+                        ]);
+
+                        foreach ($tags as $tag) {
+                            PublicationTag::firstOrCreate(
+                                ['publication_id' => $publication->id, 'tag_id' => $tag->id],
+                                ['date_publish' => $value['date']]
+                            );
+                        }
+
+                        if ($fileId) {
+                            PublicationFile::firstOrCreate(
+                                ['publication_id' => $publication->id, 'file_id' => $fileId],
+                                ['date_publish' => $value['date']]
+                            );
+                        }
+                    }
+                }
+            }
+
+            return $this->sendResponse(['status' => 200], 'Réussie.');
+
+        }
+       
+    }
 
     /**
      * Display a listing of the resource.

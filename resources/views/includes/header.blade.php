@@ -1,7 +1,5 @@
 <!-- Offcanvas START -->
 
-@include('adsense.pub')
-
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu">
 	<div class="offcanvas-header justify-content-end">
 		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -30,6 +28,10 @@
 				</li>
 				<li class="nav-item h5">
                     <off-canvas></off-canvas>
+                </li>
+
+				<li>
+                    <transfer></transfer>
                 </li>
                 
 			</ul>
@@ -97,11 +99,19 @@
 		<div class="container-fluid">
 			<div class="row g-4 mt-2">
 				<div class="d-sm-flex justify-content-sm-between align-items-sm-center my-2">
-					
-					<a class="navbar-brand d-block" href="/">
-						<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
+				<!-- Logo START -->
+				<a class="navbar-brand d-block" href="/">
+					<img class="navbar-brand-item light-mode-item" src="/assets/images/logo.png" alt="logo togoactualite" style="height: 85px; width: 185px; object-fit: cover;">
+
+				</a>
+				<!-- Logo END -->
+				<!-- Adv -->
+				<div>
+					<a href="#" class="card-img-flash d-block">
+						@include('adsense.google-ads.ads-sections-second-header')
 					</a>
 				</div>
+			</div>
 			 
 			</div>
 		</div>

@@ -8,6 +8,11 @@ import internationalModule from './modules/frontoffice/header/international'
 
 import politiqueModule from './modules/frontoffice/header/politique'
 
+
+
+import transferModule from './modules/frontoffice/includes/transferdb' 
+
+
 //Importation des modules gérant les données contenu dans le pied de page
 
 import newsletterModule from './modules/frontoffice/footer/newsletter' 
@@ -87,6 +92,8 @@ const store = createStore({
         categoryPopulars: categoryPopularsModule,
         tagsPopulars: tagsPopularsModule,
         
+        transfer: transferModule,
+
         //Déclaration du module gérant les données des publications sur la page d'accueil
                                 
                 sectionsPublicationsHomePage: sectionsPublicationsHomePageModule,

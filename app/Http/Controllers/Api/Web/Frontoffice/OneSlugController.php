@@ -11,6 +11,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
+use Artesaos\SEOTools\Facades\SEOMeta;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use Artesaos\SEOTools\Facades\JsonLd;
+
 class OneSlugController extends BaseController
 {
     public function slug(Request $request, $slug){
@@ -239,6 +245,22 @@ class OneSlugController extends BaseController
                             ->take(9)->get();
 
                         }
+
+                         SEOMeta::setTitle($article->title_truncate);
+                        SEOMeta::setDescription($article->truncate_content);
+                        SEOMeta::setCanonical($article->image_cover_url);
+
+                        OpenGraph::setDescription($article->truncate_content);
+                        OpenGraph::setTitle($article->title_truncate);
+                        OpenGraph::setUrl('https://news228.com/'.$article->slug);
+                        OpenGraph::addProperty('type', 'articles');
+
+                        TwitterCard::setTitle($article->title_truncate);
+                        TwitterCard::setSite('@manoudev');
+
+                        JsonLd::setTitle($article->title_truncate);
+                        JsonLd::setDescription($article->truncate_content);
+                        JsonLd::addImage($article->image_cover_url);
 
                         $alireaussi =  Publication::where('status', 1)->where("publications.type_publication_id", 1)->where("publications.deja_citer", 0)->orderBy('date_publish', 'desc')->take(9)->get();
 

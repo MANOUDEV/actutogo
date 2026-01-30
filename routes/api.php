@@ -40,6 +40,9 @@ Route::get('/frontoffice/header/international', [IncludesController::class, 'int
  
 Route::get('/frontoffice/header/politique', [IncludesController::class, 'politiqueRequestData']);
 
+
+Route::get('/frontoffice/header/transfer', [IncludesController::class, 'transferRequestData']);
+
 //Routes pour les données du footer
 
 Route::post('/frontoffice/footer/newsletter', [IncludesController::class, 'newsletterStoreRequest']); 

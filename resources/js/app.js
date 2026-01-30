@@ -58,6 +58,9 @@ import internationalComponent from './components/frontoffice/sectionsPublication
 
 import contactF from './components/frontoffice/includes/contact.vue' 
 
+import transferF from './components/frontoffice/includes/transferComponent.vue' 
+
+
 import states from './components/frontoffice/article/states.vue';
 
 import comments from './components/frontoffice/article/comments.vue';
@@ -155,6 +158,8 @@ app.component('states', states)
 app.component('comments', comments) 
 
 app.component('contact', contactF) 
+
+app.component('transfer', transferF) 
  
 app.use(VueSweetalert2).use(store).mount('#app')
 
