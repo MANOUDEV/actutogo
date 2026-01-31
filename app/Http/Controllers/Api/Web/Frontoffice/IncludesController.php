@@ -218,11 +218,9 @@ class IncludesController extends BaseController
         }
 
 
-        for($i = 1; $i <= 5; $i++){
+         
 
-            
-
-        $posts = Http::get("http://www.togoactualite.com/wp-json/wp/v2/posts?page=$i&per_page=10")->json(); 
+            $posts = Http::get("http://www.togoactualite.com/wp-json/wp/v2/posts?page=1&per_page=10")->json(); 
 
             foreach ($posts as $value) {
 
@@ -230,23 +228,23 @@ class IncludesController extends BaseController
                 $typePublication = TypePublication::where('slug', 'articles')->first();
 
                 // ✅ Identification correcte par ID WordPress
-                $publications = Publication::where('wp_article_id', $value['id'])->get();
+                $publication = Publication::where('wp_article_id', $value['id'])->first();
 
-                if (!$author || !$typePublication) continue;
+                if (!$author || !$typePublication || $publication) continue;
 
-                // =========================
-                // GESTION IMAGE DE COUVERTURE
-                // =========================
+                 // Incrément des compteurs
+                $author->increment('count_publications');
+                $typePublication->increment('count_publications');
+
+                // Gestion de l'image de couverture
                 $imageCoverUrl = null;
                 $fileId = null;
-
                 if (isset($value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl'])) {
                     $url = str_replace(
                         'https://togoactualite.com/wp-content/uploads',
-                        'https://togoactualite.com/wp-content/uploads',
+                        'http://togoactualite.com/wp-content/uploads',
                         $value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl']
                     );
-
                     $imageCoverUrl = $url;
 
                     $file = File::firstOrCreate(
@@ -258,14 +256,11 @@ class IncludesController extends BaseController
                             'user_id' => 1,
                         ]
                     );
-
                     $file->increment('count_publications');
                     $fileId = $file->id;
                 }
 
-                // =========================
-                // CATEGORIES
-                // =========================
+                // Récupération des catégories
                 $categories = collect();
                 foreach ($value['categories'] as $wpCategoryId) {
                     $category = Category::where('wp_category_id', $wpCategoryId)->first();
@@ -275,9 +270,7 @@ class IncludesController extends BaseController
                     }
                 }
 
-                // =========================
-                // TAGS
-                // =========================
+                // Récupération des tags
                 $tags = collect();
                 foreach ($value['tags'] as $wpTagId) {
                     $tag = Tag::where('wp_tag_id', $wpTagId)->first();
@@ -287,74 +280,14 @@ class IncludesController extends BaseController
                     }
                 }
 
-                // =========================
-                // DATE NAME
-                // =========================
+                // Date name pour InfosMonthYearPublication
                 $date = Carbon::parse($value['date']);
                 $month = InfosMonthYear::where('month_id', $date->format('m'))->first();
                 $dateName = $month ? $month->month . ' ' . $date->format('Y') : $date->format('F Y');
                 InfosMonthYearPublication::firstOrCreate(['date_name' => $dateName]);
 
-                /*
-                ============================================================
-                    🔁 MODE UPDATE (SYNC WORDPRESS → LARAVEL)
-                ============================================================
-                */
-                 if ($publications->count() > 0) {
-                        foreach ($publications as $publication) {
-                            $publication->update([
-                                'title' => $value['title']['rendered'],
-                                'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
-                            'slug' => Str::slug(strip_tags($value['title']['rendered'])),
-                            'date_name' => $dateName,
-                            'image_cover_url' => $imageCoverUrl,
-                            'content' => $value['content']['rendered'],
-                            'truncate_content' => Str::words(strip_tags($value['excerpt']['rendered']), 20, ' ...'),
-                            'truncate_content_max' => $value['excerpt']['rendered'],
-                            'status' => $value['status'] === 'publish' ? 1 : 0,
-                            'comment_status' => $value['comment_status'] === 'open' ? 1 : 0,
-                            'date_publish' => $value['date'],
-                            'author_id' => $author->id,
-                            'author_slug' => $author->slug,
-                            'author_name' => $author->authorName,
-                            'type_publication_id' => $typePublication->id,
-                            'type_publication_name' => $typePublication->name,
-                            'type_publication_slug' => $typePublication->slug,
-                            'source' => 'Togoactualité',
-                        ]);
-
-                        // 🔄 Sync tags
-                        PublicationTag::where('publication_id', $publication->id)->delete();
-                        foreach ($tags as $tag) {
-                            PublicationTag::create([
-                                'publication_id' => $publication->id,
-                                'tag_id' => $tag->id,
-                                'date_publish' => $value['date']
-                            ]);
-                        }
-
-                        // 🔄 Sync image
-                        if ($fileId) {
-                            PublicationFile::where('publication_id', $publication->id)->delete();
-                            PublicationFile::create([
-                                'publication_id' => $publication->id,
-                                'file_id' => $fileId,
-                                'date_publish' => $value['date']
-                            ]);
-                        }
-
-                        continue;
-                    }
-                    }
-
-                /*
-                ============================================================
-                    🆕 MODE CREATE (CODE ORIGINAL CONSERVÉ)
-                ============================================================
-                */
-
+                // ---- Création de la publication par catégorie ----
                 if ($categories->isEmpty()) {
-
                     $publication = Publication::create([
                         'title' => $value['title']['rendered'],
                         'title_truncate' => Str::words(strip_tags($value['title']['rendered']), 10, ' ...'),
@@ -386,6 +319,7 @@ class IncludesController extends BaseController
                         'wp_article_id' => $value['id'],
                     ]);
 
+                    // Attacher tags
                     foreach ($tags as $tag) {
                         PublicationTag::firstOrCreate(
                             ['publication_id' => $publication->id, 'tag_id' => $tag->id],
@@ -393,6 +327,7 @@ class IncludesController extends BaseController
                         );
                     }
 
+                    // Attacher fichier
                     if ($fileId) {
                         PublicationFile::firstOrCreate(
                             ['publication_id' => $publication->id, 'file_id' => $fileId],
@@ -400,10 +335,9 @@ class IncludesController extends BaseController
                         );
                     }
 
+                    
                 } else {
-
                     foreach ($categories as $index => $category) {
-
                         $deja_citer = $index === 0 ? 0 : 1;
 
                         $publication = Publication::create([
@@ -450,14 +384,17 @@ class IncludesController extends BaseController
                                 ['date_publish' => $value['date']]
                             );
                         }
+
+                       
                     }
                 }
+
+                 
             }
 
             return $this->sendResponse(['status' => 200], 'Réussie.');
 
-        }
-       
+    
     }
 
     /**
