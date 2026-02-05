@@ -108,7 +108,7 @@ const store = createStore({
         
                 //Déclaration du module gérant les données sur un article
         
-                article: articleModule, 
+                article: articleModule,     
 
         //Déclaration des modules gérant les données du système d'authenitification
                         

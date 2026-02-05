@@ -158,8 +158,6 @@ app.component('states', states)
 app.component('comments', comments) 
 
 app.component('contact', contactF) 
-
-app.component('transfer', transferF) 
  
 app.use(VueSweetalert2).use(store).mount('#app')
 

@@ -224,21 +224,28 @@ class IncludesController extends BaseController
 
             foreach ($posts as $value) {
 
-                $author = Author::where('wp_author_id', $value['author'])->first();
-                $typePublication = TypePublication::where('slug', 'articles')->first();
+            $author = Author::where('wp_author_id', $value['author'])->first();
+            $typePublication = TypePublication::where('slug', 'articles')->first();
 
-                // ✅ Identification correcte par ID WordPress
-                $publication = Publication::where('wp_article_id', $value['id'])->first();
+            // ✅ Identification correcte par ID WordPress
+            $publication = Publication::where('title', $value['title']['rendered'])->first();
 
-                if (!$author || !$typePublication || $publication) continue;
+            if (!$author || !$typePublication) continue;
 
-                 // Incrément des compteurs
-                $author->increment('count_publications');
-                $typePublication->increment('count_publications');
+                // Incrément des compteurs
+            $author->increment('count_publications');
+            $typePublication->increment('count_publications');
 
-                // Gestion de l'image de couverture
-                $imageCoverUrl = null;
-                $fileId = null;
+            // Gestion de l'image de couverture
+            $imageCoverUrl = null;
+            $fileId = null;
+
+            if($publication){
+
+                continue;
+
+            }else{
+
                 if (isset($value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl'])) {
                     $url = str_replace(
                         'https://togoactualite.com/wp-content/uploads',
@@ -335,10 +342,17 @@ class IncludesController extends BaseController
                         );
                     }
 
-                    
+                
                 } else {
                     foreach ($categories as $index => $category) {
-                        $deja_citer = $index === 0 ? 0 : 1;
+
+                        $deja_citerH = Publication::where('title', $value['title']['rendered'])->where('deja_citer', 0)->first();
+
+                        if($deja_citerH){
+                            $deja_citer = 1;
+                        }else{
+                            $deja_citer = 0;
+                        }
 
                         $publication = Publication::create([
                             'title' => $value['title']['rendered'],
@@ -385,12 +399,16 @@ class IncludesController extends BaseController
                             );
                         }
 
-                       
+                        
                     }
                 }
 
-                 
+
             }
+            
+                
+        }
+
 
             return $this->sendResponse(['status' => 200], 'Réussie.');
 
