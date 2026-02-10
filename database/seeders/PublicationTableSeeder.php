@@ -46,7 +46,7 @@ class PublicationTableSeeder extends Seeder
                 if (isset($value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl'])) {
                     $url = str_replace(
                         'https://togoactualite.com/wp-content/uploads',
-                        'https://news228.com/storage/uploads',
+                        'http://togoactualite.com/wp-content/uploads',
                         $value['yoast_head_json']['schema']['@graph'][0]['thumbnailUrl']
                     );
                     $imageCoverUrl = $url;
